@@ -1,4 +1,9 @@
-import { AlarmClockCheck, ChartColumnBig, ListTodo } from "lucide-react";
+import {
+    AlarmClockCheck,
+    BotMessageSquare,
+    ChartColumnBig,
+    ListTodo,
+} from "lucide-react";
 import ServiceButton from "./atoms/ServiceButton";
 import { cn } from "@/lib/utils";
 
@@ -10,13 +15,18 @@ export default function Nav({ className }: NavProps) {
     return (
         <>
             <div className={className}>
-                <ServiceButton isActive>
+                <ServiceButton tooltipContent="Timer" isActive>
                     <AlarmClockCheck size={24} />
                 </ServiceButton>
-                <ServiceButton>
+                <ServiceButton tooltipContent="Tasks">
                     <ListTodo size={24} />
                 </ServiceButton>
-                <ServiceButton className="mt-auto">
+                <ServiceButton tooltipContent="Comming soon">
+                    <BotMessageSquare size={24} />
+                </ServiceButton>
+
+                {/* Charts button*/}
+                <ServiceButton tooltipContent="Stats" className="mt-auto">
                     <ChartColumnBig size={24} />
                 </ServiceButton>
             </div>
