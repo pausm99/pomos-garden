@@ -67,3 +67,10 @@
         @apply bg-background text-foreground;
     }
 }
+
+/* CUSTOM STYLES */
+
+/* Global */
+.rounded-4xl {
+    border-radius: 2rem;
+}
