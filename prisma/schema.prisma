@@ -3,6 +3,10 @@ generator client {
   provideFeatures = ["mongodb"]
 }
 
+generator zod {
+  provider       = "zod-prisma-types"
+}
+
 datasource db {
   provider = "mongodb"
   url      = env("DATABASE_URL")
