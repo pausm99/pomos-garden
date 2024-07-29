@@ -15,13 +15,13 @@ export default function Nav({ className }: NavProps) {
     return (
         <>
             <div className={className}>
-                <ServiceButton tooltipContent="Timer" isActive>
+                <ServiceButton active tooltipContent="Timer">
                     <AlarmClockCheck size={24} />
                 </ServiceButton>
                 <ServiceButton tooltipContent="Tasks">
                     <ListTodo size={24} />
                 </ServiceButton>
-                <ServiceButton tooltipContent="Comming soon">
+                <ServiceButton disabled tooltipContent="Comming soon">
                     <BotMessageSquare size={24} />
                 </ServiceButton>
 
