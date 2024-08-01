@@ -28,7 +28,7 @@ export default function Nav({ className }: NavProps) {
                 <ServiceButton tooltipContent="Tasks" active={isActiveRoute('/tasks')}>
                     <ListTodo size={24} />
                 </ServiceButton>
-                <ServiceButton tooltipContent="Comming soon" active={isActiveRoute('/chat')}>
+                <ServiceButton tooltipContent="Comming soon" disabled active={isActiveRoute('/chat')}>
                     <BotMessageSquare size={24} />
                 </ServiceButton>
 
