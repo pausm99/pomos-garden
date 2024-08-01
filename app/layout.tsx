@@ -36,7 +36,7 @@ export default function RootLayout({
 
                 <div className="flex-1 flex gap-7">
                     <ServicesNav className="w-20 flex flex-col gap-5" />
-                    <div className="flex flex-1 rounded-4xl bg-zinc-100 overflow-hidden relative pomo-blob">
+                    <div className="flex flex-1 rounded-4xl bg-zinc-100 overflow-hidden relative">
                         <Blob className="absolute w-full h-full" />
                         <div className="absolute w-full h-full backdrop-blur-3xl"></div>
                         <div className="flex-1 p-5">{children}</div>
