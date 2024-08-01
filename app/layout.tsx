@@ -4,7 +4,7 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import Header from "@/components/Header";
 import ServicesNav from "@/components/ServicesNav";
-import Blob from "@/components/Blob";
+import Blob from "@/components/atoms/Blob";
 
 const fontSans = FontSans({ subsets: ["latin"], variable: "--font-sans" });
 const fontMono = FontMono({ subsets: ["latin"], variable: "--font-mono" });
