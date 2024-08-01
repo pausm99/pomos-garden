@@ -96,6 +96,8 @@ input {
 }
 
 /* Global */
+
+/* General */
 .rounded-4xl {
   border-radius: 2rem;
 }

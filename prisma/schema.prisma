@@ -1,14 +1,71 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
+  provideFeatures = ["mongodb"]
+}
+
+generator zod {
+  provider       = "zod-prisma-types"
 }
 
 datasource db {
   provider = "mongodb"
   url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String    @unique
+  name      String
+  email     String    @unique
+  sessions  Session[]
+  tasks     Task[]
+  createdAt DateTime
+  updatedAt DateTime
+}
+
+model Task {
+  id          String     @id @default(auto()) @map("_id") @db.ObjectId
+  userId      String     @db.ObjectId
+  user        User       @relation(fields: [userId], references: [id])
+  title       String
+  description String
+  status      taskStatus @default(BACKLOG)
+  tagIDs      String[]   @db.ObjectId
+  tags        Tag[]      @relation(fields: [tagIDs], references: [id])
+  sessionIDs  String[]   @db.ObjectId
+  sessions    Session[]  @relation(fields: [sessionIDs], references: [id])
+  createdAt   DateTime
+  updatedAt   DateTime
+}
+
+model Session {
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId          String   @db.ObjectId
+  user            User     @relation(fields: [userId], references: [id])
+  taskIDs         String[] @db.ObjectId
+  list_of_tasks   Task[]   @relation(fields: [taskIDs], references: [id])
+  focusDuration   Int
+  breakDuration   Int
+  rounds          Int
+  completedRounds Int      @default(0)
+  startTime       DateTime
+  endTime         DateTime
+  in_progress     Boolean  @default(false)
+  createdAt       DateTime
+  updatedAt       DateTime
+}
+
+model Tag {
+  id      String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId  String   @db.ObjectId
+  taskIDs String[] @db.ObjectId
+  tasks   Task[]   @relation(fields: [taskIDs], references: [id])
+  tagDesc String
+  color   String
+}
+
+enum taskStatus {
+  BACKLOG
+  IN_PROGRESS
+  COMPLETED
 }

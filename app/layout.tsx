@@ -4,6 +4,7 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import Header from "@/components/Header";
 import ServicesNav from "@/components/ServicesNav";
+import Blob from "@/components/atoms/Blob";
 
 const fontSans = FontSans({ subsets: ["latin"], variable: "--font-sans" });
 const fontMono = FontMono({ subsets: ["latin"], variable: "--font-mono" });
@@ -35,8 +36,10 @@ export default function RootLayout({
 
                 <div className="flex-1 flex gap-7 h-[95dvh]">
                     <ServicesNav className="w-20 flex flex-col gap-5" />
-                    <div className="flex-1 flex flex-col rounded-4xl bg-zinc-100">
-                        {children}
+                    <div className="flex flex-1 rounded-4xl bg-zinc-100 overflow-hidden relative">
+                        <Blob className="absolute w-full h-full" />
+                        <div className="absolute w-full h-full backdrop-blur-3xl"></div>
+                        <div className="flex-1 p-5">{children}</div>
                     </div>
                 </div>
             </body>

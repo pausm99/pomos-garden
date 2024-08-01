@@ -22,18 +22,18 @@ export default function Nav({ className }: NavProps) {
     return (
         <>
             <div className={className}>
-                <ServiceButton tooltipContent="Timer" isActive={isActiveRoute('/')}>
+                <ServiceButton tooltipContent="Timer" active={isActiveRoute('/')}>
                     <AlarmClockCheck size={24} />
                 </ServiceButton>
-                <ServiceButton tooltipContent="Tasks" isActive={isActiveRoute('/tasks')}>
+                <ServiceButton tooltipContent="Tasks" active={isActiveRoute('/tasks')}>
                     <ListTodo size={24} />
                 </ServiceButton>
-                <ServiceButton tooltipContent="Comming soon" isActive={isActiveRoute('/chat')}>
+                <ServiceButton tooltipContent="Comming soon" active={isActiveRoute('/chat')}>
                     <BotMessageSquare size={24} />
                 </ServiceButton>
 
                 {/* Charts button*/}
-                <ServiceButton tooltipContent="Stats" className="mt-auto" isActive={isActiveRoute('/stats')}>
+                <ServiceButton tooltipContent="Stats" className="mt-auto" active={isActiveRoute('/stats')}>
                     <ChartColumnBig size={24} />
                 </ServiceButton>
             </div>
