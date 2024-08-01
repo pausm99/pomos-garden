@@ -39,7 +39,7 @@ export default function RootLayout({
                     <div className="flex flex-1 rounded-4xl bg-zinc-100 overflow-hidden relative">
                         <Blob className="absolute w-full h-full" />
                         <div className="absolute w-full h-full backdrop-blur-3xl"></div>
-                        <div className="flex-1 p-5">{children}</div>
+                        <div className="flex-1 z-10">{children}</div>
                     </div>
                 </div>
             </body>
