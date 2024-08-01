@@ -33,9 +33,9 @@ export default function RootLayout({
             >
                 <Header />
 
-                <div className="flex-1 flex gap-7">
+                <div className="flex-1 flex gap-7 h-[95dvh]">
                     <ServicesNav className="w-20 flex flex-col gap-5" />
-                    <div className="flex-1 p-5 rounded-4xl bg-zinc-100">
+                    <div className="flex-1 flex flex-col rounded-4xl bg-zinc-100">
                         {children}
                     </div>
                 </div>
