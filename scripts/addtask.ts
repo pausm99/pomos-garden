@@ -26,4 +26,4 @@ const addTask4 = async () => {
   console.log("Task 4 added successfully!", task4);
 };
 
-await addTask4();
+addTask4().then();
