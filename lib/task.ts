@@ -1,9 +1,8 @@
 import { db } from "@/db/db";
-import { ObjectId } from "mongodb";
-import { TaskUncheckedCreateInputSchema } from "@/prisma/generated/zod";
+import { TaskUncheckedCreateInputSchema} from "@/prisma/generated/zod";
+import { taskStatus } from "@prisma/client";
 
 export async function serverCreateTask(title: string, description: string, userId: string) {
-    const userid = new ObjectId(userId);
     const data = {
         title,
         description,
@@ -18,10 +17,45 @@ export async function serverCreateTask(title: string, description: string, userI
         const newTask = await db.task.create({
             data,
         });
-        return newTask;
+
+        const updatedUser = await db.user.update({
+            where: {
+                id: userId,
+            },
+            data: {
+                tasks: {
+                    connect: {
+                        id: newTask.id,
+                    },
+                },
+            },
+        });
+        return updatedUser;
     } catch (error) {
         throw new Error(`Failed to create task: ${error}`);
     }
 }
 
-serverCreateTask("Task 17", "testing now the unchecked ", "76ad4d886e715361ebba40e3").then();
+export async function serverUpdateTask(id: string, title?: string, description?: string, status?: taskStatus ) {
+    const data = {
+        title,
+        description,
+        status,
+    };
+    try {
+        TaskUncheckedCreateInputSchema.parse(data);
+    } catch (error) {
+        throw new Error(`Failed to parse task data: ${error}`);
+    }
+    try {
+        const updatedTask = await db.task.update({
+            where: {
+                id,
+            },
+            data,
+        });
+        return updatedTask;
+    } catch (error) {
+        throw new Error(`Failed to update task: ${error}`);
+    }
+}
