@@ -10,7 +10,7 @@ import type { Prisma } from '@prisma/client';
 // ENUMS
 /////////////////////////////////////////
 
-export const UserScalarFieldEnumSchema = z.enum(['id','userId','name','email','createdAt','updatedAt']);
+export const UserScalarFieldEnumSchema = z.enum(['id','name','email','createdAt','updatedAt']);
 
 export const TaskScalarFieldEnumSchema = z.enum(['id','userId','title','description','status','tagIDs','sessionIDs','createdAt','updatedAt']);
 
@@ -36,7 +36,6 @@ export type taskStatusType = `${z.infer<typeof taskStatusSchema>}`
 
 export const UserSchema = z.object({
   id: z.string(),
-  userId: z.string(),
   name: z.string(),
   email: z.string(),
   createdAt: z.coerce.date(),
@@ -128,7 +127,6 @@ export const UserCountOutputTypeSelectSchema: z.ZodType<Prisma.UserCountOutputTy
 
 export const UserSelectSchema: z.ZodType<Prisma.UserSelect> = z.object({
   id: z.boolean().optional(),
-  userId: z.boolean().optional(),
   name: z.boolean().optional(),
   email: z.boolean().optional(),
   createdAt: z.boolean().optional(),
@@ -250,7 +248,6 @@ export const UserWhereInputSchema: z.ZodType<Prisma.UserWhereInput> = z.object({
   OR: z.lazy(() => UserWhereInputSchema).array().optional(),
   NOT: z.union([ z.lazy(() => UserWhereInputSchema),z.lazy(() => UserWhereInputSchema).array() ]).optional(),
   id: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
-  userId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   name: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   email: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
@@ -261,7 +258,6 @@ export const UserWhereInputSchema: z.ZodType<Prisma.UserWhereInput> = z.object({
 
 export const UserOrderByWithRelationInputSchema: z.ZodType<Prisma.UserOrderByWithRelationInput> = z.object({
   id: z.lazy(() => SortOrderSchema).optional(),
-  userId: z.lazy(() => SortOrderSchema).optional(),
   name: z.lazy(() => SortOrderSchema).optional(),
   email: z.lazy(() => SortOrderSchema).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional(),
@@ -273,26 +269,10 @@ export const UserOrderByWithRelationInputSchema: z.ZodType<Prisma.UserOrderByWit
 export const UserWhereUniqueInputSchema: z.ZodType<Prisma.UserWhereUniqueInput> = z.union([
   z.object({
     id: z.string(),
-    userId: z.string(),
     email: z.string()
   }),
   z.object({
     id: z.string(),
-    userId: z.string(),
-  }),
-  z.object({
-    id: z.string(),
-    email: z.string(),
-  }),
-  z.object({
-    id: z.string(),
-  }),
-  z.object({
-    userId: z.string(),
-    email: z.string(),
-  }),
-  z.object({
-    userId: z.string(),
   }),
   z.object({
     email: z.string(),
@@ -300,7 +280,6 @@ export const UserWhereUniqueInputSchema: z.ZodType<Prisma.UserWhereUniqueInput> 
 ])
 .and(z.object({
   id: z.string().optional(),
-  userId: z.string().optional(),
   email: z.string().optional(),
   AND: z.union([ z.lazy(() => UserWhereInputSchema),z.lazy(() => UserWhereInputSchema).array() ]).optional(),
   OR: z.lazy(() => UserWhereInputSchema).array().optional(),
@@ -314,7 +293,6 @@ export const UserWhereUniqueInputSchema: z.ZodType<Prisma.UserWhereUniqueInput> 
 
 export const UserOrderByWithAggregationInputSchema: z.ZodType<Prisma.UserOrderByWithAggregationInput> = z.object({
   id: z.lazy(() => SortOrderSchema).optional(),
-  userId: z.lazy(() => SortOrderSchema).optional(),
   name: z.lazy(() => SortOrderSchema).optional(),
   email: z.lazy(() => SortOrderSchema).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional(),
@@ -329,7 +307,6 @@ export const UserScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.UserScal
   OR: z.lazy(() => UserScalarWhereWithAggregatesInputSchema).array().optional(),
   NOT: z.union([ z.lazy(() => UserScalarWhereWithAggregatesInputSchema),z.lazy(() => UserScalarWhereWithAggregatesInputSchema).array() ]).optional(),
   id: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
-  userId: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
   name: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
   email: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
   createdAt: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
@@ -578,28 +555,25 @@ export const TagScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.TagScalar
 
 export const UserCreateInputSchema: z.ZodType<Prisma.UserCreateInput> = z.object({
   id: z.string().optional(),
-  userId: z.string(),
   name: z.string(),
   email: z.string(),
-  createdAt: z.coerce.date(),
-  updatedAt: z.coerce.date(),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
   sessions: z.lazy(() => SessionCreateNestedManyWithoutUserInputSchema).optional(),
   tasks: z.lazy(() => TaskCreateNestedManyWithoutUserInputSchema).optional()
 }).strict();
 
 export const UserUncheckedCreateInputSchema: z.ZodType<Prisma.UserUncheckedCreateInput> = z.object({
   id: z.string().optional(),
-  userId: z.string(),
   name: z.string(),
   email: z.string(),
-  createdAt: z.coerce.date(),
-  updatedAt: z.coerce.date(),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
   sessions: z.lazy(() => SessionUncheckedCreateNestedManyWithoutUserInputSchema).optional(),
   tasks: z.lazy(() => TaskUncheckedCreateNestedManyWithoutUserInputSchema).optional()
 }).strict();
 
 export const UserUpdateInputSchema: z.ZodType<Prisma.UserUpdateInput> = z.object({
-  userId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   email: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
@@ -609,7 +583,6 @@ export const UserUpdateInputSchema: z.ZodType<Prisma.UserUpdateInput> = z.object
 }).strict();
 
 export const UserUncheckedUpdateInputSchema: z.ZodType<Prisma.UserUncheckedUpdateInput> = z.object({
-  userId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   email: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
@@ -620,15 +593,13 @@ export const UserUncheckedUpdateInputSchema: z.ZodType<Prisma.UserUncheckedUpdat
 
 export const UserCreateManyInputSchema: z.ZodType<Prisma.UserCreateManyInput> = z.object({
   id: z.string().optional(),
-  userId: z.string(),
   name: z.string(),
   email: z.string(),
-  createdAt: z.coerce.date(),
-  updatedAt: z.coerce.date()
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional()
 }).strict();
 
 export const UserUpdateManyMutationInputSchema: z.ZodType<Prisma.UserUpdateManyMutationInput> = z.object({
-  userId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   email: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
@@ -636,7 +607,6 @@ export const UserUpdateManyMutationInputSchema: z.ZodType<Prisma.UserUpdateManyM
 }).strict();
 
 export const UserUncheckedUpdateManyInputSchema: z.ZodType<Prisma.UserUncheckedUpdateManyInput> = z.object({
-  userId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   email: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
@@ -648,8 +618,8 @@ export const TaskCreateInputSchema: z.ZodType<Prisma.TaskCreateInput> = z.object
   title: z.string(),
   description: z.string(),
   status: z.lazy(() => taskStatusSchema).optional(),
-  createdAt: z.coerce.date(),
-  updatedAt: z.coerce.date(),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
   user: z.lazy(() => UserCreateNestedOneWithoutTasksInputSchema),
   tags: z.lazy(() => TagCreateNestedManyWithoutTasksInputSchema).optional(),
   sessions: z.lazy(() => SessionCreateNestedManyWithoutList_of_tasksInputSchema).optional()
@@ -663,8 +633,8 @@ export const TaskUncheckedCreateInputSchema: z.ZodType<Prisma.TaskUncheckedCreat
   status: z.lazy(() => taskStatusSchema).optional(),
   tagIDs: z.union([ z.lazy(() => TaskCreatetagIDsInputSchema),z.string().array() ]).optional(),
   sessionIDs: z.union([ z.lazy(() => TaskCreatesessionIDsInputSchema),z.string().array() ]).optional(),
-  createdAt: z.coerce.date(),
-  updatedAt: z.coerce.date(),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
   tags: z.lazy(() => TagUncheckedCreateNestedManyWithoutTasksInputSchema).optional(),
   sessions: z.lazy(() => SessionUncheckedCreateNestedManyWithoutList_of_tasksInputSchema).optional()
 }).strict();
@@ -701,8 +671,8 @@ export const TaskCreateManyInputSchema: z.ZodType<Prisma.TaskCreateManyInput> = 
   status: z.lazy(() => taskStatusSchema).optional(),
   tagIDs: z.union([ z.lazy(() => TaskCreatetagIDsInputSchema),z.string().array() ]).optional(),
   sessionIDs: z.union([ z.lazy(() => TaskCreatesessionIDsInputSchema),z.string().array() ]).optional(),
-  createdAt: z.coerce.date(),
-  updatedAt: z.coerce.date()
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional()
 }).strict();
 
 export const TaskUpdateManyMutationInputSchema: z.ZodType<Prisma.TaskUpdateManyMutationInput> = z.object({
@@ -733,8 +703,8 @@ export const SessionCreateInputSchema: z.ZodType<Prisma.SessionCreateInput> = z.
   startTime: z.coerce.date(),
   endTime: z.coerce.date(),
   in_progress: z.boolean().optional(),
-  createdAt: z.coerce.date(),
-  updatedAt: z.coerce.date(),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
   user: z.lazy(() => UserCreateNestedOneWithoutSessionsInputSchema),
   list_of_tasks: z.lazy(() => TaskCreateNestedManyWithoutSessionsInputSchema).optional()
 }).strict();
@@ -750,8 +720,8 @@ export const SessionUncheckedCreateInputSchema: z.ZodType<Prisma.SessionUnchecke
   startTime: z.coerce.date(),
   endTime: z.coerce.date(),
   in_progress: z.boolean().optional(),
-  createdAt: z.coerce.date(),
-  updatedAt: z.coerce.date(),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
   list_of_tasks: z.lazy(() => TaskUncheckedCreateNestedManyWithoutSessionsInputSchema).optional()
 }).strict();
 
@@ -795,8 +765,8 @@ export const SessionCreateManyInputSchema: z.ZodType<Prisma.SessionCreateManyInp
   startTime: z.coerce.date(),
   endTime: z.coerce.date(),
   in_progress: z.boolean().optional(),
-  createdAt: z.coerce.date(),
-  updatedAt: z.coerce.date()
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional()
 }).strict();
 
 export const SessionUpdateManyMutationInputSchema: z.ZodType<Prisma.SessionUpdateManyMutationInput> = z.object({
@@ -926,7 +896,6 @@ export const TaskOrderByRelationAggregateInputSchema: z.ZodType<Prisma.TaskOrder
 
 export const UserCountOrderByAggregateInputSchema: z.ZodType<Prisma.UserCountOrderByAggregateInput> = z.object({
   id: z.lazy(() => SortOrderSchema).optional(),
-  userId: z.lazy(() => SortOrderSchema).optional(),
   name: z.lazy(() => SortOrderSchema).optional(),
   email: z.lazy(() => SortOrderSchema).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional(),
@@ -935,7 +904,6 @@ export const UserCountOrderByAggregateInputSchema: z.ZodType<Prisma.UserCountOrd
 
 export const UserMaxOrderByAggregateInputSchema: z.ZodType<Prisma.UserMaxOrderByAggregateInput> = z.object({
   id: z.lazy(() => SortOrderSchema).optional(),
-  userId: z.lazy(() => SortOrderSchema).optional(),
   name: z.lazy(() => SortOrderSchema).optional(),
   email: z.lazy(() => SortOrderSchema).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional(),
@@ -944,7 +912,6 @@ export const UserMaxOrderByAggregateInputSchema: z.ZodType<Prisma.UserMaxOrderBy
 
 export const UserMinOrderByAggregateInputSchema: z.ZodType<Prisma.UserMinOrderByAggregateInput> = z.object({
   id: z.lazy(() => SortOrderSchema).optional(),
-  userId: z.lazy(() => SortOrderSchema).optional(),
   name: z.lazy(() => SortOrderSchema).optional(),
   email: z.lazy(() => SortOrderSchema).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional(),
@@ -1631,8 +1598,8 @@ export const SessionCreateWithoutUserInputSchema: z.ZodType<Prisma.SessionCreate
   startTime: z.coerce.date(),
   endTime: z.coerce.date(),
   in_progress: z.boolean().optional(),
-  createdAt: z.coerce.date(),
-  updatedAt: z.coerce.date(),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
   list_of_tasks: z.lazy(() => TaskCreateNestedManyWithoutSessionsInputSchema).optional()
 }).strict();
 
@@ -1646,8 +1613,8 @@ export const SessionUncheckedCreateWithoutUserInputSchema: z.ZodType<Prisma.Sess
   startTime: z.coerce.date(),
   endTime: z.coerce.date(),
   in_progress: z.boolean().optional(),
-  createdAt: z.coerce.date(),
-  updatedAt: z.coerce.date(),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
   list_of_tasks: z.lazy(() => TaskUncheckedCreateNestedManyWithoutSessionsInputSchema).optional()
 }).strict();
 
@@ -1665,8 +1632,8 @@ export const TaskCreateWithoutUserInputSchema: z.ZodType<Prisma.TaskCreateWithou
   title: z.string(),
   description: z.string(),
   status: z.lazy(() => taskStatusSchema).optional(),
-  createdAt: z.coerce.date(),
-  updatedAt: z.coerce.date(),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
   tags: z.lazy(() => TagCreateNestedManyWithoutTasksInputSchema).optional(),
   sessions: z.lazy(() => SessionCreateNestedManyWithoutList_of_tasksInputSchema).optional()
 }).strict();
@@ -1678,8 +1645,8 @@ export const TaskUncheckedCreateWithoutUserInputSchema: z.ZodType<Prisma.TaskUnc
   status: z.lazy(() => taskStatusSchema).optional(),
   tagIDs: z.union([ z.lazy(() => TaskCreatetagIDsInputSchema),z.string().array() ]).optional(),
   sessionIDs: z.union([ z.lazy(() => TaskCreatesessionIDsInputSchema),z.string().array() ]).optional(),
-  createdAt: z.coerce.date(),
-  updatedAt: z.coerce.date(),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
   tags: z.lazy(() => TagUncheckedCreateNestedManyWithoutTasksInputSchema).optional(),
   sessions: z.lazy(() => SessionUncheckedCreateNestedManyWithoutList_of_tasksInputSchema).optional()
 }).strict();
@@ -1760,21 +1727,19 @@ export const TaskScalarWhereInputSchema: z.ZodType<Prisma.TaskScalarWhereInput> 
 
 export const UserCreateWithoutTasksInputSchema: z.ZodType<Prisma.UserCreateWithoutTasksInput> = z.object({
   id: z.string().optional(),
-  userId: z.string(),
   name: z.string(),
   email: z.string(),
-  createdAt: z.coerce.date(),
-  updatedAt: z.coerce.date(),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
   sessions: z.lazy(() => SessionCreateNestedManyWithoutUserInputSchema).optional()
 }).strict();
 
 export const UserUncheckedCreateWithoutTasksInputSchema: z.ZodType<Prisma.UserUncheckedCreateWithoutTasksInput> = z.object({
   id: z.string().optional(),
-  userId: z.string(),
   name: z.string(),
   email: z.string(),
-  createdAt: z.coerce.date(),
-  updatedAt: z.coerce.date(),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
   sessions: z.lazy(() => SessionUncheckedCreateNestedManyWithoutUserInputSchema).optional()
 }).strict();
 
@@ -1812,8 +1777,8 @@ export const SessionCreateWithoutList_of_tasksInputSchema: z.ZodType<Prisma.Sess
   startTime: z.coerce.date(),
   endTime: z.coerce.date(),
   in_progress: z.boolean().optional(),
-  createdAt: z.coerce.date(),
-  updatedAt: z.coerce.date(),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
   user: z.lazy(() => UserCreateNestedOneWithoutSessionsInputSchema)
 }).strict();
 
@@ -1828,8 +1793,8 @@ export const SessionUncheckedCreateWithoutList_of_tasksInputSchema: z.ZodType<Pr
   startTime: z.coerce.date(),
   endTime: z.coerce.date(),
   in_progress: z.boolean().optional(),
-  createdAt: z.coerce.date(),
-  updatedAt: z.coerce.date()
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional()
 }).strict();
 
 export const SessionCreateOrConnectWithoutList_of_tasksInputSchema: z.ZodType<Prisma.SessionCreateOrConnectWithoutList_of_tasksInput> = z.object({
@@ -1849,7 +1814,6 @@ export const UserUpdateToOneWithWhereWithoutTasksInputSchema: z.ZodType<Prisma.U
 }).strict();
 
 export const UserUpdateWithoutTasksInputSchema: z.ZodType<Prisma.UserUpdateWithoutTasksInput> = z.object({
-  userId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   email: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
@@ -1858,7 +1822,6 @@ export const UserUpdateWithoutTasksInputSchema: z.ZodType<Prisma.UserUpdateWitho
 }).strict();
 
 export const UserUncheckedUpdateWithoutTasksInputSchema: z.ZodType<Prisma.UserUncheckedUpdateWithoutTasksInput> = z.object({
-  userId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   email: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
@@ -1911,21 +1874,19 @@ export const SessionUpdateManyWithWhereWithoutList_of_tasksInputSchema: z.ZodTyp
 
 export const UserCreateWithoutSessionsInputSchema: z.ZodType<Prisma.UserCreateWithoutSessionsInput> = z.object({
   id: z.string().optional(),
-  userId: z.string(),
   name: z.string(),
   email: z.string(),
-  createdAt: z.coerce.date(),
-  updatedAt: z.coerce.date(),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
   tasks: z.lazy(() => TaskCreateNestedManyWithoutUserInputSchema).optional()
 }).strict();
 
 export const UserUncheckedCreateWithoutSessionsInputSchema: z.ZodType<Prisma.UserUncheckedCreateWithoutSessionsInput> = z.object({
   id: z.string().optional(),
-  userId: z.string(),
   name: z.string(),
   email: z.string(),
-  createdAt: z.coerce.date(),
-  updatedAt: z.coerce.date(),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
   tasks: z.lazy(() => TaskUncheckedCreateNestedManyWithoutUserInputSchema).optional()
 }).strict();
 
@@ -1939,8 +1900,8 @@ export const TaskCreateWithoutSessionsInputSchema: z.ZodType<Prisma.TaskCreateWi
   title: z.string(),
   description: z.string(),
   status: z.lazy(() => taskStatusSchema).optional(),
-  createdAt: z.coerce.date(),
-  updatedAt: z.coerce.date(),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
   user: z.lazy(() => UserCreateNestedOneWithoutTasksInputSchema),
   tags: z.lazy(() => TagCreateNestedManyWithoutTasksInputSchema).optional()
 }).strict();
@@ -1953,8 +1914,8 @@ export const TaskUncheckedCreateWithoutSessionsInputSchema: z.ZodType<Prisma.Tas
   status: z.lazy(() => taskStatusSchema).optional(),
   tagIDs: z.union([ z.lazy(() => TaskCreatetagIDsInputSchema),z.string().array() ]).optional(),
   sessionIDs: z.union([ z.lazy(() => TaskCreatesessionIDsInputSchema),z.string().array() ]).optional(),
-  createdAt: z.coerce.date(),
-  updatedAt: z.coerce.date(),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
   tags: z.lazy(() => TagUncheckedCreateNestedManyWithoutTasksInputSchema).optional()
 }).strict();
 
@@ -1975,7 +1936,6 @@ export const UserUpdateToOneWithWhereWithoutSessionsInputSchema: z.ZodType<Prism
 }).strict();
 
 export const UserUpdateWithoutSessionsInputSchema: z.ZodType<Prisma.UserUpdateWithoutSessionsInput> = z.object({
-  userId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   email: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
@@ -1984,7 +1944,6 @@ export const UserUpdateWithoutSessionsInputSchema: z.ZodType<Prisma.UserUpdateWi
 }).strict();
 
 export const UserUncheckedUpdateWithoutSessionsInputSchema: z.ZodType<Prisma.UserUncheckedUpdateWithoutSessionsInput> = z.object({
-  userId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   email: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
@@ -2013,8 +1972,8 @@ export const TaskCreateWithoutTagsInputSchema: z.ZodType<Prisma.TaskCreateWithou
   title: z.string(),
   description: z.string(),
   status: z.lazy(() => taskStatusSchema).optional(),
-  createdAt: z.coerce.date(),
-  updatedAt: z.coerce.date(),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
   user: z.lazy(() => UserCreateNestedOneWithoutTasksInputSchema),
   sessions: z.lazy(() => SessionCreateNestedManyWithoutList_of_tasksInputSchema).optional()
 }).strict();
@@ -2027,8 +1986,8 @@ export const TaskUncheckedCreateWithoutTagsInputSchema: z.ZodType<Prisma.TaskUnc
   status: z.lazy(() => taskStatusSchema).optional(),
   tagIDs: z.union([ z.lazy(() => TaskCreatetagIDsInputSchema),z.string().array() ]).optional(),
   sessionIDs: z.union([ z.lazy(() => TaskCreatesessionIDsInputSchema),z.string().array() ]).optional(),
-  createdAt: z.coerce.date(),
-  updatedAt: z.coerce.date(),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
   sessions: z.lazy(() => SessionUncheckedCreateNestedManyWithoutList_of_tasksInputSchema).optional()
 }).strict();
 
@@ -2063,8 +2022,8 @@ export const SessionCreateManyUserInputSchema: z.ZodType<Prisma.SessionCreateMan
   startTime: z.coerce.date(),
   endTime: z.coerce.date(),
   in_progress: z.boolean().optional(),
-  createdAt: z.coerce.date(),
-  updatedAt: z.coerce.date()
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional()
 }).strict();
 
 export const TaskCreateManyUserInputSchema: z.ZodType<Prisma.TaskCreateManyUserInput> = z.object({
@@ -2074,8 +2033,8 @@ export const TaskCreateManyUserInputSchema: z.ZodType<Prisma.TaskCreateManyUserI
   status: z.lazy(() => taskStatusSchema).optional(),
   tagIDs: z.union([ z.lazy(() => TaskCreatetagIDsInputSchema),z.string().array() ]).optional(),
   sessionIDs: z.union([ z.lazy(() => TaskCreatesessionIDsInputSchema),z.string().array() ]).optional(),
-  createdAt: z.coerce.date(),
-  updatedAt: z.coerce.date()
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional()
 }).strict();
 
 export const SessionUpdateWithoutUserInputSchema: z.ZodType<Prisma.SessionUpdateWithoutUserInput> = z.object({
