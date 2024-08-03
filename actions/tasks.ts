@@ -1,6 +1,6 @@
 'user server';
 
-import { serverCreateTask, serverUpdateTask } from "@/lib/task";
+import { serverCreateTask, serverDeleteTask, serverGetAllTasksForUser, serverGetOneTask, serverUpdateTask } from "@/lib/task";
 import { taskStatus } from "@prisma/client";
 
 // Creating the CRUD actions for tasks
@@ -11,7 +11,15 @@ export  async function actionCreateTask(title: string, description: string, user
     return await serverCreateTask(title, description, userId);
 }
 
-//Read Task Function
+//Read Task Functions
+
+export async function actionGetOneTask(id: string) {
+    return await serverGetOneTask(id);
+}
+
+export async function actionGetAllTasksForUser(userId: string) {
+    return await serverGetAllTasksForUser(userId);
+}
 
 //Update Task Function
 export async function actionUpdateTask(id: string, title?: string, description?: string, status?: taskStatus) {
@@ -19,3 +27,7 @@ export async function actionUpdateTask(id: string, title?: string, description?:
 }
 
 //Delete Task Function
+
+export async function actionDeleteTask(id: string) {
+    return await serverDeleteTask(id);
+}
