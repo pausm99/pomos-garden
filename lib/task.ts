@@ -1,5 +1,5 @@
 import { db } from "@/db/db";
-import { TaskUncheckedCreateInputSchema} from "@/prisma/generated/zod";
+import { TaskUncheckedCreateInputSchema, TaskUpdateInputSchema} from "@/prisma/generated/zod";
 import { taskStatus } from "@prisma/client";
 
 export async function serverCreateTask(title: string, description: string, userId: string) {
@@ -69,7 +69,7 @@ export async function serverUpdateTask(id: string, title?: string, description?:
         status,
     };
     try {
-        TaskUncheckedCreateInputSchema.parse(data);
+        TaskUpdateInputSchema.parse(data);
     } catch (error) {
         throw new Error(`Failed to parse task data: ${error}`);
     }
