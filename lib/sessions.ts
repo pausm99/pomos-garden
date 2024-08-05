@@ -3,6 +3,7 @@ import {
   SessionUncheckedCreateInputSchema,
   SessionUncheckedUpdateInputSchema,
 } from "@/prisma/generated/zod";
+import { Prisma } from "@prisma/client";
 
 //Function to create a new Session
 
@@ -79,28 +80,39 @@ export async function serverUpdateSession(
   userId?: string,
   taskIds?: string[]
 ) {
-  const data = {
-    focusDuration,
-    breakDuration,
-    rounds,
-    endTime,
-    userId,
-    tasks: {
-      connect: taskIds?.map((id) => ({ id })),
-    },
-  };
+  const existingSession = await db.session.findUnique({
+    where: { id },
+  });
+
+  if (!existingSession) {
+    throw new Error(`Session with id ${id} not found`);
+  }
+
+  // Construct the data object conditionally
+  const data: Prisma.SessionUpdateInput = {};
+  if (focusDuration !== undefined) data.focusDuration = { set: focusDuration };
+  if (breakDuration !== undefined) data.breakDuration = { set: breakDuration };
+  if (rounds !== undefined) data.rounds = { set: rounds };
+  if (endTime !== undefined) data.endTime = { set: endTime };
+  if (userId !== undefined) data.user = { connect: { id: userId } };
+  if (taskIds !== undefined) {
+    data.list_of_tasks = {
+      set: taskIds.map((taskId) => ({ id: taskId })),
+    };
+  }
+
   try {
     SessionUncheckedUpdateInputSchema.parse(data);
   } catch (error) {
     throw new Error(`Failed to parse session data: ${error}`);
   }
+
   try {
     const updatedSession = await db.session.update({
-      where: {
-        id,
-      },
+      where: { id },
       data,
     });
+    console.log("Session updated:", updatedSession);
     return updatedSession;
   } catch (error) {
     throw new Error(`Failed to update session: ${error}`);
