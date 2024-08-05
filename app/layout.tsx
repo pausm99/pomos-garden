@@ -11,38 +11,37 @@ const fontMono = FontMono({ subsets: ["latin"], variable: "--font-mono" });
 fontSans.variable;
 
 export const metadata: Metadata = {
-    title: "Pomo's Garden",
-    description: "Creative tools to boost your productivity",
+  title: "Pomo's Garden",
+  description: "Creative tools to boost your productivity",
 };
 
 export default function RootLayout({
-    children,
+  children,
 }: Readonly<{
-    children: React.ReactNode;
+  children: React.ReactNode;
 }>) {
-    return (
-        <html lang="en">
-            <body
-                className={cn(
-                    fontSans.variable,
-                    fontMono.variable,
-                    "flex flex-col flex-1",
-                    "min-h-screen max-w-[1400px] m-auto p-6",
-                    "font-sans text-sm text-zinc-900 text-balance",
-                    "bg-zinc-300"
-                )}
-            >
-                <Header />
-
-                <div className="flex-1 flex gap-7 h-[95dvh]">
-                    <ServicesNav className="w-20 flex flex-col gap-5" />
-                    <div className="flex flex-1 rounded-4xl bg-zinc-100 overflow-hidden relative">
-                        <Blob className="absolute w-full h-full" />
-                        <div className="absolute w-full h-full backdrop-blur-3xl"></div>
-                        <div className="flex-1 z-10">{children}</div>
-                    </div>
-                </div>
-            </body>
-        </html>
-    );
+  return (
+    <html lang="en">
+      <body
+        className={cn(
+          fontSans.variable,
+          fontMono.variable,
+          "font-sans text-sm text-zinc-900 text-balance",
+          "bg-zinc-300"
+        )}
+      >
+        <div className="flex flex-col flex-1 min-h-screen max-w-[1400px] m-auto p-6">
+          <Header />
+          <div className="flex-1 flex gap-7 h-[95dvh]">
+            <ServicesNav className="w-20 flex flex-col gap-5" />
+            <div className="flex flex-1 rounded-4xl bg-zinc-100 overflow-hidden relative">
+              <Blob className="absolute w-full h-full" />
+              <div className="absolute w-full h-full backdrop-blur-3xl"></div>
+              <div className="flex-1 z-10">{children}</div>
+            </div>
+          </div>
+        </div>
+      </body>
+    </html>
+  );
 }
