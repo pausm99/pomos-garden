@@ -48,7 +48,7 @@ model Session {
   rounds          Int
   completedRounds Int      @default(0)
   endTime         DateTime
-  startTime       DateTime
+  startTime       DateTime @default(now())
   in_progress     Boolean  @default(false)
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
