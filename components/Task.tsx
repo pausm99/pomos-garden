@@ -2,23 +2,31 @@ import TaskType from "@/interfaces/Task";
 import { EllipsisVertical } from "lucide-react";
 import { TagManager } from "./TagManager";
 import Tag from "./atoms/Tag";
-import { useDraggable } from "@dnd-kit/core";
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 type TaskProps = {
   task: TaskType;
 };
 
 export default function Task({ task }: TaskProps) {
-  const { attributes, listeners, setNodeRef, transform } = useDraggable({
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
     id: task.id,
   });
 
   const style = {
-    transform: transform
-      ? `translate3d(${transform.x}px, ${transform.y}px, 0)`
-      : undefined,
+    transform: CSS.Transform.toString(transform),
+    transition,
     boxShadow: "0px 1px 3px 0px rgba(0,0,0,0.1)",
     cursor: "pointer",
+    opacity: isDragging ? 0.5 : 1,
   };
 
   return (

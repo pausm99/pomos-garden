@@ -2,6 +2,7 @@ import TaskType from "@/interfaces/Task";
 import Task from "./Task";
 import AddTask from "./AddTask";
 import { useDroppable } from "@dnd-kit/core";
+import { SortableContext } from "@dnd-kit/sortable";
 
 type TodoStateType = "todo" | "doing" | "done";
 
@@ -39,11 +40,13 @@ export default function TodoState({ name, state, tasks }: TodoStateProps) {
         <h2 className="uppercase">{name}</h2>
       </div>
       {state === "todo" && <AddTask />}
-      <div className="flex flex-col gap-2.5 overflow-y-scroll">
-        {tasks.map((task) => (
-          <Task key={task.id} task={task} />
-        ))}
-      </div>
+      <SortableContext items={tasks.map((task) => task.id)}>
+        <div className="flex flex-col gap-2.5 overflow-y-scroll">
+          {tasks.map((task) => (
+            <Task key={task.id} task={task} />
+          ))}
+        </div>
+      </SortableContext>
     </div>
   );
 }

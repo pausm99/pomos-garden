@@ -3,7 +3,17 @@
 import Task from "@/interfaces/Task";
 import { useState } from "react";
 import { DndContext, closestCenter } from "@dnd-kit/core";
-import { arrayMove } from "@dnd-kit/sortable";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+} from "@dnd-kit/sortable";
+import {
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
 import TodoState from "./TodoState";
 
 const propTasks: Task[] = [
@@ -73,6 +83,13 @@ const propTasks: Task[] = [
 export default function TaskSection() {
   const [tasks, setTasks] = useState(propTasks);
 
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
   const handleDragEnd = (event: { active: any; over: any }) => {
     const { active, over } = event;
 
@@ -86,12 +103,18 @@ export default function TaskSection() {
   };
 
   return (
-    <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-      <div className="p-5 h-full flex gap-5 flex-nowrap overflow-y-hidden">
-        <TodoState state="todo" name="To do" tasks={tasks}></TodoState>
-        <TodoState state="doing" name="Doing" tasks={[]}></TodoState>
-        <TodoState state="done" name="Done" tasks={[]}></TodoState>
-      </div>
+    <DndContext
+      sensors={sensors}
+      collisionDetection={closestCenter}
+      onDragEnd={handleDragEnd}
+    >
+      <SortableContext items={tasks}>
+        <div className="p-5 h-full flex gap-5 flex-nowrap overflow-y-hidden">
+          <TodoState state="todo" name="To do" tasks={tasks}></TodoState>
+          <TodoState state="doing" name="Doing" tasks={[]}></TodoState>
+          <TodoState state="done" name="Done" tasks={[]}></TodoState>
+        </div>
+      </SortableContext>
     </DndContext>
   );
 }
