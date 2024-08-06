@@ -3,13 +3,13 @@
 import { useState } from "react";
 import {
   DndContext,
-  DragOverlay,
-  DragStartEvent,
   DragEndEvent,
-  KeyboardSensor,
-  PointerSensor,
   useSensor,
   useSensors,
+  PointerSensor,
+  KeyboardSensor,
+  DragStartEvent,
+  DragOverlay,
 } from "@dnd-kit/core";
 import {
   SortableContext,
@@ -75,9 +75,7 @@ export default function TaskSection() {
 
   const sensors = useSensors(
     useSensor(PointerSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
   );
 
   const handleDragStart = (event: DragStartEvent) => {
@@ -91,34 +89,19 @@ export default function TaskSection() {
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
-
     if (!over || !active) return;
 
     const activeId = active.id as number;
     const overId = over.id as string;
 
-    // Determine the section and index of the active task
     const [activeSection, activeIndex] = getTaskIndex(activeId);
     const [overSection, overIndex] = getTaskIndex(overId);
 
     if (activeSection && overSection) {
       const updatedTasks = { ...tasks };
-
-      // Remove the task from the current section
       const [movedTask] = updatedTasks[activeSection].splice(activeIndex, 1);
-
-      // Determine the target index
-      let targetIndex: number;
-
-      if (overIndex === -1) {
-        // Drop in the section but not on a specific task
-        targetIndex = updatedTasks[overSection].length;
-      } else {
-        // Drop between tasks
-        targetIndex = overIndex;
-      }
-
-      // Insert the task into the new position
+      const targetIndex =
+        overIndex === -1 ? updatedTasks[overSection].length : overIndex;
       updatedTasks[overSection].splice(targetIndex, 0, movedTask);
 
       setTasks(updatedTasks);
@@ -126,12 +109,13 @@ export default function TaskSection() {
     }
   };
 
+  //This method must remain unchaged, if removed we can't move tasks between columns
   const getTaskIndex = (
     taskId: number | string
   ): [keyof TaskState | null, number] => {
     for (const section in tasks) {
       if (section === taskId) {
-        return [section as keyof TaskState, -1]; // section found but no task
+        return [section as keyof TaskState, -1];
       }
       const index = tasks[section as keyof TaskState].findIndex(
         (task) => task.id === taskId
@@ -150,26 +134,23 @@ export default function TaskSection() {
       onDragEnd={handleDragEnd}
     >
       <div className="p-5 h-full flex gap-5 overflow-hidden">
-        <div className="flex-1 w-[33%] flex flex-col gap-2.5 bg-[#f4f4f5cc]">
-          <SortableContext items={tasks.todo.map((task) => task.id)}>
-            <TodoState state="todo" name="To do" tasks={tasks.todo} />
-          </SortableContext>
-        </div>
-        <div className="flex-1 w-[33%] flex flex-col gap-2.5 bg-[#f4f4f5cc]">
-          <SortableContext items={tasks.doing.map((task) => task.id)}>
-            <TodoState state="doing" name="Doing" tasks={tasks.doing} />
-          </SortableContext>
-        </div>
-        <div className="flex-1 w-[33%] flex flex-col gap-2.5 bg-[#f4f4f5cc]">
-          <SortableContext items={tasks.done.map((task) => task.id)}>
-            <TodoState state="done" name="Done" tasks={tasks.done} />
-          </SortableContext>
-        </div>
+        {(["todo", "doing", "done"] as Array<keyof TaskState>).map((state) => (
+          <div
+            key={state}
+            className="flex-1 w-[33%] flex flex-col gap-2.5 bg-[#f4f4f5cc]"
+          >
+            <SortableContext items={tasks[state].map((task) => task.id)}>
+              <TodoState
+                state={state}
+                name={state.charAt(0).toUpperCase() + state.slice(1)}
+                tasks={tasks[state]}
+              />
+            </SortableContext>
+          </div>
+        ))}
       </div>
       <DragOverlay>
-        {activeTask ? (
-          <TaskComponent key={activeTask.id} task={activeTask} />
-        ) : null}
+        {activeTask && <TaskComponent task={activeTask} />}
       </DragOverlay>
     </DndContext>
   );
