@@ -26,11 +26,9 @@ const initialTasks: TaskState = {
       ],
     },
     {
-      id: 4,
-      title: "Leer artículo sobre inteligencia artificial",
-      description:
-        "Explorar nuevas tendencias en IA y su aplicación en nuestro proyecto.",
-      tags: [{ label: "Investigación", color: "#EDE9FE" }],
+      id: 3,
+      title: "Actualizar el blog",
+      tags: [{ label: "Marketing", color: "#DBEAFE" }],
     },
     {
       id: 5,
@@ -50,9 +48,11 @@ const initialTasks: TaskState = {
   ],
   done: [
     {
-      id: 3,
-      title: "Actualizar el blog",
-      tags: [{ label: "Marketing", color: "#DBEAFE" }],
+      id: 4,
+      title: "Leer artículo sobre inteligencia artificial",
+      description:
+        "Explorar nuevas tendencias en IA y su aplicación en nuestro proyecto.",
+      tags: [{ label: "Investigación", color: "#EDE9FE" }],
     },
   ],
 };
@@ -64,26 +64,17 @@ export default function TaskSection() {
   return (
     <DndContext>
       <div className="p-5 h-full flex gap-5 overflow-hidden">
-        <div
-          className="flex-1 min-w-[300px] flex flex-col gap-2.5 bg-[#f4f4f5cc]"
-          style={{ maxWidth: "400px", minHeight: "500px" }}
-        >
+        <div className="flex-1 min-w-[300px] max-w-[400px] h-[100%] flex flex-col gap-2.5 bg-[#f4f4f5cc]">
           <SortableContext items={tasks.todo.map((task) => task.id)}>
             <TodoState state="todo" name="To do" tasks={tasks.todo} />
           </SortableContext>
         </div>
-        <div
-          className="flex-1 min-w-[300px] flex flex-col gap-2.5 bg-[#f4f4f5cc]"
-          style={{ maxWidth: "400px", minHeight: "500px" }}
-        >
+        <div className="flex-1 min-w-[300px] max-w-[400px] h-[100%] flex flex-col gap-2.5 bg-[#f4f4f5cc]">
           <SortableContext items={tasks.doing.map((task) => task.id)}>
             <TodoState state="doing" name="Doing" tasks={tasks.doing} />
           </SortableContext>
         </div>
-        <div
-          className="flex-1 min-w-[300px] flex flex-col gap-2.5 bg-[#f4f4f5cc]"
-          style={{ maxWidth: "400px", minHeight: "500px" }}
-        >
+        <div className="flex-1 min-w-[300px] max-w-[400px] h-[100%] flex flex-col gap-2.5 bg-[#f4f4f5cc]">
           <SortableContext items={tasks.done.map((task) => task.id)}>
             <TodoState state="done" name="Done" tasks={tasks.done} />
           </SortableContext>
