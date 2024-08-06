@@ -1,6 +1,7 @@
 import TaskType from "@/interfaces/Task";
 import Task from "./Task";
 import AddTask from "./AddTask";
+import { useDroppable } from "@dnd-kit/core";
 
 type TodoStateType = "todo" | "doing" | "done";
 
@@ -19,8 +20,13 @@ const stateColor = {
 export default function TodoState({ name, state, tasks }: TodoStateProps) {
   const dotColor = stateColor[state] || "";
 
+  const { setNodeRef } = useDroppable({
+    id: state,
+  });
+
   return (
     <div
+      ref={setNodeRef}
       className="flex-1 flex flex-col gap-2.5 border rounded-xl p-2.5 border-zinc-300"
       style={{ backgroundColor: "#f4f4f5cc" }}
     >

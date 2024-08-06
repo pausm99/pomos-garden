@@ -2,6 +2,8 @@
 
 import Task from "@/interfaces/Task";
 import { useState } from "react";
+import { DndContext, closestCenter } from "@dnd-kit/core";
+import { arrayMove } from "@dnd-kit/sortable";
 import TodoState from "./TodoState";
 
 const propTasks: Task[] = [
@@ -69,15 +71,27 @@ const propTasks: Task[] = [
 ];
 
 export default function TaskSection() {
-  const [tasks, setTasks] = useState(propTasks)
+  const [tasks, setTasks] = useState(propTasks);
+
+  const handleDragEnd = (event: { active: any; over: any }) => {
+    const { active, over } = event;
+
+    if (active.id !== over.id) {
+      setTasks((tasks) => {
+        const oldIndex = tasks.findIndex((task) => task.id === active.id);
+        const newIndex = tasks.findIndex((task) => task.id === over.id);
+        return arrayMove(tasks, oldIndex, newIndex);
+      });
+    }
+  };
 
   return (
-    <>
+    <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
       <div className="p-5 h-full flex gap-5 flex-nowrap overflow-y-hidden">
         <TodoState state="todo" name="To do" tasks={tasks}></TodoState>
         <TodoState state="doing" name="Doing" tasks={[]}></TodoState>
         <TodoState state="done" name="Done" tasks={[]}></TodoState>
       </div>
-    </>
+    </DndContext>
   );
 }
