@@ -85,11 +85,10 @@ export default function TaskSection() {
   );
 
   const handleDragStart = (event: DragStartEvent) => {
-    const activeId = event.active.id;
-    const [section] = getTaskIndex(activeId as number);
+    const activeId = event.active.id as number;
+    const [section] = getTaskIndex(activeId);
     if (section) {
-      const task =
-        tasks[section].find((task) => task.id === (activeId as number)) || null;
+      const task = tasks[section].find((task) => task.id === activeId) || null;
       setActiveTask(task);
     }
   };
@@ -99,25 +98,36 @@ export default function TaskSection() {
 
     if (!over || !active) return;
 
-    const activeId = active.id;
-    const overId = over.id;
+    const activeId = active.id as number;
+    const overId = over.id as number | undefined;
 
-    if (activeId !== overId) {
-      const [activeSection, activeIndex] = getTaskIndex(activeId as number);
-      const [overSection, overIndex] = getTaskIndex(overId as number);
+    // Get the current and target section of the dragged task
+    const [activeSection, activeIndex] = getTaskIndex(activeId);
+    const [overSection, overIndex] = getTaskIndex(overId ?? -1);
 
-      if (activeSection && overSection) {
-        const updatedTasks = { ...tasks };
+    if (activeSection && overSection) {
+      const updatedTasks = { ...tasks };
 
-        // quitar la tarea de la sección donde estaba
-        const [movedTask] = updatedTasks[activeSection].splice(activeIndex, 1);
+      // Remove the task from the source section
+      const [movedTask] = updatedTasks[activeSection].splice(activeIndex, 1);
 
-        // mover la tarea a la sección nueva
-        updatedTasks[overSection].splice(overIndex, 0, movedTask);
+      // Determine the target index for the task
+      let targetIndex: number;
 
-        setTasks(updatedTasks);
-        setActiveTask(null);
+      if (overId === undefined) {
+        // Dropping at the end of the section
+        targetIndex = updatedTasks[overSection].length;
+      } else {
+        // Dropping between two existing tasks
+        targetIndex =
+          overIndex === -1 ? updatedTasks[overSection].length : overIndex;
       }
+
+      // Insert the task at the target index
+      updatedTasks[overSection].splice(targetIndex, 0, movedTask);
+
+      setTasks(updatedTasks);
+      setActiveTask(null);
     }
   };
 
