@@ -3,11 +3,9 @@
 import { useState } from "react";
 import {
   DndContext,
-  closestCenter,
   DragOverlay,
   DragStartEvent,
   DragEndEvent,
-  UniqueIdentifier,
 } from "@dnd-kit/core";
 import {
   SortableContext,
@@ -101,29 +99,29 @@ export default function TaskSection() {
     const activeId = active.id as number;
     const overId = over.id as number | undefined;
 
-    // Aquí determinamos la osición inicial de la task
+    // Get the initial position of the task
     const [activeSection, activeIndex] = getTaskIndex(activeId);
     const [overSection, overIndex] = getTaskIndex(overId ?? -1);
 
     if (activeSection && overSection) {
       const updatedTasks = { ...tasks };
 
-      // Aquí la quitamos de la posición actual
+      // Remove from the current position
       const [movedTask] = updatedTasks[activeSection].splice(activeIndex, 1);
 
-      // Determinamos el índice de la task
+      // Determine the target index
       let targetIndex: number;
 
       if (overId === undefined) {
-        // La dropeamos en la sección que queramos
+        // Dropped in the section, not on a specific task
         targetIndex = updatedTasks[overSection].length;
       } else {
-        // En caso de droppearla entre otras tasks
+        // Dropped between tasks
         targetIndex =
           overIndex === -1 ? updatedTasks[overSection].length : overIndex;
       }
 
-      // La insertamos
+      // Insert into the new position
       updatedTasks[overSection].splice(targetIndex, 0, movedTask);
 
       setTasks(updatedTasks);
@@ -146,31 +144,21 @@ export default function TaskSection() {
   return (
     <DndContext
       sensors={sensors}
-      collisionDetection={closestCenter}
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
     >
       <div className="p-5 h-full flex gap-5 overflow-hidden">
-        <div
-          className="flex-1 min-w-[300px] flex flex-col gap-2.5 bg-[#f4f4f5cc]"
-          style={{ maxWidth: "400px", minHeight: "500px" }}
-        >
+        <div className="flex-1 w-[33%] flex flex-col gap-2.5 bg-[#f4f4f5cc]">
           <SortableContext items={tasks.todo.map((task) => task.id)}>
             <TodoState state="todo" name="To do" tasks={tasks.todo} />
           </SortableContext>
         </div>
-        <div
-          className="flex-1 min-w-[300px] flex flex-col gap-2.5 bg-[#f4f4f5cc]"
-          style={{ maxWidth: "400px", minHeight: "500px" }}
-        >
+        <div className="flex-1 w-[33%] flex flex-col gap-2.5 bg-[#f4f4f5cc]">
           <SortableContext items={tasks.doing.map((task) => task.id)}>
             <TodoState state="doing" name="Doing" tasks={tasks.doing} />
           </SortableContext>
         </div>
-        <div
-          className="flex-1 min-w-[300px] flex flex-col gap-2.5 bg-[#f4f4f5cc]"
-          style={{ maxWidth: "400px", minHeight: "500px" }}
-        >
+        <div className="flex-1 w-[33%] flex flex-col gap-2.5 bg-[#f4f4f5cc]">
           <SortableContext items={tasks.done.map((task) => task.id)}>
             <TodoState state="done" name="Done" tasks={tasks.done} />
           </SortableContext>

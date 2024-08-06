@@ -27,7 +27,6 @@ export default function Task({ task }: TaskProps) {
     boxShadow: "0px 1px 3px rgba(0,0,0,0.1)",
     cursor: "pointer",
     opacity: isDragging ? 0.5 : 1,
-    maxwidth: "300px",
     height: "175px",
     boxSizing: "border-box" as "border-box",
   };

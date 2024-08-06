@@ -28,7 +28,7 @@ export default function TodoState({ name, state, tasks }: TodoStateProps) {
       style={{
         backgroundColor: "#f4f4f5cc",
         minWidth: "300px",
-        minHeight: "600px",
+        height: "100%",
       }}
     >
       <div className="flex gap-2 items-center p-[5px]">
