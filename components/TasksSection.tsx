@@ -1,26 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import {
-  DndContext,
-  closestCenter,
-  DragOverlay,
-  DragStartEvent,
-  DragEndEvent,
-  UniqueIdentifier,
-} from "@dnd-kit/core";
-import {
-  SortableContext,
-  sortableKeyboardCoordinates,
-} from "@dnd-kit/sortable";
-import {
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-} from "@dnd-kit/core";
-import TodoState from "./TodoState";
+import { DndContext, DragOverlay } from "@dnd-kit/core";
+import { SortableContext } from "@dnd-kit/sortable";
 import Task from "@/interfaces/Task";
+import TodoState from "./TodoState";
 import TaskComponent from "./Task";
 
 type TaskState = {
@@ -74,82 +58,11 @@ const initialTasks: TaskState = {
 };
 
 export default function TaskSection() {
-  const [tasks, setTasks] = useState<TaskState>(initialTasks);
-  const [activeTask, setActiveTask] = useState<Task | null>(null);
-
-  const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
-  );
-
-  const handleDragStart = (event: DragStartEvent) => {
-    const activeId = event.active.id as number;
-    const [section] = getTaskIndex(activeId);
-    if (section) {
-      const task = tasks[section].find((task) => task.id === activeId) || null;
-      setActiveTask(task);
-    }
-  };
-
-  const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
-
-    if (!over || !active) return;
-
-    const activeId = active.id as number;
-    const overId = over.id as number | undefined;
-
-    // Get the current and target section of the dragged task
-    const [activeSection, activeIndex] = getTaskIndex(activeId);
-    const [overSection, overIndex] = getTaskIndex(overId ?? -1);
-
-    if (activeSection && overSection) {
-      const updatedTasks = { ...tasks };
-
-      // Remove the task from the source section
-      const [movedTask] = updatedTasks[activeSection].splice(activeIndex, 1);
-
-      // Determine the target index for the task
-      let targetIndex: number;
-
-      if (overId === undefined) {
-        // Dropping at the end of the section
-        targetIndex = updatedTasks[overSection].length;
-      } else {
-        // Dropping between two existing tasks
-        targetIndex =
-          overIndex === -1 ? updatedTasks[overSection].length : overIndex;
-      }
-
-      // Insert the task at the target index
-      updatedTasks[overSection].splice(targetIndex, 0, movedTask);
-
-      setTasks(updatedTasks);
-      setActiveTask(null);
-    }
-  };
-
-  const getTaskIndex = (taskId: number): [keyof TaskState | null, number] => {
-    for (const section in tasks) {
-      const index = tasks[section as keyof TaskState].findIndex(
-        (task) => task.id === taskId
-      );
-      if (index > -1) {
-        return [section as keyof TaskState, index];
-      }
-    }
-    return [null, -1];
-  };
+  const [tasks] = useState<TaskState>(initialTasks);
+  const [activeTask] = useState<Task | null>(null);
 
   return (
-    <DndContext
-      sensors={sensors}
-      collisionDetection={closestCenter}
-      onDragStart={handleDragStart}
-      onDragEnd={handleDragEnd}
-    >
+    <DndContext>
       <div className="p-5 h-full flex gap-5 overflow-hidden">
         <div
           className="flex-1 min-w-[300px] flex flex-col gap-2.5 bg-[#f4f4f5cc]"
