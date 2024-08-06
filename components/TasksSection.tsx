@@ -1,7 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { DndContext, closestCenter } from "@dnd-kit/core";
+import {
+  DndContext,
+  closestCenter,
+  DragOverlay,
+  DragStartEvent,
+  DragEndEvent,
+  UniqueIdentifier,
+} from "@dnd-kit/core";
 import {
   SortableContext,
   sortableKeyboardCoordinates,
@@ -14,6 +21,7 @@ import {
 } from "@dnd-kit/core";
 import TodoState from "./TodoState";
 import Task from "@/interfaces/Task";
+import TaskComponent from "./Task";
 
 type TaskState = {
   todo: Task[];
@@ -67,6 +75,7 @@ const initialTasks: TaskState = {
 
 export default function TaskSection() {
   const [tasks, setTasks] = useState<TaskState>(initialTasks);
+  const [activeTask, setActiveTask] = useState<Task | null>(null);
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -75,7 +84,17 @@ export default function TaskSection() {
     })
   );
 
-  const handleDragEnd = (event: { active: any; over: any }) => {
+  const handleDragStart = (event: DragStartEvent) => {
+    const activeId = event.active.id;
+    const [section] = getTaskIndex(activeId as number);
+    if (section) {
+      const task =
+        tasks[section].find((task) => task.id === (activeId as number)) || null;
+      setActiveTask(task);
+    }
+  };
+
+  const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
 
     if (!over || !active) return;
@@ -84,19 +103,20 @@ export default function TaskSection() {
     const overId = over.id;
 
     if (activeId !== overId) {
-      const [activeSection, activeIndex] = getTaskIndex(activeId);
-      const [overSection, overIndex] = getTaskIndex(overId);
+      const [activeSection, activeIndex] = getTaskIndex(activeId as number);
+      const [overSection, overIndex] = getTaskIndex(overId as number);
 
       if (activeSection && overSection) {
         const updatedTasks = { ...tasks };
 
-        // Quitamos la task de la sección
+        // quitar la tarea de la sección donde estaba
         const [movedTask] = updatedTasks[activeSection].splice(activeIndex, 1);
 
-        // Añadimos la task a la sección
+        // mover la tarea a la sección nueva
         updatedTasks[overSection].splice(overIndex, 0, movedTask);
 
         setTasks(updatedTasks);
+        setActiveTask(null);
       }
     }
   };
@@ -117,6 +137,7 @@ export default function TaskSection() {
     <DndContext
       sensors={sensors}
       collisionDetection={closestCenter}
+      onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
     >
       <div className="p-5 h-full flex gap-5 overflow-hidden">
@@ -145,6 +166,11 @@ export default function TaskSection() {
           </SortableContext>
         </div>
       </div>
+      <DragOverlay>
+        {activeTask ? (
+          <TaskComponent key={activeTask.id} task={activeTask} />
+        ) : null}
+      </DragOverlay>
     </DndContext>
   );
 }
