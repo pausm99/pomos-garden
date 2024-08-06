@@ -95,31 +95,30 @@ export default function TaskSection() {
     if (!over || !active) return;
 
     const activeId = active.id as number;
-    const overId = over.id as number | undefined;
+    const overId = over.id as string;
 
-    // Get the initial position of the task
+    // Determine the section and index of the active task
     const [activeSection, activeIndex] = getTaskIndex(activeId);
-    const [overSection, overIndex] = getTaskIndex(overId ?? -1);
+    const [overSection, overIndex] = getTaskIndex(overId);
 
     if (activeSection && overSection) {
       const updatedTasks = { ...tasks };
 
-      // Remove from the current position
+      // Remove the task from the current section
       const [movedTask] = updatedTasks[activeSection].splice(activeIndex, 1);
 
       // Determine the target index
       let targetIndex: number;
 
-      if (overId === undefined) {
-        // Dropped in the section, not on a specific task
+      if (overIndex === -1) {
+        // Drop in the section but not on a specific task
         targetIndex = updatedTasks[overSection].length;
       } else {
-        // Dropped between tasks
-        targetIndex =
-          overIndex === -1 ? updatedTasks[overSection].length : overIndex;
+        // Drop between tasks
+        targetIndex = overIndex;
       }
 
-      // Insert into the new position
+      // Insert the task into the new position
       updatedTasks[overSection].splice(targetIndex, 0, movedTask);
 
       setTasks(updatedTasks);
@@ -127,8 +126,13 @@ export default function TaskSection() {
     }
   };
 
-  const getTaskIndex = (taskId: number): [keyof TaskState | null, number] => {
+  const getTaskIndex = (
+    taskId: number | string
+  ): [keyof TaskState | null, number] => {
     for (const section in tasks) {
+      if (section === taskId) {
+        return [section as keyof TaskState, -1]; // section found but no task
+      }
       const index = tasks[section as keyof TaskState].findIndex(
         (task) => task.id === taskId
       );
