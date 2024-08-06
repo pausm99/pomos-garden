@@ -1,10 +1,26 @@
 "use client";
 
 import { useState } from "react";
-import { DndContext, DragOverlay } from "@dnd-kit/core";
-import { SortableContext } from "@dnd-kit/sortable";
-import Task from "@/interfaces/Task";
+import {
+  DndContext,
+  closestCenter,
+  DragOverlay,
+  DragStartEvent,
+  DragEndEvent,
+  UniqueIdentifier,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  sortableKeyboardCoordinates,
+} from "@dnd-kit/sortable";
+import {
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
 import TodoState from "./TodoState";
+import Task from "@/interfaces/Task";
 import TaskComponent from "./Task";
 
 type TaskState = {
@@ -26,9 +42,11 @@ const initialTasks: TaskState = {
       ],
     },
     {
-      id: 3,
-      title: "Actualizar el blog",
-      tags: [{ label: "Marketing", color: "#DBEAFE" }],
+      id: 4,
+      title: "Leer artículo sobre inteligencia artificial",
+      description:
+        "Explorar nuevas tendencias en IA y su aplicación en nuestro proyecto.",
+      tags: [{ label: "Investigación", color: "#EDE9FE" }],
     },
     {
       id: 5,
@@ -48,33 +66,111 @@ const initialTasks: TaskState = {
   ],
   done: [
     {
-      id: 4,
-      title: "Leer artículo sobre inteligencia artificial",
-      description:
-        "Explorar nuevas tendencias en IA y su aplicación en nuestro proyecto.",
-      tags: [{ label: "Investigación", color: "#EDE9FE" }],
+      id: 3,
+      title: "Actualizar el blog",
+      tags: [{ label: "Marketing", color: "#DBEAFE" }],
     },
   ],
 };
 
 export default function TaskSection() {
-  const [tasks] = useState<TaskState>(initialTasks);
-  const [activeTask] = useState<Task | null>(null);
+  const [tasks, setTasks] = useState<TaskState>(initialTasks);
+  const [activeTask, setActiveTask] = useState<Task | null>(null);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  const handleDragStart = (event: DragStartEvent) => {
+    const activeId = event.active.id as number;
+    const [section] = getTaskIndex(activeId);
+    if (section) {
+      const task = tasks[section].find((task) => task.id === activeId) || null;
+      setActiveTask(task);
+    }
+  };
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (!over || !active) return;
+
+    const activeId = active.id as number;
+    const overId = over.id as number | undefined;
+
+    // Aquí determinamos la osición inicial de la task
+    const [activeSection, activeIndex] = getTaskIndex(activeId);
+    const [overSection, overIndex] = getTaskIndex(overId ?? -1);
+
+    if (activeSection && overSection) {
+      const updatedTasks = { ...tasks };
+
+      // Aquí la quitamos de la posición actual
+      const [movedTask] = updatedTasks[activeSection].splice(activeIndex, 1);
+
+      // Determinamos el índice de la task
+      let targetIndex: number;
+
+      if (overId === undefined) {
+        // La dropeamos en la sección que queramos
+        targetIndex = updatedTasks[overSection].length;
+      } else {
+        // En caso de droppearla entre otras tasks
+        targetIndex =
+          overIndex === -1 ? updatedTasks[overSection].length : overIndex;
+      }
+
+      // La insertamos
+      updatedTasks[overSection].splice(targetIndex, 0, movedTask);
+
+      setTasks(updatedTasks);
+      setActiveTask(null);
+    }
+  };
+
+  const getTaskIndex = (taskId: number): [keyof TaskState | null, number] => {
+    for (const section in tasks) {
+      const index = tasks[section as keyof TaskState].findIndex(
+        (task) => task.id === taskId
+      );
+      if (index > -1) {
+        return [section as keyof TaskState, index];
+      }
+    }
+    return [null, -1];
+  };
 
   return (
-    <DndContext>
+    <DndContext
+      sensors={sensors}
+      collisionDetection={closestCenter}
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
+    >
       <div className="p-5 h-full flex gap-5 overflow-hidden">
-        <div className="flex-1 min-w-[300px] max-w-[400px] h-[100%] flex flex-col gap-2.5 bg-[#f4f4f5cc]">
+        <div
+          className="flex-1 min-w-[300px] flex flex-col gap-2.5 bg-[#f4f4f5cc]"
+          style={{ maxWidth: "400px", minHeight: "500px" }}
+        >
           <SortableContext items={tasks.todo.map((task) => task.id)}>
             <TodoState state="todo" name="To do" tasks={tasks.todo} />
           </SortableContext>
         </div>
-        <div className="flex-1 min-w-[300px] max-w-[400px] h-[100%] flex flex-col gap-2.5 bg-[#f4f4f5cc]">
+        <div
+          className="flex-1 min-w-[300px] flex flex-col gap-2.5 bg-[#f4f4f5cc]"
+          style={{ maxWidth: "400px", minHeight: "500px" }}
+        >
           <SortableContext items={tasks.doing.map((task) => task.id)}>
             <TodoState state="doing" name="Doing" tasks={tasks.doing} />
           </SortableContext>
         </div>
-        <div className="flex-1 min-w-[300px] max-w-[400px] h-[100%] flex flex-col gap-2.5 bg-[#f4f4f5cc]">
+        <div
+          className="flex-1 min-w-[300px] flex flex-col gap-2.5 bg-[#f4f4f5cc]"
+          style={{ maxWidth: "400px", minHeight: "500px" }}
+        >
           <SortableContext items={tasks.done.map((task) => task.id)}>
             <TodoState state="done" name="Done" tasks={tasks.done} />
           </SortableContext>
