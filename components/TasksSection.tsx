@@ -6,17 +6,15 @@ import {
   DragOverlay,
   DragStartEvent,
   DragEndEvent,
-} from "@dnd-kit/core";
-import {
-  SortableContext,
-  sortableKeyboardCoordinates,
-} from "@dnd-kit/sortable";
-import {
   KeyboardSensor,
   PointerSensor,
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
+import {
+  SortableContext,
+  sortableKeyboardCoordinates,
+} from "@dnd-kit/sortable";
 import TodoState from "./TodoState";
 import Task from "@/interfaces/Task";
 import TaskComponent from "./Task";

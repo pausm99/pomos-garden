@@ -11,14 +11,14 @@ type TodoStateProps = {
   tasks: TaskType[];
 };
 
-const stateColor = {
+const stateColors = {
   todo: "bg-zinc-400",
   doing: "bg-amber-500",
   done: "bg-lime-500",
 };
 
 export default function TodoState({ name, state, tasks }: TodoStateProps) {
-  const dotColor = stateColor[state];
+  const dotColor = stateColors[state];
   const { setNodeRef } = useDroppable({ id: state });
 
   return (
@@ -31,11 +31,11 @@ export default function TodoState({ name, state, tasks }: TodoStateProps) {
         height: "100%",
       }}
     >
-      <div className="flex gap-2 items-center p-[5px]">
+      <div className="flex gap-2 items-center p-1">
         <span
           className={`flex justify-center items-center rounded-full ${dotColor} h-5 w-5`}
         />
-        <h2 className="uppercase">{name}</h2>
+        <h2 className="text-base font-semibold uppercase">{name}</h2>
       </div>
       <SortableContext items={tasks.map((task) => task.id)}>
         <div className="flex flex-col gap-2.5 flex-grow overflow-y-auto">
