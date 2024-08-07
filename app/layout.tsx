@@ -28,7 +28,7 @@ export default function RootLayout({
                     fontMono.variable,
                     "flex flex-col flex-1",
                     "min-h-screen max-w-[1400px] m-auto p-6",
-                    "font-sans text-sm text-zinc-900 text-balance",
+                    "font-sans text-sm text-zinc-900",
                     "bg-zinc-300"
                 )}
             >
@@ -39,7 +39,9 @@ export default function RootLayout({
                     <div className="flex flex-1 rounded-4xl bg-zinc-100 overflow-hidden relative">
                         <Blob className="absolute w-full h-full" />
                         <div className="absolute w-full h-full backdrop-blur-3xl"></div>
-                        <div className="flex-1 z-10">{children}</div>
+                        <div className="flex-1 flex flex-col z-10">
+                            {children}
+                        </div>
                     </div>
                 </div>
             </body>
