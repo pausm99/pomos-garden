@@ -8,7 +8,7 @@ export default function TaskSection() {
 
   return (
     <>
-      <div className="p-5 grid grid-cols-3 gap-5 overflow-y-scroll">
+      <div className="h-full p-5 grid grid-cols-3 gap-5">
         <TodoState state="todo" name="To do" tasks={tasks}></TodoState>
         <TodoState state="doing" name="Doing" tasks={[]}></TodoState>
         <TodoState state="done" name="Done" tasks={[]}></TodoState>
