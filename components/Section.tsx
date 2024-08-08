@@ -7,7 +7,7 @@ type SectionProps = {
 
 export default function Section({ name, section }: SectionProps) {
   return (
-    <div>
+    <div className="h-full">
       <h1 className="py-5 px-7 uppercase">{name}</h1>
       <hr className="border-slate-300" />
       {section === "tasks" && <TaskSection />}

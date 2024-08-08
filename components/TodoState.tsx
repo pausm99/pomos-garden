@@ -21,14 +21,14 @@ export default function TodoState({ name, state, tasks }: TodoStateProps) {
 
   return (
     <div
-      className="flex-1 flex flex-col gap-2.5 border rounded-xl p-2.5 border-zinc-300"
+      className="flex h-full flex-col gap-2.5 border rounded-xl p-2.5 border-zinc-300"
       style={{ backgroundColor: "#f4f4f5cc" }}
     >
-      <div className="flex gap-2 p-[5px]">
+      <div className="flex items-center gap-2 p-[5px]">
         <span
-          className={`flex justify-center items-center rounded-full ${dotColor} h-5 w-5`}
+          className={`flex justify-center items-center rounded-full ${dotColor} h-6 w-6`}
         >
-          2
+          {tasks.length}
         </span>
         <h2 className="uppercase">{name}</h2>
       </div>

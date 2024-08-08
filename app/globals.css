@@ -102,6 +102,15 @@ input {
   border-radius: 2rem;
 }
 
+.addTaskButton,
+.doneEditingButton {
+  @apply border border-zinc-300 text-zinc-800 !important;
+}
+
 .addTaskButton {
-  @apply bg-zinc-50 border border-zinc-300 text-zinc-800 !important;
+  @apply bg-zinc-50 !important;
+}
+
+.doneEditingButton {
+  @apply bg-lime-200 !important;
 }

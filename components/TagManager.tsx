@@ -21,16 +21,23 @@ const propTags: TagType[] = [
   { label: "Eventos", color: "#FAFAFA" },
 ];
 
-const colors: string[] = ['bg-purple-100', 'bg-blue-100', 'bg-lime-100', 'bg-red-100']
+const colors: string[] = ["#F3E8FF", "#DBEAFE", "#ECFCCB", "#FEE2E2"];
 
-export function TagManager() {
+type TagManagerProps = {
+  onTagAdd: (tag: TagType) => void;
+};
+
+export function TagManager({ onTagAdd }: TagManagerProps) {
   const [inputText, setInputText] = useState("");
+  const [selectedColor, setSelectedColor] = useState(colors[1]);
   const [allTags, setAllTags] = useState<TagType[]>(propTags);
   const [filteredTags, setFilteredTags] = useState<TagType[]>(propTags);
+  const [isOpen, setIsOpen] = useState(false)
 
   // Manejar la selección de una etiqueta
   const selectTag = (tag: TagType) => {
-    console.log(tag);
+    onTagAdd(tag);
+    setIsOpen(false)
   };
 
   // Manejar la creación de una nueva etiqueta
@@ -65,40 +72,68 @@ export function TagManager() {
   };
 
   return (
-    <DropdownMenu>
+    <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenuTrigger asChild>
-        <button className="text-xs flex justify-center items-center rounded-full bg-zinc-50 text-zinc-400 h-5 w-5 border border-zinc-400">
+        <button onClick={() => setIsOpen(!isOpen)} className="text-xs flex justify-center items-center rounded-full bg-zinc-50 text-zinc-400 h-5 w-5 border border-zinc-400">
           +
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-52 rounded-lg border border-zinc-300">
-        <div className="p-2.5">
-          <Input value={inputText} size={12} onChange={handleInputChange} />
-        </div>
-        <DropdownMenuSeparator className="bg-zinc-300"/>
-        <div className="flex flex-wrap gap-2 p-2.5">
-          {filteredTags.map((tag, index) => (
-            <span key={index}>
-              <Tag onSelectTag={selectTag} style="cursor-pointer" tag={tag} />
-            </span>
-          ))}
-        </div>
-        <DropdownMenuSeparator className="bg-zinc-300"/>
-        <div className="p-2.5 flex flex-col gap-1.5">
-          <span className="uppercase">Create new</span>
-          <Tag
-            style="cursor-pointer w-fit"
-            onSelectTag={() =>
-              createTag({ label: inputText || "New", color: "#12345" })
-            }
-            tag={{ label: inputText || "New", color: "#12345" }}
-          />
-          <div className="flex gap-1">
-            {colors.map(color => (
-              <span key={color} style={{ border: "1px solid rgba(0,0,0,0.1)" }} className={`${color} h-4 w-4 rounded-full`}></span>
-            ))}
+        <form
+          action={() =>
+            createTag({ label: inputText || "New", color: selectedColor })
+          }
+        >
+          <div className="p-2.5">
+            <Input value={inputText} size={12} onChange={handleInputChange} />
           </div>
-        </div>
+          {filteredTags.length > 0 && (
+            <>
+              <DropdownMenuSeparator className="bg-zinc-300" />
+              <div className="flex flex-wrap gap-2 p-2.5">
+                {filteredTags.map((tag, index) => (
+                  <span key={index}>
+                    <Tag
+                      onSelectTag={selectTag}
+                      style="cursor-pointer"
+                      tag={tag}
+                    />
+                  </span>
+                ))}
+              </div>
+            </>
+          )}
+          <DropdownMenuSeparator className="bg-zinc-300" />
+          <div className="p-2.5 flex flex-col gap-1.5">
+            <span className="uppercase">Create new</span>
+            <Tag
+              style="cursor-pointer w-fit max-w-full"
+              onSelectTag={() =>
+                createTag({ label: inputText || "New", color: selectedColor })
+              }
+              tag={{ label: inputText || "New", color: selectedColor }}
+            />
+            <div className="flex gap-2">
+              {colors.map((color) => (
+                <span
+                  key={color}
+                  onClick={() => setSelectedColor(color)}
+                  style={{
+                    border: `${
+                      selectedColor === color
+                        ? "2px solid rgba(0,0,0,0.1)"
+                        : "1px solid rgba(0,0,0,0.1)"
+                    }`,
+                    backgroundColor: color,
+                  }}
+                  className={`h-4 w-4 rounded-full cursor-pointer hover:scale-125 transition-all ${
+                    selectedColor === color ? "scale-125" : ""
+                  }`}
+                ></span>
+              ))}
+            </div>
+          </div>
+        </form>
       </DropdownMenuContent>
     </DropdownMenu>
   );
