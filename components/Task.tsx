@@ -9,6 +9,8 @@ import Tag from "./atoms/Tag";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 type TaskProps = {
   task: TaskType;
@@ -21,11 +23,34 @@ export default function Task({ task }: TaskProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [tags, setTags] = useState<TagType[]>(task.tags);
 
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
+    id: task.id,
+  });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    boxShadow: "0px 1px 3px rgba(0,0,0,0.1)",
+    cursor: "pointer",
+    opacity: isDragging ? 0.5 : 1,
+    height: "175px",
+    boxSizing: "border-box" as "border-box",
+  };
+
   const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTitleInputText(event.target.value);
   };
 
-  const handleDescriptionChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const handleDescriptionChange = (
+    event: React.ChangeEvent<HTMLTextAreaElement>
+  ) => {
     setDescriptionInputText(event.target.value);
   };
 
@@ -53,19 +78,24 @@ export default function Task({ task }: TaskProps) {
 
   const handleEditTask = (event: React.FormEvent) => {
     event.preventDefault();
-    updateTask({ ...task, title: titleInputText, description: descriptionInputText, tags });
+    updateTask({
+      ...task,
+      title: titleInputText,
+      description: descriptionInputText,
+      tags,
+    });
     setIsEditing(false);
   };
 
   return (
     <div
-      className="flex flex-col gap-5 p-[15px] bg-white text-black rounded-[12px] text-wrap"
-      style={{ boxShadow: "0px 1px 3px 0px rgba(0,0,0,0.1)" }}
+      ref={setNodeRef}
+      style={style}
+      {...listeners}
+      {...attributes}
+      className="flex flex-col gap-5 p-4 bg-white text-black rounded-lg"
     >
-      <form
-        onSubmit={handleEditTask}
-        className="flex flex-col gap-5"
-      >
+      <form onSubmit={handleEditTask} className="flex flex-col gap-5">
         <div className="flex justify-between gap-2 items-center">
           {isEditing ? (
             <Input

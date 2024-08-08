@@ -1,6 +1,7 @@
 import TaskType from "@/interfaces/Task";
 import Task from "./Task";
-import AddTask from "./AddTask";
+import { useDroppable } from "@dnd-kit/core";
+import { SortableContext } from "@dnd-kit/sortable";
 
 type TodoStateType = "todo" | "doing" | "done";
 
@@ -17,27 +18,32 @@ const stateColor = {
 };
 
 export default function TodoState({ name, state, tasks }: TodoStateProps) {
-  const dotColor = stateColor[state] || "";
+  const dotColor = stateColor[state];
+  const { setNodeRef } = useDroppable({ id: state });
 
   return (
     <div
-      className="flex h-full overflow-y-scroll flex-col gap-2.5 border rounded-xl p-2.5 border-zinc-300"
-      style={{ backgroundColor: "#f4f4f5cc" }}
+      ref={setNodeRef}
+      className="flex flex-col gap-2.5 border rounded-xl p-2.5 border-zinc-300"
+      style={{
+        backgroundColor: "#f4f4f5cc",
+        minWidth: "300px",
+        height: "100%",
+      }}
     >
-      <div className="flex items-center gap-2 p-[5px]">
+      <div className="flex gap-2 items-center p-[5px]">
         <span
-          className={`flex justify-center items-center rounded-full ${dotColor} h-6 w-6`}
-        >
-          {tasks.length}
-        </span>
+          className={`flex justify-center items-center rounded-full ${dotColor} h-5 w-5`}
+        />
         <h2 className="uppercase">{name}</h2>
       </div>
-      {state === "todo" && <AddTask />}
-      <div className="flex flex-col gap-2.5 overflow-y-scroll">
-        {tasks.map((task) => (
-          <Task key={task.id} task={task} />
-        ))}
-      </div>
+      <SortableContext items={tasks.map((task) => task.id)}>
+        <div className="flex flex-col gap-2.5 flex-grow overflow-y-auto">
+          {tasks.map((task) => (
+            <Task key={task.id} task={task} />
+          ))}
+        </div>
+      </SortableContext>
     </div>
   );
 }
