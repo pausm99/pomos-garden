@@ -1,3 +1,5 @@
+import Section from "@/components/Section";
+
 export default function Home() {
-    return <h1>Pomo's Garden</h1>;
+  return <Section section="pomodoro" name="Pomodoro Timer" />;
 }
