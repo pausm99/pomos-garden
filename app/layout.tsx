@@ -27,7 +27,7 @@ export default function RootLayout({
                     fontSans.variable,
                     fontMono.variable,
                     "flex flex-col flex-1",
-                    "min-h-screen max-w-[1400px] m-auto p-6",
+                    "max-w-[1400px] m-auto p-6",
                     "font-sans text-sm text-zinc-900",
                     "bg-zinc-300"
                 )}
@@ -36,7 +36,12 @@ export default function RootLayout({
 
                 <div className="flex-1 flex gap-7 h-[95dvh]">
                     <ServicesNav className="w-20 flex flex-col gap-5" />
-                    <div className="flex flex-1 rounded-4xl bg-zinc-100 overflow-hidden relative h-full min-h-[933px]">
+                    <div
+                        className={cn(
+                            "flex flex-1 h-[933px] relative overflow-hidden",
+                            " rounded-4xl bg-zinc-100"
+                        )}
+                    >
                         <Blob className="absolute w-full h-full" />
                         <div className="absolute w-full h-full backdrop-blur-3xl"></div>
                         <div className="flex-1 flex flex-col z-10">
