@@ -59,9 +59,13 @@ model Tag {
   userId  String   @db.ObjectId
   taskIDs String[] @db.ObjectId
   tasks   Task[]   @relation(fields: [taskIDs], references: [id])
-  tagDesc String
+  tagDesc String   
   color   String
+  @@unique([userId, tagDesc])
+
 }
+
+
 
 enum taskStatus {
   BACKLOG

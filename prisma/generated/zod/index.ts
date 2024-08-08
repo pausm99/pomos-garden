@@ -516,11 +516,21 @@ export const TagOrderByWithRelationInputSchema: z.ZodType<Prisma.TagOrderByWithR
   tasks: z.lazy(() => TaskOrderByRelationAggregateInputSchema).optional()
 }).strict();
 
-export const TagWhereUniqueInputSchema: z.ZodType<Prisma.TagWhereUniqueInput> = z.object({
-  id: z.string()
-})
+export const TagWhereUniqueInputSchema: z.ZodType<Prisma.TagWhereUniqueInput> = z.union([
+  z.object({
+    id: z.string(),
+    userId_tagDesc: z.lazy(() => TagUserIdTagDescCompoundUniqueInputSchema)
+  }),
+  z.object({
+    id: z.string(),
+  }),
+  z.object({
+    userId_tagDesc: z.lazy(() => TagUserIdTagDescCompoundUniqueInputSchema),
+  }),
+])
 .and(z.object({
   id: z.string().optional(),
+  userId_tagDesc: z.lazy(() => TagUserIdTagDescCompoundUniqueInputSchema).optional(),
   AND: z.union([ z.lazy(() => TagWhereInputSchema),z.lazy(() => TagWhereInputSchema).array() ]).optional(),
   OR: z.lazy(() => TagWhereInputSchema).array().optional(),
   NOT: z.union([ z.lazy(() => TagWhereInputSchema),z.lazy(() => TagWhereInputSchema).array() ]).optional(),
@@ -1117,6 +1127,11 @@ export const BoolWithAggregatesFilterSchema: z.ZodType<Prisma.BoolWithAggregates
   _count: z.lazy(() => NestedIntFilterSchema).optional(),
   _min: z.lazy(() => NestedBoolFilterSchema).optional(),
   _max: z.lazy(() => NestedBoolFilterSchema).optional()
+}).strict();
+
+export const TagUserIdTagDescCompoundUniqueInputSchema: z.ZodType<Prisma.TagUserIdTagDescCompoundUniqueInput> = z.object({
+  userId: z.string(),
+  tagDesc: z.string()
 }).strict();
 
 export const TagCountOrderByAggregateInputSchema: z.ZodType<Prisma.TagCountOrderByAggregateInput> = z.object({
