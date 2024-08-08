@@ -1,4 +1,4 @@
-'user server';
+'use server';
 
 import { serverCreateTask, serverDeleteTask, serverGetAllTasksForUser, serverGetOneTask, serverUpdateTask } from "@/lib/task";
 import { taskStatus } from "@prisma/client";
