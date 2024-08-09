@@ -26,6 +26,10 @@ export const taskStatusSchema = z.enum(['BACKLOG','IN_PROGRESS','COMPLETED']);
 
 export type taskStatusType = `${z.infer<typeof taskStatusSchema>}`
 
+export const tagColorSchema = z.enum(['bg_red_200','bg_orange_200','bg_yellow_200','bg_lime_200','bg_emerald_200','bg_sky_200','bg_indigo_200','bg_fuchsia_200']);
+
+export type tagColorType = `${z.infer<typeof tagColorSchema>}`
+
 /////////////////////////////////////////
 // MODELS
 /////////////////////////////////////////
@@ -88,11 +92,11 @@ export type Session = z.infer<typeof SessionSchema>
 /////////////////////////////////////////
 
 export const TagSchema = z.object({
+  color: tagColorSchema,
   id: z.string(),
   userId: z.string(),
   taskIDs: z.string().array(),
   tagDesc: z.string(),
-  color: z.string(),
 })
 
 export type Tag = z.infer<typeof TagSchema>
@@ -503,7 +507,7 @@ export const TagWhereInputSchema: z.ZodType<Prisma.TagWhereInput> = z.object({
   userId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   taskIDs: z.lazy(() => StringNullableListFilterSchema).optional(),
   tagDesc: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
-  color: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  color: z.union([ z.lazy(() => EnumtagColorFilterSchema),z.lazy(() => tagColorSchema) ]).optional(),
   tasks: z.lazy(() => TaskListRelationFilterSchema).optional()
 }).strict();
 
@@ -519,10 +523,26 @@ export const TagOrderByWithRelationInputSchema: z.ZodType<Prisma.TagOrderByWithR
 export const TagWhereUniqueInputSchema: z.ZodType<Prisma.TagWhereUniqueInput> = z.union([
   z.object({
     id: z.string(),
+    tagDesc: z.string(),
     userId_tagDesc: z.lazy(() => TagUserIdTagDescCompoundUniqueInputSchema)
   }),
   z.object({
     id: z.string(),
+    tagDesc: z.string(),
+  }),
+  z.object({
+    id: z.string(),
+    userId_tagDesc: z.lazy(() => TagUserIdTagDescCompoundUniqueInputSchema),
+  }),
+  z.object({
+    id: z.string(),
+  }),
+  z.object({
+    tagDesc: z.string(),
+    userId_tagDesc: z.lazy(() => TagUserIdTagDescCompoundUniqueInputSchema),
+  }),
+  z.object({
+    tagDesc: z.string(),
   }),
   z.object({
     userId_tagDesc: z.lazy(() => TagUserIdTagDescCompoundUniqueInputSchema),
@@ -530,14 +550,14 @@ export const TagWhereUniqueInputSchema: z.ZodType<Prisma.TagWhereUniqueInput> = 
 ])
 .and(z.object({
   id: z.string().optional(),
+  tagDesc: z.string().optional(),
   userId_tagDesc: z.lazy(() => TagUserIdTagDescCompoundUniqueInputSchema).optional(),
   AND: z.union([ z.lazy(() => TagWhereInputSchema),z.lazy(() => TagWhereInputSchema).array() ]).optional(),
   OR: z.lazy(() => TagWhereInputSchema).array().optional(),
   NOT: z.union([ z.lazy(() => TagWhereInputSchema),z.lazy(() => TagWhereInputSchema).array() ]).optional(),
   userId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   taskIDs: z.lazy(() => StringNullableListFilterSchema).optional(),
-  tagDesc: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
-  color: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  color: z.union([ z.lazy(() => EnumtagColorFilterSchema),z.lazy(() => tagColorSchema) ]).optional(),
   tasks: z.lazy(() => TaskListRelationFilterSchema).optional()
 }).strict());
 
@@ -560,7 +580,7 @@ export const TagScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.TagScalar
   userId: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
   taskIDs: z.lazy(() => StringNullableListFilterSchema).optional(),
   tagDesc: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
-  color: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  color: z.union([ z.lazy(() => EnumtagColorWithAggregatesFilterSchema),z.lazy(() => tagColorSchema) ]).optional(),
 }).strict();
 
 export const UserCreateInputSchema: z.ZodType<Prisma.UserCreateInput> = z.object({
@@ -809,7 +829,7 @@ export const TagCreateInputSchema: z.ZodType<Prisma.TagCreateInput> = z.object({
   id: z.string().optional(),
   userId: z.string(),
   tagDesc: z.string(),
-  color: z.string(),
+  color: z.lazy(() => tagColorSchema),
   tasks: z.lazy(() => TaskCreateNestedManyWithoutTagsInputSchema).optional()
 }).strict();
 
@@ -818,14 +838,14 @@ export const TagUncheckedCreateInputSchema: z.ZodType<Prisma.TagUncheckedCreateI
   userId: z.string(),
   taskIDs: z.union([ z.lazy(() => TagCreatetaskIDsInputSchema),z.string().array() ]).optional(),
   tagDesc: z.string(),
-  color: z.string(),
+  color: z.lazy(() => tagColorSchema),
   tasks: z.lazy(() => TaskUncheckedCreateNestedManyWithoutTagsInputSchema).optional()
 }).strict();
 
 export const TagUpdateInputSchema: z.ZodType<Prisma.TagUpdateInput> = z.object({
   userId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   tagDesc: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  color: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  color: z.union([ z.lazy(() => tagColorSchema),z.lazy(() => EnumtagColorFieldUpdateOperationsInputSchema) ]).optional(),
   tasks: z.lazy(() => TaskUpdateManyWithoutTagsNestedInputSchema).optional()
 }).strict();
 
@@ -833,7 +853,7 @@ export const TagUncheckedUpdateInputSchema: z.ZodType<Prisma.TagUncheckedUpdateI
   userId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   taskIDs: z.union([ z.lazy(() => TagUpdatetaskIDsInputSchema),z.string().array() ]).optional(),
   tagDesc: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  color: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  color: z.union([ z.lazy(() => tagColorSchema),z.lazy(() => EnumtagColorFieldUpdateOperationsInputSchema) ]).optional(),
   tasks: z.lazy(() => TaskUncheckedUpdateManyWithoutTagsNestedInputSchema).optional()
 }).strict();
 
@@ -842,20 +862,20 @@ export const TagCreateManyInputSchema: z.ZodType<Prisma.TagCreateManyInput> = z.
   userId: z.string(),
   taskIDs: z.union([ z.lazy(() => TagCreatetaskIDsInputSchema),z.string().array() ]).optional(),
   tagDesc: z.string(),
-  color: z.string()
+  color: z.lazy(() => tagColorSchema)
 }).strict();
 
 export const TagUpdateManyMutationInputSchema: z.ZodType<Prisma.TagUpdateManyMutationInput> = z.object({
   userId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   tagDesc: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  color: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  color: z.union([ z.lazy(() => tagColorSchema),z.lazy(() => EnumtagColorFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const TagUncheckedUpdateManyInputSchema: z.ZodType<Prisma.TagUncheckedUpdateManyInput> = z.object({
   userId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   taskIDs: z.union([ z.lazy(() => TagUpdatetaskIDsInputSchema),z.string().array() ]).optional(),
   tagDesc: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  color: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  color: z.union([ z.lazy(() => tagColorSchema),z.lazy(() => EnumtagColorFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const StringFilterSchema: z.ZodType<Prisma.StringFilter> = z.object({
@@ -1129,6 +1149,13 @@ export const BoolWithAggregatesFilterSchema: z.ZodType<Prisma.BoolWithAggregates
   _max: z.lazy(() => NestedBoolFilterSchema).optional()
 }).strict();
 
+export const EnumtagColorFilterSchema: z.ZodType<Prisma.EnumtagColorFilter> = z.object({
+  equals: z.lazy(() => tagColorSchema).optional(),
+  in: z.lazy(() => tagColorSchema).array().optional(),
+  notIn: z.lazy(() => tagColorSchema).array().optional(),
+  not: z.union([ z.lazy(() => tagColorSchema),z.lazy(() => NestedEnumtagColorFilterSchema) ]).optional(),
+}).strict();
+
 export const TagUserIdTagDescCompoundUniqueInputSchema: z.ZodType<Prisma.TagUserIdTagDescCompoundUniqueInput> = z.object({
   userId: z.string(),
   tagDesc: z.string()
@@ -1154,6 +1181,16 @@ export const TagMinOrderByAggregateInputSchema: z.ZodType<Prisma.TagMinOrderByAg
   userId: z.lazy(() => SortOrderSchema).optional(),
   tagDesc: z.lazy(() => SortOrderSchema).optional(),
   color: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const EnumtagColorWithAggregatesFilterSchema: z.ZodType<Prisma.EnumtagColorWithAggregatesFilter> = z.object({
+  equals: z.lazy(() => tagColorSchema).optional(),
+  in: z.lazy(() => tagColorSchema).array().optional(),
+  notIn: z.lazy(() => tagColorSchema).array().optional(),
+  not: z.union([ z.lazy(() => tagColorSchema),z.lazy(() => NestedEnumtagColorWithAggregatesFilterSchema) ]).optional(),
+  _count: z.lazy(() => NestedIntFilterSchema).optional(),
+  _min: z.lazy(() => NestedEnumtagColorFilterSchema).optional(),
+  _max: z.lazy(() => NestedEnumtagColorFilterSchema).optional()
 }).strict();
 
 export const SessionCreateNestedManyWithoutUserInputSchema: z.ZodType<Prisma.SessionCreateNestedManyWithoutUserInput> = z.object({
@@ -1449,6 +1486,10 @@ export const TaskUncheckedCreateNestedManyWithoutTagsInputSchema: z.ZodType<Pris
   connect: z.union([ z.lazy(() => TaskWhereUniqueInputSchema),z.lazy(() => TaskWhereUniqueInputSchema).array() ]).optional(),
 }).strict();
 
+export const EnumtagColorFieldUpdateOperationsInputSchema: z.ZodType<Prisma.EnumtagColorFieldUpdateOperationsInput> = z.object({
+  set: z.lazy(() => tagColorSchema).optional()
+}).strict();
+
 export const TaskUpdateManyWithoutTagsNestedInputSchema: z.ZodType<Prisma.TaskUpdateManyWithoutTagsNestedInput> = z.object({
   create: z.union([ z.lazy(() => TaskCreateWithoutTagsInputSchema),z.lazy(() => TaskCreateWithoutTagsInputSchema).array(),z.lazy(() => TaskUncheckedCreateWithoutTagsInputSchema),z.lazy(() => TaskUncheckedCreateWithoutTagsInputSchema).array() ]).optional(),
   connectOrCreate: z.union([ z.lazy(() => TaskCreateOrConnectWithoutTagsInputSchema),z.lazy(() => TaskCreateOrConnectWithoutTagsInputSchema).array() ]).optional(),
@@ -1602,6 +1643,23 @@ export const NestedBoolWithAggregatesFilterSchema: z.ZodType<Prisma.NestedBoolWi
   _count: z.lazy(() => NestedIntFilterSchema).optional(),
   _min: z.lazy(() => NestedBoolFilterSchema).optional(),
   _max: z.lazy(() => NestedBoolFilterSchema).optional()
+}).strict();
+
+export const NestedEnumtagColorFilterSchema: z.ZodType<Prisma.NestedEnumtagColorFilter> = z.object({
+  equals: z.lazy(() => tagColorSchema).optional(),
+  in: z.lazy(() => tagColorSchema).array().optional(),
+  notIn: z.lazy(() => tagColorSchema).array().optional(),
+  not: z.union([ z.lazy(() => tagColorSchema),z.lazy(() => NestedEnumtagColorFilterSchema) ]).optional(),
+}).strict();
+
+export const NestedEnumtagColorWithAggregatesFilterSchema: z.ZodType<Prisma.NestedEnumtagColorWithAggregatesFilter> = z.object({
+  equals: z.lazy(() => tagColorSchema).optional(),
+  in: z.lazy(() => tagColorSchema).array().optional(),
+  notIn: z.lazy(() => tagColorSchema).array().optional(),
+  not: z.union([ z.lazy(() => tagColorSchema),z.lazy(() => NestedEnumtagColorWithAggregatesFilterSchema) ]).optional(),
+  _count: z.lazy(() => NestedIntFilterSchema).optional(),
+  _min: z.lazy(() => NestedEnumtagColorFilterSchema).optional(),
+  _max: z.lazy(() => NestedEnumtagColorFilterSchema).optional()
 }).strict();
 
 export const SessionCreateWithoutUserInputSchema: z.ZodType<Prisma.SessionCreateWithoutUserInput> = z.object({
@@ -1767,7 +1825,7 @@ export const TagCreateWithoutTasksInputSchema: z.ZodType<Prisma.TagCreateWithout
   id: z.string().optional(),
   userId: z.string(),
   tagDesc: z.string(),
-  color: z.string()
+  color: z.lazy(() => tagColorSchema)
 }).strict();
 
 export const TagUncheckedCreateWithoutTasksInputSchema: z.ZodType<Prisma.TagUncheckedCreateWithoutTasksInput> = z.object({
@@ -1775,7 +1833,7 @@ export const TagUncheckedCreateWithoutTasksInputSchema: z.ZodType<Prisma.TagUnch
   userId: z.string(),
   taskIDs: z.union([ z.lazy(() => TagCreatetaskIDsInputSchema),z.string().array() ]).optional(),
   tagDesc: z.string(),
-  color: z.string()
+  color: z.lazy(() => tagColorSchema)
 }).strict();
 
 export const TagCreateOrConnectWithoutTasksInputSchema: z.ZodType<Prisma.TagCreateOrConnectWithoutTasksInput> = z.object({
@@ -1868,7 +1926,7 @@ export const TagScalarWhereInputSchema: z.ZodType<Prisma.TagScalarWhereInput> = 
   userId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   taskIDs: z.lazy(() => StringNullableListFilterSchema).optional(),
   tagDesc: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
-  color: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  color: z.union([ z.lazy(() => EnumtagColorFilterSchema),z.lazy(() => tagColorSchema) ]).optional(),
 }).strict();
 
 export const SessionUpsertWithWhereUniqueWithoutList_of_tasksInputSchema: z.ZodType<Prisma.SessionUpsertWithWhereUniqueWithoutList_of_tasksInput> = z.object({
@@ -2127,21 +2185,21 @@ export const TaskUncheckedUpdateManyWithoutUserInputSchema: z.ZodType<Prisma.Tas
 export const TagUpdateWithoutTasksInputSchema: z.ZodType<Prisma.TagUpdateWithoutTasksInput> = z.object({
   userId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   tagDesc: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  color: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  color: z.union([ z.lazy(() => tagColorSchema),z.lazy(() => EnumtagColorFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const TagUncheckedUpdateWithoutTasksInputSchema: z.ZodType<Prisma.TagUncheckedUpdateWithoutTasksInput> = z.object({
   userId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   taskIDs: z.union([ z.lazy(() => TagUpdatetaskIDsInputSchema),z.string().array() ]).optional(),
   tagDesc: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  color: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  color: z.union([ z.lazy(() => tagColorSchema),z.lazy(() => EnumtagColorFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const TagUncheckedUpdateManyWithoutTasksInputSchema: z.ZodType<Prisma.TagUncheckedUpdateManyWithoutTasksInput> = z.object({
   userId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   taskIDs: z.union([ z.lazy(() => TagUpdatetaskIDsInputSchema),z.string().array() ]).optional(),
   tagDesc: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  color: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  color: z.union([ z.lazy(() => tagColorSchema),z.lazy(() => EnumtagColorFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const SessionUpdateWithoutList_of_tasksInputSchema: z.ZodType<Prisma.SessionUpdateWithoutList_of_tasksInput> = z.object({
