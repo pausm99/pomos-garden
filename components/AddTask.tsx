@@ -3,20 +3,20 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { useTasksContext } from "@/contexts/TasksContext";
 import { useState } from "react";
-import Task from "@/interfaces/Task";
+import { Task } from "@/prisma/generated/zod";
 
 export default function AddTask() {
   const [inputTitle, setInputTitle] = useState("");
   const { addTask } = useTasksContext();
 
   const handleAddTask = () => {
-    const task: Task = {
-      id: 1234,
+    const newTask: any = {
       title: inputTitle,
-      tags: []
+      userId: "66c60077cfa9f183ca355e23",
+      description: "",
     }
     setInputTitle("")
-    addTask(task)
+    addTask(newTask)
   };
 
   const handleTextInput = (event: any) => {

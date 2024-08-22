@@ -1,8 +1,8 @@
-import TaskType from "@/interfaces/Task";
-import Task from "./Task";
 import { useDroppable } from "@dnd-kit/core";
 import { SortableContext } from "@dnd-kit/sortable";
 import AddTask from "./AddTask";
+import { Task as TaskType } from "@/prisma/generated/zod";
+import Task from "./Task";
 
 type TodoStateType = "todo" | "doing" | "done";
 
@@ -33,9 +33,7 @@ export default function TodoState({ name, state, tasks }: TodoStateProps) {
       }}
     >
       <div className="flex gap-2 items-center p-[5px]">
-        <span
-          className={`flex justify-center items-center rounded-full ${dotColor} h-5 w-5`}
-        />
+        <span className={`flex justify-center items-center rounded-full ${dotColor} h-5 w-5`}>{tasks.length}</span>
         <h2 className="uppercase">{name}</h2>
       </div>
       {state === "todo" && <AddTask />}

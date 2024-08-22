@@ -1,27 +1,30 @@
 import { useTasksContext } from "@/contexts/TasksContext";
-import TagType from "@/interfaces/Tag";
-import TaskType from "@/interfaces/Task";
+import { Task as TaskType } from "@/prisma/generated/zod";
+import { Tag as TagType } from "@/prisma/generated/zod";
 import { Check } from "lucide-react";
 import { useState } from "react";
-import { TagManager } from "./TagManager";
 import TaskActions from "./TaskActions";
-import Tag from "./atoms/Tag";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { TagManager } from "./TagManager";
+import { useTagsContext } from "@/contexts/TagsContext";
+import Tag from "./atoms/Tag";
 
 type TaskProps = {
   task: TaskType;
 };
 
 export default function Task({ task }: TaskProps) {
+  const { tagsCollection, addTag } = useTagsContext();
   const { updateTask, deleteTask } = useTasksContext();
   const [titleInputText, setTitleInputText] = useState(task.title);
-  const [descriptionInputText, setDescriptionInputText] = useState(task.description || "");
+  const [descriptionInputText, setDescriptionInputText] = useState(
+    task.description || ""
+  );
   const [isEditing, setIsEditing] = useState(false);
-  const [tags, setTags] = useState<TagType[]>(task.tags);
 
   const {
     attributes,
@@ -55,18 +58,17 @@ export default function Task({ task }: TaskProps) {
   };
 
   const handleTagAdd = (newTag: TagType) => {
-    if (!tags.includes(newTag)) {
-      const updatedTags = [...tags, newTag];
-      setTags(updatedTags);
-      updateTask({ ...task, tags: updatedTags });
+    if (!task.tagIDs.includes(newTag.id)) {
+      newTag.taskIDs.push(task.id)
+      addTag(newTag)
     }
   };
 
-  const handleDiscardTag = (oldTag: TagType) => {
-    const updatedTags = tags.filter((tag) => tag.label !== oldTag.label);
-    setTags(updatedTags);
-    updateTask({ ...task, tags: updatedTags });
-  };
+  // const handleDiscardTag = (oldTag: TagType) => {
+  //   const updatedTags = tags.filter((tag) => tag.label !== oldTag.label);
+  //   setTags(updatedTags);
+  //   updateTask({ ...task, tags: updatedTags });
+  // };
 
   const handleDelete = () => {
     deleteTask(task.id);
@@ -82,7 +84,6 @@ export default function Task({ task }: TaskProps) {
       ...task,
       title: titleInputText,
       description: descriptionInputText,
-      tags,
     });
     setIsEditing(false);
   };
@@ -133,17 +134,23 @@ export default function Task({ task }: TaskProps) {
         )}
       </form>
       <div className="flex gap-2 flex-wrap items-center">
-        {tags &&
-          tags.map((tag, index) => (
-            <span key={index}>
+        {task.tagIDs.length > 0 &&
+          task.tagIDs
+            .map((tagId: string) =>
+              tagsCollection.find(
+                (collectionTag: TagType) => collectionTag.id === tagId
+              )
+            )
+            .filter((tag): tag is TagType => tag !== undefined)
+            .map((tag: TagType) => (
               <Tag
+                key={tag.id}
                 tag={tag}
                 style="cursor-pointer"
                 deletable={isEditing}
-                onDiscardTag={handleDiscardTag}
+                // onDiscardTag={handleDiscardTag}
               />
-            </span>
-          ))}
+            ))}
         <TagManager onTagAdd={handleTagAdd} />
       </div>
     </div>

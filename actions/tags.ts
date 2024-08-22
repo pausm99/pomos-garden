@@ -1,3 +1,5 @@
+"use server";
+
 import { serverCreateTag, serverUpdateTag, serverDeleteTag, serverGetAllTagsForUser } from "@/lib/tags";
 
 // Creating the CRUD actions for tags

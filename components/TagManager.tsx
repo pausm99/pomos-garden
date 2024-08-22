@@ -6,22 +6,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import TagType from "@/interfaces/Tag";
+import { Tag as TagType } from "@/prisma/generated/zod";
 import { useState } from "react";
 import Tag from "./atoms/Tag";
 import { Input } from "./ui/input";
+import { useTagsContext } from "@/contexts/TagsContext";
 
-// Etiquetas iniciales
-const propTags: TagType[] = [
-  { label: "Finanzas", color: "#FEE2E2" },
-  { label: "Urgente", color: "#FEE2E2" },
-  { label: "Desarrollo", color: "#ECFCCB" },
-  { label: "Marketing", color: "#DBEAFE" },
-  { label: "Investigación", color: "#EDE9FE" },
-  { label: "Eventos", color: "#FAFAFA" },
-];
-
-const colors: string[] = ["#F3E8FF", "#DBEAFE", "#ECFCCB", "#FEE2E2"];
+const colors: string[] = ["bg_red_200", "bg_orange_200", "bg_yellow_200", "bg_lime_200", "bg_emerald_200", "bg_sky_200", "bg_indigo_200", "bg_fuchsia_200"];
 
 type TagManagerProps = {
   onTagAdd: (tag: TagType) => void;
@@ -30,20 +21,21 @@ type TagManagerProps = {
 export function TagManager({ onTagAdd }: TagManagerProps) {
   const [inputText, setInputText] = useState("");
   const [selectedColor, setSelectedColor] = useState(colors[1]);
-  const [allTags, setAllTags] = useState<TagType[]>(propTags);
-  const [filteredTags, setFilteredTags] = useState<TagType[]>(propTags);
-  const [isOpen, setIsOpen] = useState(false)
+  const { tagsCollection } = useTagsContext();
+  const [allTags, setAllTags] = useState<TagType[]>(tagsCollection)
+  const [filteredTags, setFilteredTags] = useState<TagType[]>(tagsCollection);
+  const [isOpen, setIsOpen] = useState(false);
 
   // Manejar la selección de una etiqueta
   const selectTag = (tag: TagType) => {
     onTagAdd(tag);
-    setIsOpen(false)
+    setIsOpen(false);
   };
 
-  // Manejar la creación de una nueva etiqueta
+  // Manejar la creación de un nuevo tag
   const createTag = (newTag: TagType) => {
-    if (newTag.label) {
-      if (!allTags.find((tag) => tag.label === newTag.label)) {
+    if (newTag.tagDesc) {
+      if (!allTags.find((tag) => tag.tagDesc === newTag.tagDesc)) {
         setAllTags([...allTags, newTag]);
         setInputText("");
         setFilteredTags([...allTags, newTag]);
@@ -65,7 +57,7 @@ export function TagManager({ onTagAdd }: TagManagerProps) {
       setFilteredTags(allTags); // Restaurar etiquetas originales
     } else {
       const filtered = allTags.filter((tag) =>
-        tag.label.toLowerCase().includes(text.toLowerCase())
+        tag.tagDesc.toLowerCase().includes(text.toLowerCase())
       );
       setFilteredTags(filtered);
     }
@@ -74,11 +66,14 @@ export function TagManager({ onTagAdd }: TagManagerProps) {
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenuTrigger asChild>
-        <button onClick={() => setIsOpen(!isOpen)} className="text-xs flex justify-center items-center rounded-full bg-zinc-50 text-zinc-400 h-5 w-5 border border-zinc-400">
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className="text-xs flex justify-center items-center rounded-full bg-zinc-50 text-zinc-400 h-5 w-5 border border-zinc-400"
+        >
           +
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-52 rounded-lg border border-zinc-300">
+      <DropdownMenuContent className="w-64 rounded-lg border border-zinc-300">
         <form
           action={() =>
             createTag({ label: inputText || "New", color: selectedColor })
@@ -90,14 +85,13 @@ export function TagManager({ onTagAdd }: TagManagerProps) {
           {filteredTags.length > 0 && (
             <>
               <DropdownMenuSeparator className="bg-zinc-300" />
-              <div className="flex flex-wrap gap-2 p-2.5">
+              <div className="flex flex-wrap gap-2 p-2.5 h-32 overflow-y-scroll">
                 {filteredTags.map((tag, index) => (
                   <span key={index}>
                     <Tag
                       onSelectTag={selectTag}
                       style="cursor-pointer"
-                      tag={tag}
-                    />
+                      tag={tag} deletable={false}                    />
                   </span>
                 ))}
               </div>
@@ -111,7 +105,7 @@ export function TagManager({ onTagAdd }: TagManagerProps) {
               onSelectTag={() =>
                 createTag({ label: inputText || "New", color: selectedColor })
               }
-              tag={{ label: inputText || "New", color: selectedColor }}
+              tag={{ tagDesc: inputText || "New", color: selectedColor }}
             />
             <div className="flex gap-2">
               {colors.map((color) => (
