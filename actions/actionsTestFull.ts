@@ -24,7 +24,11 @@ async function main() {
   try {
     // Create a user
     console.log("Creating user...");
-    const user = await actionCreateUser("User 4", "user4@example.com");
+    const user = await actionCreateUser(
+      "User 4",
+      "user4@example.com",
+      "54325135413265"
+    );
     console.log("User created:", user);
 
     // Create a task for the user
