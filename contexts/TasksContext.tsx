@@ -20,6 +20,7 @@ interface TasksContextProps {
   addTask: (task: Task) => void;
   updateTask: (updatedTask: Task) => void;
   deleteTask: (taskId: string) => void;
+  loading: boolean
 }
 
 const TasksContext = createContext<TasksContextProps | undefined>(undefined);
@@ -71,7 +72,7 @@ export const TasksProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <TasksContext.Provider
-      value={{ tasksCollection, addTask, updateTask, deleteTask }}
+      value={{ tasksCollection, addTask, updateTask, deleteTask, loading }}
     >
       {children}
     </TasksContext.Provider>

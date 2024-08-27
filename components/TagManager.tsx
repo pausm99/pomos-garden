@@ -6,40 +6,63 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Tag as TagType } from "@/prisma/generated/zod";
+import { Tag as TagType, TagCreateInputSchema } from "@/prisma/generated/zod";
 import { useState } from "react";
 import Tag from "./atoms/Tag";
 import { Input } from "./ui/input";
 import { useTagsContext } from "@/contexts/TagsContext";
+import { z } from "zod";
 
-const colors: string[] = ["bg_red_200", "bg_orange_200", "bg_yellow_200", "bg_lime_200", "bg_emerald_200", "bg_sky_200", "bg_indigo_200", "bg_fuchsia_200"];
+type TagCreateInput = z.infer<typeof TagCreateInputSchema>;
+
+const colors: color[] = [
+  "bg_red_200",
+  "bg_orange_200",
+  "bg_yellow_200",
+  "bg_lime_200",
+  "bg_emerald_200",
+  "bg_sky_200",
+  "bg_indigo_200",
+  "bg_fuchsia_200",
+];
+
+type color =
+  | "bg_red_200"
+  | "bg_orange_200"
+  | "bg_yellow_200"
+  | "bg_lime_200"
+  | "bg_emerald_200"
+  | "bg_sky_200"
+  | "bg_indigo_200"
+  | "bg_fuchsia_200";
 
 type TagManagerProps = {
-  onTagAdd: (tag: TagType) => void;
+  onTagSelect: (tag: TagType) => void;
 };
 
-export function TagManager({ onTagAdd }: TagManagerProps) {
+export function TagManager({ onTagSelect }: TagManagerProps) {
   const [inputText, setInputText] = useState("");
-  const [selectedColor, setSelectedColor] = useState(colors[1]);
-  const { tagsCollection } = useTagsContext();
-  const [allTags, setAllTags] = useState<TagType[]>(tagsCollection)
+  const [selectedColor, setSelectedColor] = useState<color>("bg_red_200");
+  const { tagsCollection, addTag } = useTagsContext();
+  const [allTags, setAllTags] = useState<TagType[]>(tagsCollection);
   const [filteredTags, setFilteredTags] = useState<TagType[]>(tagsCollection);
   const [isOpen, setIsOpen] = useState(false);
 
   // Manejar la selección de una etiqueta
   const selectTag = (tag: TagType) => {
-    onTagAdd(tag);
+    onTagSelect(tag);
     setIsOpen(false);
   };
 
   // Manejar la creación de un nuevo tag
-  const createTag = (newTag: TagType) => {
+  const createTag = async (newTag: TagCreateInput) => {
     if (newTag.tagDesc) {
       if (!allTags.find((tag) => tag.tagDesc === newTag.tagDesc)) {
-        setAllTags([...allTags, newTag]);
+        const addedTag = await addTag(newTag);
+        setAllTags([...allTags, addedTag]);
+        setFilteredTags([...allTags, addedTag]);
         setInputText("");
-        setFilteredTags([...allTags, newTag]);
-        selectTag(newTag);
+        selectTag(addedTag);
       }
     }
   };
@@ -76,7 +99,11 @@ export function TagManager({ onTagAdd }: TagManagerProps) {
       <DropdownMenuContent className="w-64 rounded-lg border border-zinc-300">
         <form
           action={() =>
-            createTag({ label: inputText || "New", color: selectedColor })
+            createTag({
+              userId: "66c60077cfa9f183ca355e23",
+              tagDesc: inputText || "New",
+              color: selectedColor,
+            })
           }
         >
           <div className="p-2.5">
@@ -91,7 +118,9 @@ export function TagManager({ onTagAdd }: TagManagerProps) {
                     <Tag
                       onSelectTag={selectTag}
                       style="cursor-pointer"
-                      tag={tag} deletable={false}                    />
+                      tag={tag}
+                      deletable={false}
+                    />
                   </span>
                 ))}
               </div>
@@ -103,12 +132,17 @@ export function TagManager({ onTagAdd }: TagManagerProps) {
             <Tag
               style="cursor-pointer w-fit max-w-full"
               onSelectTag={() =>
-                createTag({ label: inputText || "New", color: selectedColor })
+                createTag({
+                  userId: "66c60077cfa9f183ca355e23",
+                  tagDesc: inputText || "New",
+                  color: selectedColor,
+                })
               }
-              tag={{ tagDesc: inputText || "New", color: selectedColor }}
+              deletable={false}
+              tag={{userId: "66c60077cfa9f183ca355e23", tagDesc: inputText || "New", color: selectedColor }}
             />
             <div className="flex gap-2">
-              {colors.map((color) => (
+              {colors.map((color: color) => (
                 <span
                   key={color}
                   onClick={() => setSelectedColor(color)}

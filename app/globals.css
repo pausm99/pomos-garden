@@ -86,12 +86,15 @@ p {
 
 input,
 input:hover,
-input:focus-visible {
+input:focus-visible,
+button,
+button:hover,
+button:focus-visible {
   outline: 0 !important;
   box-shadow: none !important;
 }
 
-input {
+input, button, textarea {
   @apply border border-zinc-300 !important;
 }
 

@@ -1,11 +1,20 @@
 "use client";
 
-import { Tag as TagType } from "@/prisma/generated/zod";
+import { Tag as TagType, TagCreateInputSchema } from "@/prisma/generated/zod";
 import { X } from "lucide-react";
 import React from "react";
+import { z } from "zod";
+
+type TagCreateInput = z.infer<typeof TagCreateInputSchema>;
+
+type CompleteTag = TagCreateInput & {
+  id: string;
+  userId: string;
+  taskIDs: string[];
+};
 
 type TagProps = {
-  tag: TagType;
+  tag: TagCreateInput;
   style?: string;
   onSelectTag?: (tag: TagType) => void;
   onDiscardTag?: (tag: TagType) => void;
@@ -15,10 +24,10 @@ type TagProps = {
 export default function Tag({ tag, style, onSelectTag, onDiscardTag, deletable }: TagProps) {
   const sendEvent = () => {
     if (deletable && onDiscardTag) {
-      onDiscardTag(tag)
+      onDiscardTag(tag as CompleteTag)
     }
     if (onSelectTag) {
-      onSelectTag(tag); // Envía la etiqueta seleccionada
+      onSelectTag(tag as CompleteTag); // Envía la etiqueta seleccionada
     }
   };
 

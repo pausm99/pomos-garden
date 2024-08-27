@@ -33,8 +33,8 @@ export async function actionGetAllTasksForUser(userId: string) {
 
 //Update Task Function
 export async function actionUpdateTask(updatedTask: Task) {
-  const { id, title, description, status } = updatedTask;
-  return await serverUpdateTask(id, title, description, status);
+  const { id, title, description, status, tagIDs } = updatedTask;
+  return await serverUpdateTask(id, title, description, status, tagIDs);
 }
 
 //Delete Task Function

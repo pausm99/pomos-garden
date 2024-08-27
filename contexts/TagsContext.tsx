@@ -1,32 +1,33 @@
 "use client";
 
 import { actionCreateTag, actionGetAllTagsForUser } from "@/actions/tags";
-import { Tag } from "@/prisma/generated/zod";
+import { Tag, TagCreateInputSchema } from "@/prisma/generated/zod";
 import {
-    createContext,
-    ReactNode,
-    useContext,
-    useEffect,
-    useState,
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useState,
 } from "react";
+import { z } from "zod";
+
+type TagCreateInput = z.infer<typeof TagCreateInputSchema>;
 
 interface TagsContextProps {
   tagsCollection: Tag[];
-  addTag: (tag: Tag) => void;
-//   updateTag: (updatedTag: Tag) => void;
-//   deleteTag: (tagId: string) => void;
+  addTag: (tag: TagCreateInput) => Promise<Tag>;
+  //   updateTag: (updatedTag: Tag) => void;
+  //   deleteTag: (tagId: string) => void;
 }
 
 const TagsContext = createContext<TagsContextProps | undefined>(undefined);
 
 export const TagsProvider = ({ children }: { children: ReactNode }) => {
   const [tagsCollection, setTagsCollection] = useState<Tag[]>([]);
-  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchTags = async () => {
       try {
-        setLoading(true);
         const fetchedTags = await actionGetAllTagsForUser(
           "66c60077cfa9f183ca355e23"
         );
@@ -34,42 +35,25 @@ export const TagsProvider = ({ children }: { children: ReactNode }) => {
       } catch (error) {
         console.error("Error fetching tags:", error);
       } finally {
-        setLoading(false);
       }
     };
 
     fetchTags();
   }, []);
 
-  const addTag = async (tag: {
-    title: string;
-    description: string;
-    userId: string;
-    color: string;
-    taskId: string[]
-  }) => {
-    const newTag = await actionCreateTag("", tag.description, tag.color, tag.taskId);
+  const addTag = async (tag: TagCreateInput) => {
+    const newTag = await actionCreateTag(
+      "66c60077cfa9f183ca355e23",
+      tag.tagDesc,
+      tag.color,
+      []
+    );
     setTagsCollection((prevTags) => [...prevTags, newTag]);
-  };
-
-  const updateTag = async (updatedTag: Tag) => {
-    // const tag = await actionUpdateTag(updatedTag);
-    // setTagsCollection((prevTags) =>
-    //   prevTags.map((prevTag) => (prevTag.id === tag.id ? tag : prevTag))
-    // );
-  };
-
-  const deleteTag = async (tagId: string) => {
-    // await actionDeleteTag(tagId)
-    // setTagsCollection((prevTags) =>
-    //   prevTags.filter((tag) => tag.id !== tagId)
-    // );
+    return newTag;
   };
 
   return (
-    <TagsContext.Provider
-      value={{ tagsCollection, addTag }}
-    >
+    <TagsContext.Provider value={{ tagsCollection, addTag }}>
       {children}
     </TagsContext.Provider>
   );

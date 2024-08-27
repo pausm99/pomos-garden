@@ -62,11 +62,12 @@ export async function serverGetAllTasksForUser(userId: string) {
     }
 }
 
-export async function serverUpdateTask(id: string, title?: string, description?: string, status?: taskStatus ) {
+export async function serverUpdateTask(id: string, title?: string, description?: string, status?: taskStatus, tagIDs?: string[]) {
     const data = {
         title,
         description,
         status,
+        tags: tagIDs ? { set: tagIDs.map(id => ({ id })) } : undefined
     };
     try {
         TaskUpdateInputSchema.parse(data);
