@@ -94,11 +94,17 @@ button:focus-visible {
   box-shadow: none !important;
 }
 
-input, button, textarea {
+input,
+button,
+textarea {
   @apply border border-zinc-300 !important;
 }
 
 /* Global */
+
+* {
+  @apply text-zinc-800;
+}
 
 /* General */
 .rounded-4xl {
