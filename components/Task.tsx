@@ -1,48 +1,38 @@
 import { useTasksContext } from "@/contexts/TasksContext";
-import TagType from "@/interfaces/Tag";
-import TaskType from "@/interfaces/Task";
+import { Task as TaskType } from "@/prisma/generated/zod";
+import { Tag as TagType } from "@/prisma/generated/zod";
 import { Check } from "lucide-react";
 import { useState } from "react";
-import { TagManager } from "./TagManager";
 import TaskActions from "./TaskActions";
-import Tag from "./atoms/Tag";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
-import { useSortable } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
+import { TagManager } from "./TagManager";
+import { useTagsContext } from "@/contexts/TagsContext";
+import Tag from "./atoms/Tag";
+import { SelectState } from "./atoms/SelectState";
+import { TaskStatus } from "@/interfaces/State";
 
 type TaskProps = {
   task: TaskType;
 };
 
 export default function Task({ task }: TaskProps) {
+  const { tagsCollection } = useTagsContext();
   const { updateTask, deleteTask } = useTasksContext();
   const [titleInputText, setTitleInputText] = useState(task.title);
-  const [descriptionInputText, setDescriptionInputText] = useState(task.description || "");
+  const [descriptionInputText, setDescriptionInputText] = useState(
+    task.description || ""
+  );
   const [isEditing, setIsEditing] = useState(false);
-  const [tags, setTags] = useState<TagType[]>(task.tags);
-
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({
-    id: task.id,
-  });
 
   const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
     boxShadow: "0px 1px 3px rgba(0,0,0,0.1)",
-    cursor: "pointer",
-    opacity: isDragging ? 0.5 : 1,
-    height: "175px",
-    boxSizing: "border-box" as "border-box",
   };
+
+  const handleStatusChange = (newStatus: TaskStatus) => {
+    task.status = newStatus
+  }
 
   const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTitleInputText(event.target.value);
@@ -54,18 +44,17 @@ export default function Task({ task }: TaskProps) {
     setDescriptionInputText(event.target.value);
   };
 
-  const handleTagAdd = (newTag: TagType) => {
-    if (!tags.includes(newTag)) {
-      const updatedTags = [...tags, newTag];
-      setTags(updatedTags);
-      updateTask({ ...task, tags: updatedTags });
+  const handleTagSelect = (newTag: TagType) => {
+    if (!task.tagIDs.includes(newTag.id)) {
+      task.tagIDs.push(newTag.id);
+      updateTask(task);
     }
   };
 
   const handleDiscardTag = (oldTag: TagType) => {
-    const updatedTags = tags.filter((tag) => tag.label !== oldTag.label);
-    setTags(updatedTags);
-    updateTask({ ...task, tags: updatedTags });
+    const updatedTags = task.tagIDs.filter((tagID) => tagID !== oldTag.id);
+    task.tagIDs = updatedTags;
+    updateTask(task);
   };
 
   const handleDelete = () => {
@@ -82,17 +71,13 @@ export default function Task({ task }: TaskProps) {
       ...task,
       title: titleInputText,
       description: descriptionInputText,
-      tags,
     });
     setIsEditing(false);
   };
 
   return (
     <div
-      ref={setNodeRef}
       style={style}
-      {...listeners}
-      {...attributes}
       className="flex flex-col gap-5 p-4 bg-white text-black rounded-lg"
     >
       <form onSubmit={handleEditTask} className="flex flex-col gap-5">
@@ -110,7 +95,7 @@ export default function Task({ task }: TaskProps) {
           )}
           {isEditing ? (
             <Button
-              onClick={() => setIsEditing(false)}
+              onClick={handleEditTask}
               className="doneEditingButton"
               type="submit"
               size="icon"
@@ -122,10 +107,13 @@ export default function Task({ task }: TaskProps) {
           )}
         </div>
         {isEditing ? (
-          <Textarea
-            value={descriptionInputText}
-            onChange={handleDescriptionChange}
-          />
+          <>
+            <Textarea
+              value={descriptionInputText}
+              onChange={handleDescriptionChange}
+            />
+            <SelectState onStatusChange={handleStatusChange} status={task.status}/>
+          </>
         ) : (
           descriptionInputText && (
             <p className="flex-1 text-zinc-500">{descriptionInputText}</p>
@@ -133,18 +121,24 @@ export default function Task({ task }: TaskProps) {
         )}
       </form>
       <div className="flex gap-2 flex-wrap items-center">
-        {tags &&
-          tags.map((tag, index) => (
-            <span key={index}>
+        {task.tagIDs.length > 0 &&
+          task.tagIDs
+            .map((tagId: string) =>
+              tagsCollection.find(
+                (collectionTag: TagType) => collectionTag.id === tagId
+              )
+            )
+            .filter((tag): tag is TagType => tag !== undefined)
+            .map((tag: TagType) => (
               <Tag
+                key={tag.id}
                 tag={tag}
                 style="cursor-pointer"
                 deletable={isEditing}
                 onDiscardTag={handleDiscardTag}
               />
-            </span>
-          ))}
-        <TagManager onTagAdd={handleTagAdd} />
+            ))}
+        <TagManager onTagSelect={handleTagSelect} />
       </div>
     </div>
   );

@@ -6,48 +6,63 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import TagType from "@/interfaces/Tag";
+import { Tag as TagType, TagCreateInputSchema } from "@/prisma/generated/zod";
 import { useState } from "react";
 import Tag from "./atoms/Tag";
 import { Input } from "./ui/input";
+import { useTagsContext } from "@/contexts/TagsContext";
+import { z } from "zod";
 
-// Etiquetas iniciales
-const propTags: TagType[] = [
-  { label: "Finanzas", color: "#FEE2E2" },
-  { label: "Urgente", color: "#FEE2E2" },
-  { label: "Desarrollo", color: "#ECFCCB" },
-  { label: "Marketing", color: "#DBEAFE" },
-  { label: "Investigación", color: "#EDE9FE" },
-  { label: "Eventos", color: "#FAFAFA" },
+type TagCreateInput = z.infer<typeof TagCreateInputSchema>;
+
+const colors: color[] = [
+  "bg_red_200",
+  "bg_orange_200",
+  "bg_yellow_200",
+  "bg_lime_200",
+  "bg_emerald_200",
+  "bg_sky_200",
+  "bg_indigo_200",
+  "bg_fuchsia_200",
 ];
 
-const colors: string[] = ["#F3E8FF", "#DBEAFE", "#ECFCCB", "#FEE2E2"];
+type color =
+  | "bg_red_200"
+  | "bg_orange_200"
+  | "bg_yellow_200"
+  | "bg_lime_200"
+  | "bg_emerald_200"
+  | "bg_sky_200"
+  | "bg_indigo_200"
+  | "bg_fuchsia_200";
 
 type TagManagerProps = {
-  onTagAdd: (tag: TagType) => void;
+  onTagSelect: (tag: TagType) => void;
 };
 
-export function TagManager({ onTagAdd }: TagManagerProps) {
+export function TagManager({ onTagSelect }: TagManagerProps) {
   const [inputText, setInputText] = useState("");
-  const [selectedColor, setSelectedColor] = useState(colors[1]);
-  const [allTags, setAllTags] = useState<TagType[]>(propTags);
-  const [filteredTags, setFilteredTags] = useState<TagType[]>(propTags);
-  const [isOpen, setIsOpen] = useState(false)
+  const [selectedColor, setSelectedColor] = useState<color>("bg_red_200");
+  const { tagsCollection, addTag } = useTagsContext();
+  const [allTags, setAllTags] = useState<TagType[]>(tagsCollection);
+  const [filteredTags, setFilteredTags] = useState<TagType[]>(tagsCollection);
+  const [isOpen, setIsOpen] = useState(false);
 
   // Manejar la selección de una etiqueta
   const selectTag = (tag: TagType) => {
-    onTagAdd(tag);
-    setIsOpen(false)
+    onTagSelect(tag);
+    setIsOpen(false);
   };
 
-  // Manejar la creación de una nueva etiqueta
-  const createTag = (newTag: TagType) => {
-    if (newTag.label) {
-      if (!allTags.find((tag) => tag.label === newTag.label)) {
-        setAllTags([...allTags, newTag]);
+  // Manejar la creación de un nuevo tag
+  const createTag = async (newTag: TagCreateInput) => {
+    if (newTag.tagDesc) {
+      if (!allTags.find((tag) => tag.tagDesc === newTag.tagDesc)) {
+        const addedTag = await addTag(newTag);
+        setAllTags([...allTags, addedTag]);
+        setFilteredTags([...allTags, addedTag]);
         setInputText("");
-        setFilteredTags([...allTags, newTag]);
-        selectTag(newTag);
+        selectTag(addedTag);
       }
     }
   };
@@ -65,7 +80,7 @@ export function TagManager({ onTagAdd }: TagManagerProps) {
       setFilteredTags(allTags); // Restaurar etiquetas originales
     } else {
       const filtered = allTags.filter((tag) =>
-        tag.label.toLowerCase().includes(text.toLowerCase())
+        tag.tagDesc.toLowerCase().includes(text.toLowerCase())
       );
       setFilteredTags(filtered);
     }
@@ -74,14 +89,21 @@ export function TagManager({ onTagAdd }: TagManagerProps) {
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenuTrigger asChild>
-        <button onClick={() => setIsOpen(!isOpen)} className="text-xs flex justify-center items-center rounded-full bg-zinc-50 text-zinc-400 h-5 w-5 border border-zinc-400">
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className="text-xs flex justify-center items-center rounded-full bg-zinc-50 text-zinc-400 h-5 w-5 border border-zinc-400"
+        >
           +
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-52 rounded-lg border border-zinc-300">
+      <DropdownMenuContent className="w-64 rounded-lg border border-zinc-300">
         <form
           action={() =>
-            createTag({ label: inputText || "New", color: selectedColor })
+            createTag({
+              userId: "66c60077cfa9f183ca355e23",
+              tagDesc: inputText || "New",
+              color: selectedColor,
+            })
           }
         >
           <div className="p-2.5">
@@ -90,13 +112,14 @@ export function TagManager({ onTagAdd }: TagManagerProps) {
           {filteredTags.length > 0 && (
             <>
               <DropdownMenuSeparator className="bg-zinc-300" />
-              <div className="flex flex-wrap gap-2 p-2.5">
+              <div className="flex flex-wrap gap-2 p-2.5 h-32 overflow-y-scroll">
                 {filteredTags.map((tag, index) => (
                   <span key={index}>
                     <Tag
                       onSelectTag={selectTag}
                       style="cursor-pointer"
                       tag={tag}
+                      deletable={false}
                     />
                   </span>
                 ))}
@@ -109,12 +132,17 @@ export function TagManager({ onTagAdd }: TagManagerProps) {
             <Tag
               style="cursor-pointer w-fit max-w-full"
               onSelectTag={() =>
-                createTag({ label: inputText || "New", color: selectedColor })
+                createTag({
+                  userId: "66c60077cfa9f183ca355e23",
+                  tagDesc: inputText || "New",
+                  color: selectedColor,
+                })
               }
-              tag={{ label: inputText || "New", color: selectedColor }}
+              deletable={false}
+              tag={{userId: "66c60077cfa9f183ca355e23", tagDesc: inputText || "New", color: selectedColor }}
             />
             <div className="flex gap-2">
-              {colors.map((color) => (
+              {colors.map((color: color) => (
                 <span
                   key={color}
                   onClick={() => setSelectedColor(color)}

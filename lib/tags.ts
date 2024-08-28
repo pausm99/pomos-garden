@@ -95,7 +95,7 @@ export async function serverUpdateTag(
 }
 //Function to delete a Tag
 
-export async function serverDeleteTag(tagId: string) {
+export async function serverDeleteTag(tagId: string)
   try {
     const deletedTag = await db.tag.delete({
       where: {
