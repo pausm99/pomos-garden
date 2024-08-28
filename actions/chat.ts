@@ -5,11 +5,20 @@ import { openai } from "@ai-sdk/openai";
 import { createStreamableValue } from "ai/rsc";
 import { db } from "@/db/db";
 import { auth } from "@clerk/nextjs/server";
+import { serverGetUserIdByClerkId } from "@/lib/user";
 
 export interface Message {
   role: "user" | "assistant";
   content: string;
 }
+
+const { userId } = auth();
+try {
+  if (!userId) throw new Error("User not authenticated");
+} catch (error) {
+  throw new Error(`Failed to get user: ${error}`);
+}
+const dbUserId = serverGetUserIdByClerkId(userId);
 
 // Continue an existing conversation or start a new one
 export async function continueConversation(
