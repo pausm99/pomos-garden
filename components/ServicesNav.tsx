@@ -7,7 +7,7 @@ import {
   ListTodo,
 } from "lucide-react";
 import { usePathname } from "next/navigation";
-import Link from "next/link"; // Import Link from next/link
+import Link from "next/link";
 import ServiceButton from "./atoms/ServiceButton";
 
 type NavProps = {
@@ -37,10 +37,14 @@ export default function Nav({ className }: NavProps) {
             <ListTodo size={24} />
           </ServiceButton>
         </Link>
-
-        <ServiceButton tooltipContent="ChatBot" active={isActiveRoute("/chat")}>
-          <BotMessageSquare size={24} />
-        </ServiceButton>
+        <Link href="/chat" passHref>
+          <ServiceButton
+            tooltipContent="ChatBot"
+            active={isActiveRoute("/chat")}
+          >
+            <BotMessageSquare size={24} />
+          </ServiceButton>
+        </Link>
 
         <Link href="/analytics" passHref>
           <ServiceButton

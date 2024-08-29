@@ -94,7 +94,9 @@ button:focus-visible {
   box-shadow: none !important;
 }
 
-input, button, textarea {
+input,
+button,
+textarea {
   @apply border border-zinc-300 !important;
 }
 

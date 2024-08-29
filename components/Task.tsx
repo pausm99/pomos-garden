@@ -10,7 +10,6 @@ import { Textarea } from "./ui/textarea";
 import { TagManager } from "./TagManager";
 import { useTagsContext } from "@/contexts/TagsContext";
 import Tag from "./atoms/Tag";
-import { SelectState } from "./atoms/SelectState";
 import { TaskStatus } from "@/interfaces/State";
 
 type TaskProps = {
@@ -31,8 +30,8 @@ export default function Task({ task }: TaskProps) {
   };
 
   const handleStatusChange = (newStatus: TaskStatus) => {
-    task.status = newStatus
-  }
+    task.status = newStatus;
+  };
 
   const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTitleInputText(event.target.value);
@@ -112,7 +111,6 @@ export default function Task({ task }: TaskProps) {
               value={descriptionInputText}
               onChange={handleDescriptionChange}
             />
-            <SelectState onStatusChange={handleStatusChange} status={task.status}/>
           </>
         ) : (
           descriptionInputText && (

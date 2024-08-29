@@ -139,7 +139,11 @@ export function TagManager({ onTagSelect }: TagManagerProps) {
                 })
               }
               deletable={false}
-              tag={{userId: "66c60077cfa9f183ca355e23", tagDesc: inputText || "New", color: selectedColor }}
+              tag={{
+                userId: "66c60077cfa9f183ca355e23",
+                tagDesc: inputText || "New",
+                color: selectedColor,
+              }}
             />
             <div className="flex gap-2">
               {colors.map((color: color) => (
