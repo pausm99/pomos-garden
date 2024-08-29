@@ -93,9 +93,8 @@ export async function serverUpdateTag(
     throw new Error(`Failed to update tag: ${error}`);
   }
 }
-//Function to delete a Tag
-
-export async function serverDeleteTag(tagId: string)
+// Function to delete a Tag
+export async function serverDeleteTag(tagId: string) {
   try {
     const deletedTag = await db.tag.delete({
       where: {

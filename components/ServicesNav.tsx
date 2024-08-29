@@ -7,6 +7,7 @@ import {
   ListTodo,
 } from "lucide-react";
 import { usePathname } from "next/navigation";
+import Link from "next/link"; // Import Link from next/link
 import ServiceButton from "./atoms/ServiceButton";
 
 type NavProps = {
@@ -22,28 +23,34 @@ export default function Nav({ className }: NavProps) {
   return (
     <>
       <div className={className}>
-        <ServiceButton tooltipContent="Timer" active={isActiveRoute("/")}>
-          <AlarmClockCheck size={24} />
-        </ServiceButton>
-        <ServiceButton tooltipContent="Tasks" active={isActiveRoute("/tasks")}>
-          <ListTodo size={24} />
-        </ServiceButton>
-        <ServiceButton
-          tooltipContent="Comming soon"
-          disabled
-          active={isActiveRoute("/chat")}
-        >
+        <Link href="/" passHref>
+          <ServiceButton tooltipContent="Timer" active={isActiveRoute("/")}>
+            <AlarmClockCheck size={24} />
+          </ServiceButton>
+        </Link>
+
+        <Link href="/tasks" passHref>
+          <ServiceButton
+            tooltipContent="Tasks"
+            active={isActiveRoute("/tasks")}
+          >
+            <ListTodo size={24} />
+          </ServiceButton>
+        </Link>
+
+        <ServiceButton tooltipContent="ChatBot" active={isActiveRoute("/chat")}>
           <BotMessageSquare size={24} />
         </ServiceButton>
 
-        {/* Charts button*/}
-        <ServiceButton
-          tooltipContent="Stats"
-          className="mt-auto"
-          active={isActiveRoute("/stats")}
-        >
-          <ChartColumnBig size={24} />
-        </ServiceButton>
+        <Link href="/analytics" passHref>
+          <ServiceButton
+            tooltipContent="Stats"
+            className="mt-auto"
+            active={isActiveRoute("/analytics")}
+          >
+            <ChartColumnBig size={24} />
+          </ServiceButton>
+        </Link>
       </div>
     </>
   );

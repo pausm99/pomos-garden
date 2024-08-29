@@ -1,4 +1,4 @@
-"user server";
+"use server";
 
 import { serverCreateUser, serverGetUserIdByClerkId } from "@/lib/user";
 
