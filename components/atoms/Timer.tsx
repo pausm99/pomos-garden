@@ -18,7 +18,7 @@ export default function Timer({ timeLeft }: TimerProps) {
 
   return (
     <div
-      style={{ lineHeight: "220px", fontSize: "220px" }}
+      style={{ lineHeight: "220px", fontSize: "220px", fontWeight: "300" }}
       className="font-mono flex flex-nowrap justify-between items-center"
     >
       <span>{formattedTime}</span>

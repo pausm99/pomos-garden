@@ -2,6 +2,7 @@ import { useTimerContext } from "@/contexts/TimerContext";
 import Timer from "./atoms/Timer";
 import TimerProgress from "./atoms/TimerProgress";
 import TimerControls from "./TimerControls";
+import PresetsSection from "./PresetsSection";
 
 export default function TimerSection() {
   const { progress, timeLeft } = useTimerContext();
@@ -29,7 +30,7 @@ export default function TimerSection() {
         <TimerControls />
       </div>
       <div style={style} className="w-1/3 border rounded-xl p-5 bg-white">
-        <h2 className="uppercase text-zinc-400">Presets</h2>
+        <PresetsSection />
       </div>
     </div>
   );
