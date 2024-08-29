@@ -39,6 +39,7 @@ export default function Nav({ className }: NavProps) {
         </Link>
         <Link href="/chat" passHref>
           <ServiceButton
+            disabled
             tooltipContent="ChatBot"
             active={isActiveRoute("/chat")}
           >
