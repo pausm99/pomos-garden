@@ -11,6 +11,7 @@ import { TagManager } from "./TagManager";
 import { useTagsContext } from "@/contexts/TagsContext";
 import Tag from "./atoms/Tag";
 import { TaskStatus } from "@/interfaces/State";
+import { SelectState } from "./atoms/SelectState";
 
 type TaskProps = {
   task: TaskType;
@@ -110,6 +111,10 @@ export default function Task({ task }: TaskProps) {
             <Textarea
               value={descriptionInputText}
               onChange={handleDescriptionChange}
+            />
+            <SelectState
+              onStatusChange={handleStatusChange}
+              status={task.status}
             />
           </>
         ) : (
