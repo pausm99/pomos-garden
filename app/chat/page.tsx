@@ -31,7 +31,7 @@ export default function Home() {
 
     // Transform the fetched messages to match the Message type
     const formattedMessages: Message[] = conversationMessages.map(
-      (message) => ({
+      (message: { role: string }) => ({
         ...message,
         role: message.role as "user" | "assistant", // Ensure the role matches the expected type
       })

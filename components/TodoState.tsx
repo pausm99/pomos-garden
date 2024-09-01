@@ -1,3 +1,5 @@
+import * as React from "react";
+import { List, arrayMove } from "react-movable";
 import { Task as TaskType } from "@/prisma/generated/zod";
 import AddTask from "./AddTask";
 import Task from "./Task";
@@ -8,6 +10,7 @@ type TodoStateProps = {
   name: string;
   state: TodoStateType;
   tasks: TaskType[];
+  onTasksChange: (state: TodoStateType, newTasks: TaskType[]) => void;
 };
 
 const stateColor = {
@@ -16,8 +19,18 @@ const stateColor = {
   done: "bg-lime-500",
 };
 
-export default function TodoState({ name, state, tasks }: TodoStateProps) {
+export default function TodoState({
+  name,
+  state,
+  tasks,
+  onTasksChange,
+}: TodoStateProps) {
   const dotColor = stateColor[state];
+
+  const handleTasksChange = (event: { oldIndex: number; newIndex: number }) => {
+    const newTasks = arrayMove(tasks, event.oldIndex, event.newIndex);
+    onTasksChange(state, newTasks);
+  };
 
   return (
     <div
@@ -38,9 +51,20 @@ export default function TodoState({ name, state, tasks }: TodoStateProps) {
       </div>
       {state === "todo" && <AddTask />}
       <div className="flex flex-col gap-2.5 flex-grow overflow-y-auto">
-        {tasks.map((task) => (
-          <Task key={task.id} task={task} />
-        ))}
+        <List
+          values={tasks}
+          onChange={handleTasksChange}
+          renderList={({ children, props }) => (
+            <ul {...props} className="list-none p-0 m-0">
+              {children}
+            </ul>
+          )}
+          renderItem={({ value, props }) => (
+            <li {...props} key={value.id} className="mb-2">
+              <Task task={value} />
+            </li>
+          )}
+        />
       </div>
     </div>
   );

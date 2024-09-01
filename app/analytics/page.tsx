@@ -1,3 +1,4 @@
+"use client";
 import { Stats } from "@/components/Stats";
 import React from "react";
 
