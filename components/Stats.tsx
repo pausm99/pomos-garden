@@ -33,7 +33,7 @@ export const Stats = () => {
   useEffect(() => {
     const fetchTaskData = async () => {
       try {
-        const userId = await actionGetUserIdByClerkId(user!.id);
+        //const userId = await actionGetUserIdByClerkId(user!.id);
         const data = await actionGetAllTasksForUser("66c60077cfa9f183ca355e23");
         const taskCounts = data.reduce(
           (acc: { [key: string]: number }, task) => {
@@ -54,8 +54,7 @@ export const Stats = () => {
 
     const fetchTagData = async () => {
       try {
-        const userId = await actionGetUserIdByClerkId(user!.id);
-
+        //const userId = await actionGetUserIdByClerkId(user!.id);
         const tags = await actionGetAllTagsForUser("66c60077cfa9f183ca355e23");
         const tagCounts = tags.reduce((acc: { [key: string]: number }, tag) => {
           const taskCount = tag.taskIDs.length;
