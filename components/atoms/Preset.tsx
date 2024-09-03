@@ -1,16 +1,24 @@
+import { usePresetsContext } from "@/contexts/PresetsContext";
+import { Preset as PresetType } from "@/interfaces/Preset";
+
 type PresetProps = {
-  preset: {
-    name: string;
-    breakTime: number;
-    focusTime: number;
-  };
+  preset: PresetType
 };
 
 export default function Preset({ preset }: PresetProps) {
+  const { selectPreset, selectedPreset } = usePresetsContext();
+
+  const handleSelectPreset = () => {
+    selectPreset(preset.id);
+  };
+
   return (
     <div
+      onClick={handleSelectPreset} // Corrige aquí para llamar a la función
       style={{ boxShadow: "0px 1px 3px rgba(0,0,0,0.1)" }}
-      className="flex justify-between items-center bg-zinc-100 text-zinc-900 rounded-lg p-2.5"
+      className={`cursor-pointer flex justify-between items-center ${
+        selectedPreset?.id === preset.id ? "bg-white" : "bg-zinc-100"
+      } text-zinc-900 rounded-lg p-2.5`}
     >
       <span>{preset.name}</span>
       <div>

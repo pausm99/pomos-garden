@@ -1,20 +1,19 @@
+import { usePresetsContext } from "@/contexts/PresetsContext";
 import Preset from "./atoms/Preset";
+import AddPreset from "./AddPreset";
 
 export default function PresetsSection() {
-  const presets = [
-    { name: "Study", focusTime: 40, breakTime: 5 },
-    { name: "Study", focusTime: 40, breakTime: 5 },
-    { name: "Study", focusTime: 40, breakTime: 5 },
-    { name: "Study", focusTime: 40, breakTime: 5 },
-    { name: "Study", focusTime: 40, breakTime: 5 },
-  ];
+  const { presets } = usePresetsContext();
   return (
-    <div className="flex flex-col">
-      <h2 className="uppercase text-zinc-400">Presets</h2>
-      <div className="flex flex-col gap-2">
-        {presets.map((preset) => (
-          <Preset preset={preset} />
-        ))}
+    <div className="h-full">
+      <h2 className="uppercase text-zinc-400 text-lg mb-2.5">Presets</h2>
+      <div className="flex flex-col justify-between gap-10 h-full">
+        <div style={{ maxHeight: '66%', flex: '3' }} className="flex flex-col flex-grow flex-1 gap-2.5 overflow-y-scroll">
+          {presets.map((preset, index) => (
+            <Preset key={index} preset={preset} />
+          ))}
+        </div>
+        <AddPreset />
       </div>
     </div>
   );

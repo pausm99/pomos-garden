@@ -970,7 +970,7 @@ export const SessionCreateInputSchema: z.ZodType<Prisma.SessionCreateInput> = z.
   breakDuration: z.number().int(),
   rounds: z.number().int(),
   completedRounds: z.number().int().optional(),
-  endTime: z.coerce.date(),
+  endTime: z.coerce.date().optional(),
   startTime: z.coerce.date().optional(),
   in_progress: z.boolean().optional(),
   createdAt: z.coerce.date().optional(),

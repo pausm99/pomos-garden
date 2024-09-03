@@ -1,51 +1,84 @@
-import { Pause, Play } from "lucide-react";
-import { Button } from "./ui/button";
+import { usePresetsContext } from "@/contexts/PresetsContext";
 import { useTimerContext } from "@/contexts/TimerContext";
-import { useEffect, useState } from "react";
+import Tippy from "@tippyjs/react";
+import { CircleStop, Pause, Play } from "lucide-react";
+import { Button } from "./ui/button";
 
 export default function TimerControls() {
-  const { timeLeft, startTimer, pauseTimer, resumeTimer } = useTimerContext();
-  const [hasStarted, setHasStarted] = useState(false);
-  const [isPaused, setIsPaused] = useState(true); // Assume initially paused
+  const {
+    isPaused,
+    startSession,
+    pauseTimer,
+    resumeTimer,
+    resetTimer,
+    hasStarted,
+    timeLeft,
+  } = useTimerContext();
 
-  useEffect(() => {
-    if (timeLeft <= 0) {
-      setHasStarted(false);
-      setIsPaused(false);
-    }
-  }, [timeLeft]);
+  const { selectedPreset } = usePresetsContext();
 
-  const handlePlay = () => {
-    if (!hasStarted) {
-      startTimer(300); // Start timer with 300 seconds
-      setHasStarted(true);
+  const handlePlayPauseClick = () => {
+    if (hasStarted) {
+      if (isPaused) {
+        resumeTimer();
+      } else {
+        pauseTimer();
+      }
     } else {
-      resumeTimer();
+      if (selectedPreset) {
+        startSession(
+          "userId",
+          selectedPreset.focusTime,
+          selectedPreset.breakTime
+        );
+      }
     }
-    setIsPaused(false);
   };
 
-  const handlePause = () => {
-    pauseTimer();
-    setIsPaused(true);
+  const handleStopClick = () => {
+    resetTimer();
   };
 
   return (
     <div className="flex items-center justify-between gap-2.5">
-      <Button
-        onClick={handlePause}
-        disabled={isPaused || timeLeft <= 0} // Disable if already paused or timer is finished
-        className="w-[50%] rounded-xl"
+      <Tippy
+        content={isPaused ? "Play" : "Pause"}
+        placement="top"
+        theme="light"
+        arrow={false}
+        className={"uppercase pt-[2px]"}
       >
-        <Pause color="#ffffff" />
-      </Button>
-      <Button
-        onClick={handlePlay}
-        disabled={timeLeft <= 0 && hasStarted} // Disable if timer is finished and has started
-        className="w-[50%] rounded-xl"
+        <Button
+          disabled={!selectedPreset}
+          onClick={handlePlayPauseClick}
+          className="w-[50%] rounded-xl"
+        >
+          {hasStarted ? (
+            isPaused ? (
+              <Play color="#ffffff" />
+            ) : (
+              <Pause color="#ffffff" />
+            )
+          ) : (
+            <Play color="#ffffff" />
+          )}
+        </Button>
+      </Tippy>
+      <Tippy
+        content="Stop & restart"
+        placement="top"
+        theme="light"
+        arrow={false}
+        className={"uppercase pt-[2px]"}
       >
-        <Play color="#ffffff" />
-      </Button>
+        <Button
+          onClick={handleStopClick}
+          disabled={!hasStarted || timeLeft <= 0}
+          className="w-[50%] rounded-xl"
+        >
+          <CircleStop color="#ffffff" />
+        </Button>
+      </Tippy>
     </div>
   );
 }
