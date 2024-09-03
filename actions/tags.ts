@@ -6,6 +6,7 @@ import {
   serverDeleteTag,
   serverGetAllTagsForUser,
 } from "@/lib/tags";
+import { tagColor } from "@prisma/client";
 
 // Creating the CRUD actions for tags
 
@@ -13,7 +14,7 @@ import {
 export async function actionCreateTag(
   userId: string,
   tagDesc: string,
-  color: string,
+  color: tagColor,
   taskId: string[]
 ) {
   return await serverCreateTag(userId, tagDesc, color, taskId);
@@ -30,7 +31,7 @@ export async function actionGetAllTagsForUser(userId: string) {
 export async function actionUpdateTag(
   tagId: string,
   tagDesc?: string,
-  color?: string,
+  color?: tagColor,
   taskId?: string[]
 ) {
   return await serverUpdateTag(tagId, tagDesc, color, taskId);

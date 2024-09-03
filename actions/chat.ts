@@ -3,54 +3,57 @@
 import { streamText } from "ai";
 import { openai } from "@ai-sdk/openai";
 import { createStreamableValue } from "ai/rsc";
-import { db } from "@/db/db"; // Assuming this is where your Prisma client is imported
+import { db } from "@/db/db";
+import { auth } from "@clerk/nextjs/server";
+import { serverGetUserIdByClerkId } from "@/lib/user";
 
 export interface Message {
   role: "user" | "assistant";
   content: string;
 }
 
+const { userId } = auth();
+try {
+  if (!userId) throw new Error("User not authenticated");
+} catch (error) {
+  throw new Error(`Failed to get user: ${error}`);
+}
+const dbUserId = serverGetUserIdByClerkId(userId);
+
+// Continue an existing conversation or start a new one
 export async function continueConversation(
   history: Message[],
-  userId: string,
-  conversationId?: string // Optional, only provided when continuing an existing conversation
+  conversationId?: string | null
 ) {
-  "use server";
+  const userId = "66c60077cfa9f183ca355e23";
+  if (!userId) throw new Error("User not authenticated");
 
+  const stream = createStreamableValue();
   let conversation;
 
   if (conversationId) {
-    // Continue existing conversation
+    // Fetch the existing conversation
     conversation = await db.conversation.findUnique({
       where: { id: conversationId },
-      include: { messages: true },
     });
 
-    if (!conversation) {
-      throw new Error("Conversation not found");
-    }
-
-    // Add the existing conversation's messages to the history
-    history = [
-      ...conversation.messages.map((msg) => ({
-        role: msg.role as "user" | "assistant", // Cast the role to the expected type
-        content: msg.content,
-      })),
-      ...history,
-    ];
+    if (!conversation) throw new Error("Conversation not found");
   } else {
     // Start a new conversation
     conversation = await db.conversation.create({
-      data: {
-        userId,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
+      data: { userId, createdAt: new Date(), updatedAt: new Date() },
     });
     conversationId = conversation.id;
   }
 
-  const stream = createStreamableValue();
+  const messagesToSave = history.map((message) => ({
+    role: message.role,
+    content: message.content,
+    conversationId,
+  }));
+
+  // Save the conversation messages to the database
+  await db.message.createMany({ data: messagesToSave });
 
   (async () => {
     const { textStream } = await streamText({
@@ -60,42 +63,51 @@ export async function continueConversation(
       messages: history,
     });
 
-    let assistantResponse = "";
-
     for await (const text of textStream) {
       stream.update(text);
-      assistantResponse += text;
     }
 
     stream.done();
-
-    // Save the user's message and the assistant's response to the database
-    await db.message.create({
-      data: {
-        conversationId,
-        role: "user",
-        content: history[history.length - 1].content, // last message in history is the user's input
-      },
-    });
-
-    await db.message.create({
-      data: {
-        conversationId,
-        role: "assistant",
-        content: assistantResponse,
-      },
-    });
-
-    // Update the conversation's updatedAt field
-    await db.conversation.update({
-      where: { id: conversationId },
-      data: { updatedAt: new Date() },
-    });
   })();
 
   return {
     messages: history,
     newMessage: stream.value,
-    conversationId,
+    conversationId, // Return the conversationId to maintain context
   };
+}
+
+// Fetch all conversations for the current user
+export async function getConversations() {
+  const userId = "66c60077cfa9f183ca355e23";
+
+  if (!userId) throw new Error("User not authenticated");
+
+  const conversations = await db.conversation.findMany({
+    where: { userId },
+    orderBy: { createdAt: "desc" },
+  });
+
+  return conversations.map((conv) => ({
+    id: conv.id,
+    createdAt: conv.createdAt,
+  }));
+}
+
+// Fetch messages of a specific conversation
+export async function getConversationMessages(conversationId: string) {
+  const userId = "66c60077cfa9f183ca355e23";
+
+  if (!userId) throw new Error("User not authenticated");
+
+  const conversation = await db.conversation.findUnique({
+    where: { id: conversationId },
+    include: { messages: true },
+  });
+
+  if (!conversation || conversation.userId !== userId) {
+    throw new Error("Conversation not found");
+  }
+
+  return conversation.messages;
 }

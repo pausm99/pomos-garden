@@ -1,6 +1,6 @@
-"user server";
+"use server";
 
-import { serverCreateUser } from "@/lib/user";
+import { serverCreateUser, serverGetUserIdByClerkId } from "@/lib/user";
 
 export async function actionCreateUser(
   name: string,
@@ -8,4 +8,8 @@ export async function actionCreateUser(
   clerkId: string
 ) {
   return await serverCreateUser(name, email, clerkId);
+}
+
+export async function actionGetUserIdByClerkId(clerkId: string) {
+  return await serverGetUserIdByClerkId(clerkId);
 }

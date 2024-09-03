@@ -17,6 +17,7 @@ import {
 import { useUser } from "@clerk/nextjs";
 import { actionGetAllTasksForUser } from "@/actions/tasks";
 import { actionGetAllTagsForUser } from "@/actions/tags";
+import { actionGetUserIdByClerkId } from "@/actions/users";
 
 const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
 
@@ -29,10 +30,10 @@ export const Stats = () => {
   >([]);
 
   const { isSignedIn, user, isLoaded } = useUser();
-
   useEffect(() => {
     const fetchTaskData = async () => {
       try {
+        //const userId = await actionGetUserIdByClerkId(user!.id);
         const data = await actionGetAllTasksForUser("66c60077cfa9f183ca355e23");
         const taskCounts = data.reduce(
           (acc: { [key: string]: number }, task) => {
@@ -53,6 +54,7 @@ export const Stats = () => {
 
     const fetchTagData = async () => {
       try {
+        //const userId = await actionGetUserIdByClerkId(user!.id);
         const tags = await actionGetAllTagsForUser("66c60077cfa9f183ca355e23");
         const tagCounts = tags.reduce((acc: { [key: string]: number }, tag) => {
           const taskCount = tag.taskIDs.length;
