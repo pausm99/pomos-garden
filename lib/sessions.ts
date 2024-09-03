@@ -112,7 +112,6 @@ export async function serverUpdateSession(
       where: { id },
       data,
     });
-    console.log("Session updated:", updatedSession);
     return updatedSession;
   } catch (error) {
     throw new Error(`Failed to update session: ${error}`);

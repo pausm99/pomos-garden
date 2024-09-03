@@ -14,10 +14,10 @@ export default function TimerSection() {
   };
 
   return (
-    <div className="p-5 h-full flex gap-5 overflow-hidden">
+    <div className="p-5 h-full w-full flex gap-5">
       <div
         style={style}
-        className="flex p-20 flex-col gap-6 flex-1 border rounded-xl bg-white"
+        className="flex flex-col items-center justify-between gap-6 w-[calc(66.666%-0.625rem)] flex-grow-0 flex-shrink-0 p-20 border rounded-xl bg-white"
       >
         <div className="w-full flex justify-between items-center">
           <span className="rounded-full px-5 py-0.5 uppercase bg-zinc-200 border border-zinc-300">
@@ -40,7 +40,10 @@ export default function TimerSection() {
         <TimerProgress progress={progress} />
         <TimerControls />
       </div>
-      <div style={style} className="w-1/3 border rounded-xl p-5 bg-white">
+      <div
+        style={style}
+        className="w-[calc(33.333%-0.625rem)] flex-grow-0 flex-shrink-0 border rounded-xl p-5 bg-white"
+      >
         <PresetsSection />
       </div>
     </div>

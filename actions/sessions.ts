@@ -1,3 +1,5 @@
+"use server";
+
 import {
   serverCreateSession,
   serverGetAllSessionsForUser,

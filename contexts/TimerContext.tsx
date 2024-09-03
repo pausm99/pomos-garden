@@ -1,5 +1,11 @@
 "use client";
 
+import {
+  actionCreateSession,
+  actionDeleteSession,
+  actionUpdateSession,
+} from "@/actions/sessions";
+import { SessionUncheckedCreateInputSchema } from "@/prisma/generated/zod";
 import React, {
   createContext,
   useState,
@@ -7,12 +13,9 @@ import React, {
   ReactNode,
   useContext,
 } from "react";
+import { z } from "zod";
 
-interface Session {
-  userId: string;
-  focusDuration: number;
-  breakDuration: number;
-}
+type Session = z.infer<typeof SessionUncheckedCreateInputSchema>;
 
 interface TimerContextProps {
   progress: number;
@@ -46,17 +49,15 @@ export const TimerProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     if (timeLeft <= 0) {
       if (isFocus && currentSession) {
-        // Cambiar a modo "break" cuando termina el "focus"
         startBreakTimer(currentSession.breakDuration);
-      } else {
-        // Finalizar la sesión cuando termina el "break"
+      } else if (!isFocus) {
         completeSession();
         setHasStarted(false);
       }
       return;
     }
 
-    if (isPaused) return;
+    if (isPaused || !hasStarted) return;
 
     const interval = setInterval(() => {
       setTimeLeft((prevTime) => {
@@ -70,9 +71,9 @@ export const TimerProvider = ({ children }: { children: ReactNode }) => {
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [timeLeft, totalDuration, isPaused, isFocus, currentSession]);
+  }, [timeLeft, totalDuration, isPaused, isFocus, currentSession, hasStarted]);
 
-  const startSession = (
+  const startSession = async (
     userId: string,
     focusDuration: number,
     breakDuration: number
@@ -81,8 +82,16 @@ export const TimerProvider = ({ children }: { children: ReactNode }) => {
       userId,
       focusDuration,
       breakDuration,
+      rounds: 0,
+      endTime: "",
     };
-    setCurrentSession(newSession);
+    const createdSession = await actionCreateSession(
+      newSession.userId,
+      newSession.focusDuration,
+      newSession.breakDuration,
+      newSession.rounds
+    );
+    setCurrentSession(createdSession);
     startFocusTimer(focusDuration);
     setHasStarted(true);
   };
@@ -100,16 +109,16 @@ export const TimerProvider = ({ children }: { children: ReactNode }) => {
     setTimeLeft(duration);
     setProgress(0);
     setIsPaused(false);
-    setIsFocus(false); // Modo "break"
+    setIsFocus(false);
   };
 
-  const resetTimer = () => {
+  const resetTimer = async () => {
     setTimeLeft(0);
     setProgress(0);
     setIsPaused(true);
     setIsFocus(true);
-    setCurrentSession(null);
     setHasStarted(false);
+    setCurrentSession(null);
   };
 
   const pauseTimer = () => {
@@ -120,15 +129,25 @@ export const TimerProvider = ({ children }: { children: ReactNode }) => {
     setIsPaused(false);
   };
 
-  const completeSession = () => {
+  const completeSession = async () => {
     if (currentSession) {
-      const completedSession = { ...currentSession, completed: true };
-      console.log("Sesión completada:", completedSession);
+      const completedSession = await actionUpdateSession(
+        currentSession.id!,
+        undefined,
+        undefined,
+        undefined,
+        new Date(),
+        undefined,
+        undefined
+      );
     }
     resetTimer();
   };
 
-  const cancelSession = () => {
+  const cancelSession = async () => {
+    if (currentSession) {
+      await actionDeleteSession(currentSession.id!);
+    }
     resetTimer();
   };
 
@@ -145,7 +164,7 @@ export const TimerProvider = ({ children }: { children: ReactNode }) => {
         isPaused,
         isFocus,
         currentSession,
-        hasStarted
+        hasStarted,
       }}
     >
       {children}

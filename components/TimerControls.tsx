@@ -10,7 +10,7 @@ export default function TimerControls() {
     startSession,
     pauseTimer,
     resumeTimer,
-    resetTimer,
+    cancelSession,
     hasStarted,
     timeLeft,
   } = useTimerContext();
@@ -27,7 +27,7 @@ export default function TimerControls() {
     } else {
       if (selectedPreset) {
         startSession(
-          "userId",
+          "66d6edd4f3aeb2c0285644e1",
           selectedPreset.focusTime,
           selectedPreset.breakTime
         );
@@ -36,11 +36,11 @@ export default function TimerControls() {
   };
 
   const handleStopClick = () => {
-    resetTimer();
+    cancelSession();
   };
 
   return (
-    <div className="flex items-center justify-between gap-2.5">
+    <div className="w-full flex items-center justify-between gap-2.5">
       <Tippy
         content={isPaused ? "Play" : "Pause"}
         placement="top"
