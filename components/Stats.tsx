@@ -87,9 +87,9 @@ export const Stats = () => {
     return <div>Loading...</div>;
   }
 
-  if (!isSignedIn) {
-    return <div>You must be signed in to view this page</div>;
-  }
+  // if (!isSignedIn) {
+  //   return <div>You must be signed in to view this page</div>;
+  // }
 
   if (isSignedIn) {
     return (
