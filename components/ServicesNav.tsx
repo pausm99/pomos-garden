@@ -9,6 +9,7 @@ import {
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import ServiceButton from "./atoms/ServiceButton";
+import { useAuth } from "@clerk/nextjs";
 
 type NavProps = {
   className?: string;
@@ -20,7 +21,9 @@ export default function Nav({ className }: NavProps) {
     return pathName === path;
   };
 
-  return (
+  const { isSignedIn } = useAuth()
+
+  return !isSignedIn ? <></> : (
     <>
       <div className={className}>
         <Link href="/" passHref>
