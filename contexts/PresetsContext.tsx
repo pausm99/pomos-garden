@@ -1,52 +1,68 @@
-import { Preset } from "@/interfaces/Preset";
-import React, { createContext, useState, ReactNode, useContext } from "react";
+import {
+  actionCreatePreset,
+  actionGetAllPresetsForUser,
+} from "@/actions/presets";
+import { Preset } from "@/prisma/generated/zod";
+import React, {
+  createContext,
+  useState,
+  ReactNode,
+  useContext,
+  useEffect,
+} from "react";
+import { PresetCreateInputSchema } from "@/prisma/generated/zod";
+import { z } from "zod";
+type PresetCreate = z.infer<typeof PresetCreateInputSchema>;
 
 interface PresetsContextProps {
   presets: Preset[];
   selectedPreset: Preset | null;
-  selectPreset: (id: number) => void;
+  selectPreset: (id: string) => void;
   addPreset: (preset: Preset) => void;
-  removePreset: (name: string) => void;
+  loading: boolean;
 }
-
-const testPresets = [
-  { id: 1, name: "Prova", focusTime: 10, breakTime: 5 },
-  { id: 2, name: "Prova 2", focusTime: 15, breakTime: 5 },
-  { id: 3, name: "Prova 3", focusTime: 20, breakTime: 10 },
-  { id: 4, name: "Prova 4", focusTime: 10, breakTime: 5 },
-  { id: 5, name: "Prova 5", focusTime: 10, breakTime: 5 },
-  { id: 6, name: "Prova 5", focusTime: 10, breakTime: 5 },
-  { id: 7, name: "Prova 5", focusTime: 10, breakTime: 5 },
-  { id: 8, name: "Prova 5", focusTime: 10, breakTime: 5 },
-  { id: 9, name: "Prova 5", focusTime: 10, breakTime: 5 },
-  { id: 10, name: "Prova 5", focusTime: 10, breakTime: 5 },
-  { id: 11, name: "Prova 5", focusTime: 10, breakTime: 5 },
-];
 
 const PresetsContext = createContext<PresetsContextProps | undefined>(
   undefined
 );
 
 export const PresetsProvider = ({ children }: { children: ReactNode }) => {
-  const [presets, setPresets] = useState<Preset[]>(testPresets);
+  const [presets, setPresets] = useState<Preset[]>([]);
   const [selectedPreset, setSelectedPreset] = useState<Preset | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  const selectPreset = (id: number) => {
+  useEffect(() => {
+    const fetchPresets = async () => {
+      try {
+        setLoading(true);
+        const fetchetPresets = await actionGetAllPresetsForUser(
+          "66d6edd4f3aeb2c0285644e1"
+        );
+        setPresets(fetchetPresets);
+      } catch (error) {
+        console.error("Error fetching presets:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPresets();
+  }, []);
+
+  const selectPreset = (id: string) => {
     const preset = presets.find((p) => p.id === id) || null;
     setSelectedPreset(preset);
   };
 
-  const addPreset = (preset: Preset) => {
-    preset.id = 12
-    setPresets((prevPresets) => [preset, ...prevPresets]);
-    selectPreset(preset.id);
-  };
-
-  const removePreset = (name: string) => {
-    setPresets((prevPresets) => prevPresets.filter((p) => p.name !== name));
-    if (selectedPreset && selectedPreset.name === name) {
-      setSelectedPreset(null);
-    }
+  const addPreset = async (preset: PresetCreate) => {
+    const newPreset = await actionCreatePreset(
+      "66d6edd4f3aeb2c0285644e1",
+      preset.name,
+      preset.focusTime,
+      preset.breakTime
+    );
+    setPresets((prevPresets) => [...prevPresets, newPreset]);
+    return newPreset;
   };
 
   return (
@@ -56,7 +72,7 @@ export const PresetsProvider = ({ children }: { children: ReactNode }) => {
         selectedPreset,
         selectPreset,
         addPreset,
-        removePreset,
+        loading,
       }}
     >
       {children}

@@ -100,7 +100,7 @@ export function TagManager({ onTagSelect }: TagManagerProps) {
         <form
           action={() =>
             createTag({
-              userId: "66c60077cfa9f183ca355e23",
+              userId: "66d6edd4f3aeb2c0285644e1",
               tagDesc: inputText || "New",
               color: selectedColor,
             })
@@ -133,14 +133,14 @@ export function TagManager({ onTagSelect }: TagManagerProps) {
               style="cursor-pointer w-fit max-w-full"
               onSelectTag={() =>
                 createTag({
-                  userId: "66c60077cfa9f183ca355e23",
+                  userId: "66d6edd4f3aeb2c0285644e1",
                   tagDesc: inputText || "New",
                   color: selectedColor,
                 })
               }
               deletable={false}
               tag={{
-                userId: "66c60077cfa9f183ca355e23",
+                userId: "66d6edd4f3aeb2c0285644e1",
                 tagDesc: inputText || "New",
                 color: selectedColor,
               }}

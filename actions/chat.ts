@@ -25,7 +25,7 @@ export async function continueConversation(
   history: Message[],
   conversationId?: string | null
 ) {
-  const userId = "66c60077cfa9f183ca355e23";
+  const userId = "66d6edd4f3aeb2c0285644e1";
   if (!userId) throw new Error("User not authenticated");
 
   const stream = createStreamableValue();
@@ -79,7 +79,7 @@ export async function continueConversation(
 
 // Fetch all conversations for the current user
 export async function getConversations() {
-  const userId = "66c60077cfa9f183ca355e23";
+  const userId = "66d6edd4f3aeb2c0285644e1";
 
   if (!userId) throw new Error("User not authenticated");
 
@@ -96,7 +96,7 @@ export async function getConversations() {
 
 // Fetch messages of a specific conversation
 export async function getConversationMessages(conversationId: string) {
-  const userId = "66c60077cfa9f183ca355e23";
+  const userId = "66d6edd4f3aeb2c0285644e1";
 
   if (!userId) throw new Error("User not authenticated");
 

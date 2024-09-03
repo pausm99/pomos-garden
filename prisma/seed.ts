@@ -692,6 +692,53 @@ async function main() {
         });
     });
     console.log(`Seeded ${tasks.length} tasks`);
+
+    //Create presets
+    const presets = [
+        {
+            userId: user.id,
+            name: "Quick study",
+            focusTime: 120,
+            breakTime: 20
+        },
+        {
+            userId: user.id,
+            name: "Deep Focus",
+            focusTime: 180,  // 3 horas
+            breakTime: 30
+        },
+        {
+            userId: user.id,
+            name: "Power Session",
+            focusTime: 90,  // 1.5 horas
+            breakTime: 15
+        },
+        {
+            userId: user.id,
+            name: "Balanced Work",
+            focusTime: 150,  // 2.5 horas
+            breakTime: 25
+        },
+        {
+            userId: user.id,
+            name: "Sprint Focus",
+            focusTime: 45,  // 45 minutos
+            breakTime: 10
+        },
+        {
+            userId: user.id,
+            name: "Easy Flow",
+            focusTime: 60,  // 1 hora
+            breakTime: 5
+        }
+    ];
+
+    presets.forEach(async (preset: any) => {
+        await prisma.preset.create({
+            data: preset,
+        });
+    });
+    console.log(`Seeded ${presets.length} presets`);
 }
 
 main();

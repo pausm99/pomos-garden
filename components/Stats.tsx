@@ -34,7 +34,7 @@ export const Stats = () => {
     const fetchTaskData = async () => {
       try {
         //const userId = await actionGetUserIdByClerkId(user!.id);
-        const data = await actionGetAllTasksForUser("66c60077cfa9f183ca355e23");
+        const data = await actionGetAllTasksForUser("66d6edd4f3aeb2c0285644e1");
         const taskCounts = data.reduce(
           (acc: { [key: string]: number }, task) => {
             acc[task.status] = (acc[task.status] || 0) + 1;
@@ -55,7 +55,7 @@ export const Stats = () => {
     const fetchTagData = async () => {
       try {
         //const userId = await actionGetUserIdByClerkId(user!.id);
-        const tags = await actionGetAllTagsForUser("66c60077cfa9f183ca355e23");
+        const tags = await actionGetAllTagsForUser("66d6edd4f3aeb2c0285644e1");
         const tagCounts = tags.reduce((acc: { [key: string]: number }, tag) => {
           const taskCount = tag.taskIDs.length;
           acc[tag.tagDesc] = (acc[tag.tagDesc] || 0) + taskCount;

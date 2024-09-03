@@ -29,7 +29,7 @@ export const TagsProvider = ({ children }: { children: ReactNode }) => {
     const fetchTags = async () => {
       try {
         const fetchedTags = await actionGetAllTagsForUser(
-          "66c60077cfa9f183ca355e23"
+          "66d6edd4f3aeb2c0285644e1"
         );
         setTagsCollection(fetchedTags);
       } catch (error) {
@@ -43,7 +43,7 @@ export const TagsProvider = ({ children }: { children: ReactNode }) => {
 
   const addTag = async (tag: TagCreateInput) => {
     const newTag = await actionCreateTag(
-      "66c60077cfa9f183ca355e23",
+      "66d6edd4f3aeb2c0285644e1",
       tag.tagDesc,
       tag.color,
       []
