@@ -19,8 +19,12 @@ interface TasksContextProps {
   tasksCollection: Task[];
   addTask: (task: Task) => void;
   updateTask: (updatedTask: Task) => void;
+  updateTaskStatus: (
+    taskId: string,
+    status: "BACKLOG" | "IN_PROGRESS" | "COMPLETED"
+  ) => void;
   deleteTask: (taskId: string) => void;
-  loading: boolean
+  loading: boolean;
 }
 
 const TasksContext = createContext<TasksContextProps | undefined>(undefined);
@@ -63,8 +67,22 @@ export const TasksProvider = ({ children }: { children: ReactNode }) => {
     );
   };
 
+  const updateTaskStatus = async (
+    taskId: string,
+    newStatus: "BACKLOG" | "IN_PROGRESS" | "COMPLETED"
+  ) => {
+    const taskToUpdate = tasksCollection.find((task) => task.id === taskId);
+    if (!taskToUpdate) return;
+
+    const updatedTask = { ...taskToUpdate, status: newStatus };
+    const task = await actionUpdateTask(updatedTask);
+    setTasksCollection((prevTasks) =>
+      prevTasks.map((prevTask) => (prevTask.id === task.id ? task : prevTask))
+    );
+  };
+
   const deleteTask = async (taskId: string) => {
-    await actionDeleteTask(taskId)
+    await actionDeleteTask(taskId);
     setTasksCollection((prevTasks) =>
       prevTasks.filter((task) => task.id !== taskId)
     );
@@ -72,7 +90,14 @@ export const TasksProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <TasksContext.Provider
-      value={{ tasksCollection, addTask, updateTask, deleteTask, loading }}
+      value={{
+        tasksCollection,
+        addTask,
+        updateTask,
+        updateTaskStatus,
+        deleteTask,
+        loading,
+      }}
     >
       {children}
     </TasksContext.Provider>

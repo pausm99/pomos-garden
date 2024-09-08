@@ -13,7 +13,7 @@ import {
 import { Task as TaskType } from "@/prisma/generated/zod";
 
 export default function TaskSection() {
-  const { tasksCollection, loading } = useTasksContext();
+  const { tasksCollection, updateTaskStatus, loading } = useTasksContext();
   const [tasks, setTasks] = useState({
     todo: tasksCollection.filter((task) => task.status === "BACKLOG"),
     doing: tasksCollection.filter((task) => task.status === "IN_PROGRESS"),
@@ -47,20 +47,63 @@ export default function TaskSection() {
 
   const onDragEnd = (event: any) => {
     const { active, over } = event;
+
     if (!over) {
       setDraggingTask(null);
       return;
     }
 
-    if (active.id !== over.id) {
-      const state = Object.keys(tasks).find((state) =>
-        tasks[state as keyof typeof tasks].find((task) => task.id === active.id)
-      ) as keyof typeof tasks;
+    const activeTask = tasksCollection.find((task) => task.id === active.id);
+    const overTask = tasksCollection.find((task) => task.id === over.id);
 
-      const oldIndex = tasks[state].findIndex((task) => task.id === active.id);
-      const newIndex = tasks[state].findIndex((task) => task.id === over.id);
+    if (!activeTask || !overTask) {
+      setDraggingTask(null);
+      return;
+    }
 
-      handleTasksChange(state, arrayMove(tasks[state], oldIndex, newIndex));
+    // Check if the task is dropped in a different column (state)
+    const activeColumn = Object.keys(tasks).find((key) =>
+      tasks[key as keyof typeof tasks].some((task) => task.id === active.id)
+    ) as keyof typeof tasks;
+
+    const overColumn = Object.keys(tasks).find((key) =>
+      tasks[key as keyof typeof tasks].some((task) => task.id === over.id)
+    ) as keyof typeof tasks;
+
+    // Handle task moving between columns
+    if (activeColumn !== overColumn) {
+      const newActiveTasks = tasks[activeColumn].filter(
+        (task) => task.id !== active.id
+      );
+      const newOverTasks = [...tasks[overColumn], activeTask];
+
+      // Update task status (based on the new column it's dropped into)
+      updateTaskStatus(
+        activeTask.id,
+        overColumn === "todo"
+          ? "BACKLOG"
+          : overColumn === "doing"
+          ? "IN_PROGRESS"
+          : "COMPLETED"
+      );
+
+      setTasks({
+        ...tasks,
+        [activeColumn]: newActiveTasks,
+        [overColumn]: newOverTasks,
+      });
+    } else {
+      // Handle reordering within the same column
+      const oldIndex = tasks[activeColumn].findIndex(
+        (task) => task.id === active.id
+      );
+      const newIndex = tasks[activeColumn].findIndex(
+        (task) => task.id === over.id
+      );
+      handleTasksChange(
+        activeColumn,
+        arrayMove(tasks[activeColumn], oldIndex, newIndex)
+      );
     }
 
     setDraggingTask(null);
