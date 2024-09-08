@@ -4,16 +4,16 @@ import { useTasksContext } from "@/contexts/TasksContext";
 import { useEffect, useState } from "react";
 import TodoState from "./TodoState";
 import Loading from "./atoms/Loading";
-import { DndContext, closestCenter } from "@dnd-kit/core";
+import { DndContext, closestCenter, DragOverlay } from "@dnd-kit/core";
 import {
   arrayMove,
   SortableContext,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { Task as TaskType } from "@/prisma/generated/zod";
-
+import Task from "./Task";
 export default function TaskSection() {
-  const { tasksCollection, updateTaskStatus, loading } = useTasksContext();
+  const { tasksCollection, loading } = useTasksContext();
   const [tasks, setTasks] = useState({
     todo: tasksCollection.filter((task) => task.status === "BACKLOG"),
     doing: tasksCollection.filter((task) => task.status === "IN_PROGRESS"),
@@ -61,7 +61,6 @@ export default function TaskSection() {
       return;
     }
 
-    // Check if the task is dropped in a different column (state)
     const activeColumn = Object.keys(tasks).find((key) =>
       tasks[key as keyof typeof tasks].some((task) => task.id === active.id)
     ) as keyof typeof tasks;
@@ -70,22 +69,12 @@ export default function TaskSection() {
       tasks[key as keyof typeof tasks].some((task) => task.id === over.id)
     ) as keyof typeof tasks;
 
-    // Handle task moving between columns
     if (activeColumn !== overColumn) {
       const newActiveTasks = tasks[activeColumn].filter(
         (task) => task.id !== active.id
       );
-      const newOverTasks = [...tasks[overColumn], activeTask];
 
-      // Update task status (based on the new column it's dropped into)
-      updateTaskStatus(
-        activeTask.id,
-        overColumn === "todo"
-          ? "BACKLOG"
-          : overColumn === "doing"
-          ? "IN_PROGRESS"
-          : "COMPLETED"
-      );
+      const newOverTasks = [activeTask, ...tasks[overColumn]];
 
       setTasks({
         ...tasks,
@@ -93,7 +82,6 @@ export default function TaskSection() {
         [overColumn]: newOverTasks,
       });
     } else {
-      // Handle reordering within the same column
       const oldIndex = tasks[activeColumn].findIndex(
         (task) => task.id === active.id
       );
@@ -137,6 +125,12 @@ export default function TaskSection() {
             )
           )}
         </div>
+
+        <DragOverlay>
+          {draggingTask ? (
+            <Task task={draggingTask} draggingTask={null} />
+          ) : null}
+        </DragOverlay>
       </DndContext>
     </>
   );
