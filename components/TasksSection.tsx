@@ -1,4 +1,5 @@
-// TaskSection.tsx
+"use client";
+
 import { useTasksContext } from "@/contexts/TasksContext";
 import { useEffect, useState } from "react";
 import TodoState from "./TodoState";
@@ -13,12 +14,13 @@ import { Task as TaskType } from "@/prisma/generated/zod";
 
 export default function TaskSection() {
   const { tasksCollection, loading } = useTasksContext();
-
   const [tasks, setTasks] = useState({
     todo: tasksCollection.filter((task) => task.status === "BACKLOG"),
     doing: tasksCollection.filter((task) => task.status === "IN_PROGRESS"),
     done: tasksCollection.filter((task) => task.status === "COMPLETED"),
   });
+
+  const [draggingTask, setDraggingTask] = useState<TaskType | null>(null);
 
   useEffect(() => {
     setTasks({
@@ -35,10 +37,20 @@ export default function TaskSection() {
     setTasks((prevTasks) => ({ ...prevTasks, [state]: newTasks }));
   };
 
+  const onDragStart = (event: any) => {
+    const { active } = event;
+    const task = tasksCollection.find((task) => task.id === active.id);
+    if (task) {
+      setDraggingTask(task);
+    }
+  };
+
   const onDragEnd = (event: any) => {
     const { active, over } = event;
-
-    if (!over) return;
+    if (!over) {
+      setDraggingTask(null);
+      return;
+    }
 
     if (active.id !== over.id) {
       const state = Object.keys(tasks).find((state) =>
@@ -50,12 +62,18 @@ export default function TaskSection() {
 
       handleTasksChange(state, arrayMove(tasks[state], oldIndex, newIndex));
     }
+
+    setDraggingTask(null);
   };
 
   return (
     <>
       <Loading isOpen={loading} />
-      <DndContext collisionDetection={closestCenter} onDragEnd={onDragEnd}>
+      <DndContext
+        collisionDetection={closestCenter}
+        onDragStart={onDragStart}
+        onDragEnd={onDragEnd}
+      >
         <div className="p-5 h-full flex gap-5 overflow-hidden">
           {(["todo", "doing", "done"] as Array<keyof typeof tasks>).map(
             (state) => (
@@ -68,6 +86,7 @@ export default function TaskSection() {
                     state={state}
                     name={state.charAt(0).toUpperCase() + state.slice(1)}
                     tasks={tasks[state]}
+                    draggingTask={draggingTask}
                     onTasksChange={handleTasksChange}
                   />
                 </SortableContext>
