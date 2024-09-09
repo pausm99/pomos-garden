@@ -21,9 +21,11 @@ export default function Nav({ className }: NavProps) {
     return pathName === path;
   };
 
-  const { isSignedIn } = useAuth()
+  const { isSignedIn } = useAuth();
 
-  return !isSignedIn ? <></> : (
+  return !isSignedIn ? (
+    <></>
+  ) : (
     <>
       <div className={className}>
         <Link href="/" passHref>
@@ -42,7 +44,6 @@ export default function Nav({ className }: NavProps) {
         </Link>
         <Link href="/chat" passHref>
           <ServiceButton
-            disabled
             tooltipContent="ChatBot"
             active={isActiveRoute("/chat")}
           >

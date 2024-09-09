@@ -12,12 +12,14 @@ import { useTagsContext } from "@/contexts/TagsContext";
 import Tag from "./atoms/Tag";
 import { TaskStatus } from "@/interfaces/State";
 import { SelectState } from "./atoms/SelectState";
+import { useSortable } from "@dnd-kit/sortable";
 
 type TaskProps = {
   task: TaskType;
+  draggingTask: TaskType | null;
 };
 
-export default function Task({ task }: TaskProps) {
+export default function Task({ task, draggingTask }: TaskProps) {
   const { tagsCollection } = useTagsContext();
   const { updateTask, deleteTask } = useTasksContext();
   const [titleInputText, setTitleInputText] = useState(task.title);
@@ -26,8 +28,14 @@ export default function Task({ task }: TaskProps) {
   );
   const [isEditing, setIsEditing] = useState(false);
 
+  const { attributes, listeners, setNodeRef, transform, transition } =
+    useSortable({ id: task.id });
+
   const style = {
+    transition,
+    transform: `translate3d(${transform?.x || 0}px, ${transform?.y || 0}px, 0)`,
     boxShadow: "0px 1px 3px rgba(0,0,0,0.1)",
+    opacity: draggingTask?.id === task.id ? 0.7 : 1,
   };
 
   const handleStatusChange = (newStatus: TaskStatus) => {
@@ -77,6 +85,7 @@ export default function Task({ task }: TaskProps) {
 
   return (
     <div
+      ref={setNodeRef}
       style={style}
       className="flex flex-col gap-5 p-4 bg-white text-black rounded-lg"
     >
@@ -89,7 +98,11 @@ export default function Task({ task }: TaskProps) {
               onChange={handleTitleChange}
             />
           ) : (
-            <h3 className="flex-1 text-zinc-700 text-ellipsis whitespace-nowrap overflow-hidden">
+            <h3
+              className="flex-1 text-zinc-700 text-ellipsis whitespace-nowrap overflow-hidden"
+              {...listeners}
+              {...attributes}
+            >
               {titleInputText}
             </h3>
           )}
