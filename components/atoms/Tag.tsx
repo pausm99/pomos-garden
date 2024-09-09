@@ -27,7 +27,7 @@ export default function Tag({ tag, style, onSelectTag, onDiscardTag, deletable }
       onDiscardTag(tag as CompleteTag)
     }
     if (onSelectTag) {
-      onSelectTag(tag as CompleteTag); // Envía la etiqueta seleccionada
+      onSelectTag(tag as CompleteTag);
     }
   };
 
