@@ -42,3 +42,22 @@ export async function actionUpdateTask(updatedTask: Task) {
 export async function actionDeleteTask(id: string) {
   return await serverDeleteTask(id);
 }
+
+//Update Task Status (Drag and Drop)
+export async function actionUpdateTaskStatus(
+  taskId: string,
+  newStatus: "BACKLOG" | "IN_PROGRESS" | "COMPLETED"
+) {
+  try {
+    return await serverUpdateTask(
+      taskId,
+      undefined,
+      undefined,
+      newStatus,
+      undefined
+    );
+  } catch (error) {
+    console.error("Failed to update task status:", error);
+    throw new Error("Failed to update task status");
+  }
+}

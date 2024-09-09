@@ -12,6 +12,8 @@ import {
 } from "@dnd-kit/sortable";
 import { Task as TaskType } from "@/prisma/generated/zod";
 import Task from "./Task";
+import { actionUpdateTaskStatus } from "@/actions/tasks";
+
 export default function TaskSection() {
   const { tasksCollection, loading } = useTasksContext();
   const [tasks, setTasks] = useState({
@@ -37,6 +39,15 @@ export default function TaskSection() {
     setTasks((prevTasks) => ({ ...prevTasks, [state]: newTasks }));
   };
 
+  const columnToStatusMap: Record<
+    string,
+    "BACKLOG" | "IN_PROGRESS" | "COMPLETED"
+  > = {
+    todo: "BACKLOG",
+    doing: "IN_PROGRESS",
+    done: "COMPLETED",
+  };
+
   const onDragStart = (event: any) => {
     const { active } = event;
     const task = tasksCollection.find((task) => task.id === active.id);
@@ -45,7 +56,7 @@ export default function TaskSection() {
     }
   };
 
-  const onDragEnd = (event: any) => {
+  const onDragEnd = async (event: any) => {
     const { active, over } = event;
 
     if (!over) {
@@ -73,7 +84,6 @@ export default function TaskSection() {
       const newActiveTasks = tasks[activeColumn].filter(
         (task) => task.id !== active.id
       );
-
       const newOverTasks = [activeTask, ...tasks[overColumn]];
 
       setTasks({
@@ -81,6 +91,10 @@ export default function TaskSection() {
         [activeColumn]: newActiveTasks,
         [overColumn]: newOverTasks,
       });
+
+      const newStatus = columnToStatusMap[overColumn];
+
+      await actionUpdateTaskStatus(activeTask.id, newStatus);
     } else {
       const oldIndex = tasks[activeColumn].findIndex(
         (task) => task.id === active.id
