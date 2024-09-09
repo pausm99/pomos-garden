@@ -4,6 +4,7 @@ import TimerProgress from "./atoms/TimerProgress";
 import TimerControls from "./TimerControls";
 import PresetsSection from "./PresetsSection";
 import { usePresetsContext } from "@/contexts/PresetsContext";
+import Image from "next/image";
 
 export default function TimerSection() {
   const { progress, timeLeft, isFocus } = useTimerContext();
@@ -32,9 +33,15 @@ export default function TimerSection() {
               Select time preset
             </span>
           )}
-          <span className="rounded-full px-5 py-0.5 uppercase bg-zinc-50 border border-zinc-300">
-            O x2
-          </span>
+          <div className="flex items-center justify-between gap-2.5 rounded-full px-5 py-0.5 uppercase bg-zinc-50 border border-zinc-300">
+            <Image
+              src="/assets/images/tomato_3d.png"
+              alt="Pomo's Garden logo"
+              width={20}
+              height={20}
+            />
+            <span>x2</span>
+          </div>
         </div>
         <Timer timeLeft={timeLeft} />
         <TimerProgress progress={progress} />

@@ -123,3 +123,8 @@ textarea {
 .doneEditingButton {
   @apply bg-lime-200 !important;
 }
+
+/* Presets */
+.preset:hover .preset-trash {
+  opacity: 100;
+}

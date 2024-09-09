@@ -97,9 +97,10 @@ export const TimerProvider = ({ children }: { children: ReactNode }) => {
     setCurrentSession(createdSession);
     startFocusTimer(focusDuration);
     setHasStarted(true);
+    const formattedDuration = convertSeconds(focusDuration);
     addToast({
       title: "Session started",
-      description: `Focus for ${focusDuration} seconds!`,
+      description: `Focus for ${formattedDuration}!`,
     });
   };
 
@@ -117,10 +118,10 @@ export const TimerProvider = ({ children }: { children: ReactNode }) => {
     setProgress(0);
     setIsPaused(false);
     setIsFocus(false);
-
+    const formattedDuration = convertSeconds(duration);
     addToast({
       title: "Break time!",
-      description: `Relax for ${duration} seconds.`,
+      description: `Relax for ${formattedDuration}!`,
     });
   };
 
@@ -198,6 +199,36 @@ export const TimerProvider = ({ children }: { children: ReactNode }) => {
     >
       {children}
     </TimerContext.Provider>
+  );
+};
+
+const convertSeconds = (seconds: number) => {
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const remainingSeconds = seconds % 60;
+
+  const hoursStr = hours > 0 ? `${hours} hour${hours > 1 ? "s" : ""}` : "";
+  const minutesStr =
+    minutes > 0 ? `${minutes} minute${minutes > 1 ? "s" : ""}` : "";
+  const secondsStr =
+    remainingSeconds > 0
+      ? `${remainingSeconds} second${remainingSeconds > 1 ? "s" : ""}`
+      : "";
+
+  // Filtra los componentes no vacíos
+  const timeComponents = [hoursStr, minutesStr, secondsStr].filter(Boolean);
+
+  // Si solo hay un componente, lo retornamos tal cual
+  if (timeComponents.length === 1) {
+    return timeComponents[0];
+  }
+
+  // Si hay más de un componente, unimos todos excepto el último con ", "
+  // y el último lo unimos con " and "
+  return (
+    timeComponents.slice(0, -1).join(", ") +
+    (timeComponents.length > 1 ? " and " : "") +
+    timeComponents.slice(-1)
   );
 };
 
