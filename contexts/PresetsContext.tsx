@@ -1,5 +1,6 @@
 import {
   actionCreatePreset,
+  actionDeletePreset,
   actionGetAllPresetsForUser,
 } from "@/actions/presets";
 import { Preset } from "@/prisma/generated/zod";
@@ -12,6 +13,7 @@ import React, {
 } from "react";
 import { PresetCreateInputSchema } from "@/prisma/generated/zod";
 import { z } from "zod";
+import { useToastContext } from "./ToastsContext";
 type PresetCreate = z.infer<typeof PresetCreateInputSchema>;
 
 interface PresetsContextProps {
@@ -19,6 +21,7 @@ interface PresetsContextProps {
   selectedPreset: Preset | null;
   selectPreset: (id: string) => void;
   addPreset: (preset: Preset) => void;
+  deletePreset: (presetId: string) => void;
   loading: boolean;
 }
 
@@ -27,6 +30,8 @@ const PresetsContext = createContext<PresetsContextProps | undefined>(
 );
 
 export const PresetsProvider = ({ children }: { children: ReactNode }) => {
+  const { addToast } = useToastContext();
+
   const [presets, setPresets] = useState<Preset[]>([]);
   const [selectedPreset, setSelectedPreset] = useState<Preset | null>(null);
   const [loading, setLoading] = useState(false);
@@ -61,8 +66,20 @@ export const PresetsProvider = ({ children }: { children: ReactNode }) => {
       preset.focusTime,
       preset.breakTime
     );
+    addToast({
+      description: `Preset ${newPreset.name} added`
+    })
     setPresets((prevPresets) => [...prevPresets, newPreset]);
     return newPreset;
+  };
+
+  const deletePreset = async (presetId: string) => {
+    const deletedPreset = await actionDeletePreset(presetId);
+    addToast({
+      description: `Preset ${deletedPreset.name} deleted`
+    })
+    const updatedPresets = presets.filter((preset) => preset.id !== presetId);
+    setPresets(updatedPresets);
   };
 
   return (
@@ -72,6 +89,7 @@ export const PresetsProvider = ({ children }: { children: ReactNode }) => {
         selectedPreset,
         selectPreset,
         addPreset,
+        deletePreset,
         loading,
       }}
     >

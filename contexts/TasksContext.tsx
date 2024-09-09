@@ -14,15 +14,12 @@ import React, {
   useContext,
   useEffect,
 } from "react";
+import { useToastContext } from "./ToastsContext";
 
 interface TasksContextProps {
   tasksCollection: Task[];
   addTask: (task: Task) => void;
   updateTask: (updatedTask: Task) => void;
-  updateTaskStatus: (
-    taskId: string,
-    status: "BACKLOG" | "IN_PROGRESS" | "COMPLETED"
-  ) => void;
   deleteTask: (taskId: string) => void;
   loading: boolean;
 }
@@ -30,6 +27,8 @@ interface TasksContextProps {
 const TasksContext = createContext<TasksContextProps | undefined>(undefined);
 
 export const TasksProvider = ({ children }: { children: ReactNode }) => {
+  const { addToast } = useToastContext();
+
   const [tasksCollection, setTasksCollection] = useState<Task[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -57,25 +56,17 @@ export const TasksProvider = ({ children }: { children: ReactNode }) => {
     userId: string;
   }) => {
     const newTask = await actionCreateTask(task);
-    setTasksCollection((prevTasks) => [...prevTasks, newTask]);
+    addToast({
+      description: "Task created",
+    });
+    setTasksCollection((prevTasks) => [newTask, ...prevTasks]);
   };
 
   const updateTask = async (updatedTask: Task) => {
     const task = await actionUpdateTask(updatedTask);
-    setTasksCollection((prevTasks) =>
-      prevTasks.map((prevTask) => (prevTask.id === task.id ? task : prevTask))
-    );
-  };
-
-  const updateTaskStatus = async (
-    taskId: string,
-    newStatus: "BACKLOG" | "IN_PROGRESS" | "COMPLETED"
-  ) => {
-    const taskToUpdate = tasksCollection.find((task) => task.id === taskId);
-    if (!taskToUpdate) return;
-
-    const updatedTask = { ...taskToUpdate, status: newStatus };
-    const task = await actionUpdateTask(updatedTask);
+    addToast({
+      description: "Task updated",
+    });
     setTasksCollection((prevTasks) =>
       prevTasks.map((prevTask) => (prevTask.id === task.id ? task : prevTask))
     );
@@ -83,6 +74,9 @@ export const TasksProvider = ({ children }: { children: ReactNode }) => {
 
   const deleteTask = async (taskId: string) => {
     await actionDeleteTask(taskId);
+    addToast({
+      description: "Task deleted",
+    });
     setTasksCollection((prevTasks) =>
       prevTasks.filter((task) => task.id !== taskId)
     );
@@ -94,7 +88,6 @@ export const TasksProvider = ({ children }: { children: ReactNode }) => {
         tasksCollection,
         addTask,
         updateTask,
-        updateTaskStatus,
         deleteTask,
         loading,
       }}

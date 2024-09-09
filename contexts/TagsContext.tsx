@@ -10,6 +10,7 @@ import {
   useState,
 } from "react";
 import { z } from "zod";
+import { useToastContext } from "./ToastsContext";
 
 type TagCreateInput = z.infer<typeof TagCreateInputSchema>;
 
@@ -23,6 +24,7 @@ interface TagsContextProps {
 const TagsContext = createContext<TagsContextProps | undefined>(undefined);
 
 export const TagsProvider = ({ children }: { children: ReactNode }) => {
+  const { addToast } = useToastContext()
   const [tagsCollection, setTagsCollection] = useState<Tag[]>([]);
 
   useEffect(() => {
@@ -48,6 +50,9 @@ export const TagsProvider = ({ children }: { children: ReactNode }) => {
       tag.color,
       []
     );
+    addToast({
+      description: "Tag created"
+    })
     setTagsCollection((prevTags) => [...prevTags, newTag]);
     return newTag;
   };
