@@ -15,6 +15,7 @@ import React, {
   useEffect,
 } from "react";
 import { useToastContext } from "./ToastsContext";
+import { useUserContext } from "./UserContext";
 
 interface TasksContextProps {
   tasksCollection: Task[];
@@ -28,6 +29,7 @@ const TasksContext = createContext<TasksContextProps | undefined>(undefined);
 
 export const TasksProvider = ({ children }: { children: ReactNode }) => {
   const { addToast } = useToastContext();
+  const { user } = useUserContext();
 
   const [tasksCollection, setTasksCollection] = useState<Task[]>([]);
   const [loading, setLoading] = useState(false);
@@ -35,11 +37,11 @@ export const TasksProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-        setLoading(true);
-        const fetchedTasks = await actionGetAllTasksForUser(
-          "66d6edd4f3aeb2c0285644e1"
-        );
-        setTasksCollection(fetchedTasks);
+        if (user) {
+          setLoading(true);
+          const fetchedTasks = await actionGetAllTasksForUser(user!.id);
+          setTasksCollection(fetchedTasks);
+        }
       } catch (error) {
         console.error("Error fetching tasks:", error);
       } finally {
@@ -48,7 +50,7 @@ export const TasksProvider = ({ children }: { children: ReactNode }) => {
     };
 
     fetchTasks();
-  }, []);
+  }, [user]);
 
   const addTask = async (task: {
     title: string;

@@ -3,17 +3,19 @@ import { Plus } from "lucide-react";
 import { useState } from "react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
+import { useUserContext } from "@/contexts/UserContext";
 
 export default function AddTask() {
+  const { user } = useUserContext();
   const [inputTitle, setInputTitle] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const { addTask } = useTasksContext();
 
   const handleAddTask = () => {
-    if (inputTitle !== "") {
+    if (inputTitle !== "" && user) {
       const newTask: any = {
         title: inputTitle,
-        userId: "66d6edd4f3aeb2c0285644e1",
+        userId: user!.id,
         description: "",
       };
       setErrorMessage("")

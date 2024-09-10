@@ -5,10 +5,12 @@ import { useState } from "react";
 import { PresetCreateInputSchema } from "@/prisma/generated/zod";
 import { usePresetsContext } from "@/contexts/PresetsContext";
 import { z } from "zod";
+import { useUserContext } from "@/contexts/UserContext";
 
 type PresetCreate = z.infer<typeof PresetCreateInputSchema>;
 
 export default function AddPreset() {
+  const { user } = useUserContext();
   const { addPreset } = usePresetsContext();
   const [name, setName] = useState("");
   const [focusTime, setFocusTime] = useState("");
@@ -26,9 +28,9 @@ export default function AddPreset() {
   };
 
   const handlePresetAdd = () => {
-    if (name !== "" || focusTime !== "" || breakTime !== "") {
+    if (name !== "" || focusTime !== "" || breakTime !== "" && user) {
       const newPreset: PresetCreate = {
-        userId: "66d6edd4f3aeb2c0285644e1",
+        userId: user!.id,
         name: name,
         breakTime: parseInt(breakTime),
         focusTime: parseInt(focusTime),

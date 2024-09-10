@@ -3,8 +3,10 @@ import { useTimerContext } from "@/contexts/TimerContext";
 import Tippy from "@tippyjs/react";
 import { CircleStop, Pause, Play } from "lucide-react";
 import { Button } from "./ui/button";
+import { useUserContext } from "@/contexts/UserContext";
 
 export default function TimerControls() {
+  const { user } = useUserContext();
   const {
     isPaused,
     startSession,
@@ -25,9 +27,9 @@ export default function TimerControls() {
         pauseTimer();
       }
     } else {
-      if (selectedPreset) {
+      if (selectedPreset && user) {
         startSession(
-          "66d6edd4f3aeb2c0285644e1",
+          user!.id,
           selectedPreset.focusTime,
           selectedPreset.breakTime
         );

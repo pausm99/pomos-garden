@@ -14,6 +14,7 @@ import React, {
 import { PresetCreateInputSchema } from "@/prisma/generated/zod";
 import { z } from "zod";
 import { useToastContext } from "./ToastsContext";
+import { useUserContext } from "./UserContext";
 type PresetCreate = z.infer<typeof PresetCreateInputSchema>;
 
 interface PresetsContextProps {
@@ -30,6 +31,7 @@ const PresetsContext = createContext<PresetsContextProps | undefined>(
 );
 
 export const PresetsProvider = ({ children }: { children: ReactNode }) => {
+  const { user } = useUserContext();
   const { addToast } = useToastContext();
 
   const [presets, setPresets] = useState<Preset[]>([]);
@@ -40,10 +42,12 @@ export const PresetsProvider = ({ children }: { children: ReactNode }) => {
     const fetchPresets = async () => {
       try {
         setLoading(true);
-        const fetchetPresets = await actionGetAllPresetsForUser(
-          "66d6edd4f3aeb2c0285644e1"
-        );
-        setPresets(fetchetPresets);
+        if (user) {
+          const fetchetPresets = await actionGetAllPresetsForUser(
+            user.id
+          );
+          setPresets(fetchetPresets);
+        }
       } catch (error) {
         console.error("Error fetching presets:", error);
       } finally {
@@ -52,7 +56,7 @@ export const PresetsProvider = ({ children }: { children: ReactNode }) => {
     };
 
     fetchPresets();
-  }, []);
+  }, [user]);
 
   const selectPreset = (id: string) => {
     const preset = presets.find((p) => p.id === id) || null;

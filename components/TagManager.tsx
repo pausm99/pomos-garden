@@ -12,6 +12,7 @@ import Tag from "./atoms/Tag";
 import { Input } from "./ui/input";
 import { useTagsContext } from "@/contexts/TagsContext";
 import { z } from "zod";
+import { useUserContext } from "@/contexts/UserContext";
 
 type TagCreateInput = z.infer<typeof TagCreateInputSchema>;
 
@@ -41,6 +42,8 @@ type TagManagerProps = {
 };
 
 export function TagManager({ onTagSelect }: TagManagerProps) {
+  const { user } = useUserContext();
+  
   const [inputText, setInputText] = useState("");
   const [selectedColor, setSelectedColor] = useState<color>("bg_red_200");
   const { tagsCollection, addTag } = useTagsContext();
@@ -100,7 +103,7 @@ export function TagManager({ onTagSelect }: TagManagerProps) {
         <form
           action={() =>
             createTag({
-              userId: "66d6edd4f3aeb2c0285644e1",
+              userId: user!.id,
               tagDesc: inputText || "New",
               color: selectedColor,
             })
@@ -133,14 +136,14 @@ export function TagManager({ onTagSelect }: TagManagerProps) {
               style="cursor-pointer w-fit max-w-full"
               onSelectTag={() =>
                 createTag({
-                  userId: "66d6edd4f3aeb2c0285644e1",
+                  userId: user!.id,
                   tagDesc: inputText || "New",
                   color: selectedColor,
                 })
               }
               deletable={false}
               tag={{
-                userId: "66d6edd4f3aeb2c0285644e1",
+                userId: user!.id,
                 tagDesc: inputText || "New",
                 color: selectedColor,
               }}

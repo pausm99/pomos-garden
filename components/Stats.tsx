@@ -1,23 +1,23 @@
 "use client";
 
-import { useState, useEffect, ReactNode } from "react";
+import { actionGetAllTagsForUser } from "@/actions/tags";
+import { actionGetAllTasksForUser } from "@/actions/tasks";
+import { useUserContext } from "@/contexts/UserContext";
+import { useUser } from "@clerk/nextjs";
+import { useEffect, useState } from "react";
 import {
-  BarChart,
   Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  Legend,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
   XAxis,
   YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
 } from "recharts";
-import { useUser } from "@clerk/nextjs";
-import { actionGetAllTasksForUser } from "@/actions/tasks";
-import { actionGetAllTagsForUser } from "@/actions/tags";
-import { actionGetUserIdByClerkId } from "@/actions/users";
 
 const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
 
@@ -29,24 +29,29 @@ export const Stats = () => {
     Array<{ tagDesc: string; count: number }>
   >([]);
 
-  const { isSignedIn, user, isLoaded } = useUser();
+  const { isSignedIn, isLoaded } = useUser();
+  const { user } = useUserContext();
+
   useEffect(() => {
     const fetchTaskData = async () => {
       try {
-        //const userId = await actionGetUserIdByClerkId(user!.id);
-        const data = await actionGetAllTasksForUser("66d6edd4f3aeb2c0285644e1");
-        const taskCounts = data.reduce(
-          (acc: { [key: string]: number }, task) => {
-            acc[task.status] = (acc[task.status] || 0) + 1;
-            return acc;
-          },
-          {}
-        );
-        const chartData = Object.entries(taskCounts).map(([status, count]) => ({
-          status,
-          count,
-        }));
-        setTaskData(chartData);
+        if (user) {
+          const data = await actionGetAllTasksForUser(user!.id);
+          const taskCounts = data.reduce(
+            (acc: { [key: string]: number }, task) => {
+              acc[task.status] = (acc[task.status] || 0) + 1;
+              return acc;
+            },
+            {}
+          );
+          const chartData = Object.entries(taskCounts).map(
+            ([status, count]) => ({
+              status,
+              count,
+            })
+          );
+          setTaskData(chartData);
+        }
       } catch (error) {
         console.error("Failed to fetch task data:", error);
       }
@@ -54,26 +59,30 @@ export const Stats = () => {
 
     const fetchTagData = async () => {
       try {
-        //const userId = await actionGetUserIdByClerkId(user!.id);
-        const tags = await actionGetAllTagsForUser("66d6edd4f3aeb2c0285644e1");
-        const tagCounts = tags.reduce((acc: { [key: string]: number }, tag) => {
-          const taskCount = tag.taskIDs.length;
-          acc[tag.tagDesc] = (acc[tag.tagDesc] || 0) + taskCount;
-          return acc;
-        }, {});
-        const tagChartData = Object.entries(tagCounts).map(
-          ([tagDesc, count]) => ({
-            tagDesc,
-            count,
-          })
-        );
-        setTagData(tagChartData);
+        if (user) {
+          const tags = await actionGetAllTagsForUser(user!.id);
+          const tagCounts = tags.reduce(
+            (acc: { [key: string]: number }, tag) => {
+              const taskCount = tag.taskIDs.length;
+              acc[tag.tagDesc] = (acc[tag.tagDesc] || 0) + taskCount;
+              return acc;
+            },
+            {}
+          );
+          const tagChartData = Object.entries(tagCounts).map(
+            ([tagDesc, count]) => ({
+              tagDesc,
+              count,
+            })
+          );
+          setTagData(tagChartData);
+        }
       } catch (error) {
         console.error("Failed to fetch tag data:", error);
       }
     };
 
-    if (isSignedIn && user.id) {
+    if (isSignedIn && user!.id) {
       fetchTaskData();
       fetchTagData();
     }
@@ -95,7 +104,7 @@ export const Stats = () => {
     return (
       <div className="p-8">
         <h1 className="text-2xl font-bold mb-4">
-          Analytics Dashboard for User: {user.fullName}
+          Analytics Dashboard for User: {user!.name}
         </h1>
         <div className="bg-white p-4 rounded-lg shadow-lg">
           <h2 className="text-xl font-semibold mb-2">Task Status Overview</h2>

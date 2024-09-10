@@ -43,3 +43,21 @@ export async function serverGetUserIdByClerkId(userClerkId: string) {
     throw new Error(`Failed to get user: ${error}`);
   }
 }
+
+export async function serverGetUserById(id: string) {
+  try {
+    const user = await db.user.findUnique({
+      where: {
+        id
+      },
+    });
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    return user;
+  } catch (error) {
+    throw new Error(`Failed to get user: ${error}`);
+  }
+}

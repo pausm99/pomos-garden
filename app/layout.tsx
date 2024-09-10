@@ -9,6 +9,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import { ToastProviderContext } from "@/contexts/ToastsContext";
 import { Toaster } from "@/components/ui/toaster";
 import { TimerProvider } from "@/contexts/TimerContext";
+import { UserProvider } from "@/contexts/UserContext";
 
 const fontSans = FontSans({ subsets: ["latin"], variable: "--font-sans" });
 const fontMono = FontMono({ subsets: ["latin"], variable: "--font-mono" });
@@ -36,20 +37,22 @@ export default function RootLayout({
           )}
         >
           <ToastProviderContext>
-            <TimerProvider>
-              <div className="flex flex-col flex-1 min-h-screen max-w-[1400px] m-auto p-6">
-                <Header />
-                <div className="flex-1 flex gap-7 h-[95dvh]">
-                  <ServicesNav className="w-20 flex flex-col gap-5" />
-                  <div className="flex flex-1 rounded-4xl bg-zinc-100 overflow-hidden relative">
-                    <Blob className="absolute w-full h-full" />
-                    <div className="absolute w-full h-full backdrop-blur-3xl"></div>
-                    <div className="flex-1 z-10">{children}</div>
+            <UserProvider>
+              <TimerProvider>
+                <div className="flex flex-col flex-1 min-h-screen max-w-[1400px] m-auto p-6">
+                  <Header />
+                  <div className="flex-1 flex gap-7 h-[95dvh]">
+                    <ServicesNav className="w-20 flex flex-col gap-5" />
+                    <div className="flex flex-1 rounded-4xl bg-zinc-100 overflow-hidden relative">
+                      <Blob className="absolute w-full h-full" />
+                      <div className="absolute w-full h-full backdrop-blur-3xl"></div>
+                      <div className="flex-1 z-10">{children}</div>
+                    </div>
                   </div>
                 </div>
-              </div>
-              <Toaster />
-            </TimerProvider>
+                <Toaster />
+              </TimerProvider>
+            </UserProvider>
           </ToastProviderContext>
         </body>
       </html>
