@@ -1,41 +1,40 @@
+// pages/api/clerk-webhook.ts
 import { Webhook } from "svix";
 import { headers } from "next/headers";
 import { WebhookEvent } from "@clerk/nextjs/server";
 import { serverCreateUser } from "@/lib/user";
 
 export async function POST(req: Request) {
-  // You can find this in the Clerk Dashboard -> Webhooks -> choose the endpoint
+  // Asegúrate de que WEBHOOK_SECRET está configurado en tu archivo .env o .env.local
   const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET;
 
   if (!WEBHOOK_SECRET) {
-    throw new Error(
-      "Please add WEBHOOK_SECRET from Clerk Dashboard to .env or .env.local"
-    );
+    throw new Error("Please add WEBHOOK_SECRET from Clerk Dashboard to .env or .env.local");
   }
 
-  // Get the headers
+  // Obtener los headers necesarios para validar el webhook
   const headerPayload = headers();
   const svix_id = headerPayload.get("svix-id");
   const svix_timestamp = headerPayload.get("svix-timestamp");
   const svix_signature = headerPayload.get("svix-signature");
 
-  // If there are no headers, error out
+  // Si faltan headers importantes, devolver un error
   if (!svix_id || !svix_timestamp || !svix_signature) {
-    return new Response("Error occured -- no svix headers", {
+    return new Response("Error: Missing svix headers", {
       status: 400,
     });
   }
 
-  // Get the body
+  // Obtener el cuerpo de la solicitud
   const payload = await req.json();
   const body = JSON.stringify(payload);
 
-  // Create a new Svix instance with your secret.
+  // Crear una instancia de Svix para validar el webhook
   const wh = new Webhook(WEBHOOK_SECRET);
 
   let evt: WebhookEvent;
 
-  // Verify the payload with the headers
+  // Verificar la validez de la firma del webhook
   try {
     evt = wh.verify(body, {
       "svix-id": svix_id,
@@ -44,37 +43,43 @@ export async function POST(req: Request) {
     }) as WebhookEvent;
   } catch (err) {
     console.error("Error verifying webhook:", err);
-    return new Response("Error occured", {
+    return new Response("Error: Invalid webhook signature", {
       status: 400,
     });
   }
 
-  // Do something with the payload
-  // For this guide, you simply log the payload to the console
-  const { id } = evt.data;
+  // Procesar el evento según su tipo
   const eventType = evt.type;
-  console.log(`Webhook with and ID of ${id} and type of ${eventType}`);
+  console.log(`Received webhook event: ${eventType}`);
 
-  //Getting the data we need to create a new user in our MongoDB.
-  // console.log("User First Name:", evt.data.first_name);
-  // console.log("User email:", evt.data.email_addresses[0].email_address);
-  // console.log("User ID:", evt.data.id);
-
-  if (evt.type === "user.created") {
+  if (eventType === "user.created") {
     const firstName = evt.data.first_name;
-    const email = evt.data.email_addresses[0].email_address;
+    const email = evt.data.email_addresses[0]?.email_address;
     const userClerkId = evt.data.id;
 
-    try {
-      await serverCreateUser(firstName!, email, userClerkId);
-      console.log("User created successfully with name:", firstName);
-    } catch (error) {
-      console.error("Error creating user:", error);
-      return new Response("Error occured", {
+    if (!firstName || !email || !userClerkId) {
+      return new Response("Error: Missing user data", {
         status: 400,
       });
     }
-  }
 
-  return new Response("", { status: 200 });
+    try {
+      // Llama a la función que creará el usuario en tu base de datos
+      await serverCreateUser(firstName, email, userClerkId);
+      console.log(`User created successfully with name: ${firstName}`);
+      return new Response("User created successfully", {
+        status: 200,
+      });
+    } catch (error) {
+      console.error("Error creating user:", error);
+      return new Response("Error: Failed to create user", {
+        status: 500,
+      });
+    }
+  } else {
+    // Si no es un evento que manejas, puedes devolver una respuesta 200 sin acción
+    return new Response("Event not handled", {
+      status: 200,
+    });
+  }
 }
