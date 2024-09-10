@@ -56,9 +56,9 @@ export async function POST(req: Request) {
   console.log(`Webhook with and ID of ${id} and type of ${eventType}`);
 
   //Getting the data we need to create a new user in our MongoDB.
-  console.log("User First Name:", evt.data.first_name);
-  console.log("User email:", evt.data.email_addresses[0].email_address);
-  console.log("User ID:", evt.data.id);
+  // console.log("User First Name:", evt.data.first_name);
+  // console.log("User email:", evt.data.email_addresses[0].email_address);
+  // console.log("User ID:", evt.data.id);
 
   if (evt.type === "user.created") {
     const firstName = evt.data.first_name;

@@ -2,8 +2,11 @@ import { Plus } from "lucide-react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { useState } from "react";
-import { Preset } from "@/interfaces/Preset";
+import { PresetCreateInputSchema } from "@/prisma/generated/zod";
 import { usePresetsContext } from "@/contexts/PresetsContext";
+import { z } from "zod";
+
+type PresetCreate = z.infer<typeof PresetCreateInputSchema>;
 
 export default function AddPreset() {
   const { addPreset } = usePresetsContext();
@@ -24,7 +27,8 @@ export default function AddPreset() {
 
   const handlePresetAdd = () => {
     if (name !== "" || focusTime !== "" || breakTime !== "") {
-      const newPreset: Preset = {
+      const newPreset: PresetCreate = {
+        userId: "66d6edd4f3aeb2c0285644e1",
         name: name,
         breakTime: parseInt(breakTime),
         focusTime: parseInt(focusTime),

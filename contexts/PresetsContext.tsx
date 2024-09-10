@@ -20,7 +20,7 @@ interface PresetsContextProps {
   presets: Preset[];
   selectedPreset: Preset | null;
   selectPreset: (id: string) => void;
-  addPreset: (preset: Preset) => void;
+  addPreset: (preset: PresetCreate) => void;
   deletePreset: (presetId: string) => void;
   loading: boolean;
 }
@@ -61,7 +61,7 @@ export const PresetsProvider = ({ children }: { children: ReactNode }) => {
 
   const addPreset = async (preset: PresetCreate) => {
     const newPreset = await actionCreatePreset(
-      "66d6edd4f3aeb2c0285644e1",
+      preset.userId,
       preset.name,
       preset.focusTime,
       preset.breakTime

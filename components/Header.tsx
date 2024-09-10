@@ -22,7 +22,7 @@ export default function Header() {
           height={62}
         />
         <span className="mt-1.5 font-medium leading-4 text-zinc-900">
-          Pomo's
+          Pomo&apos;s
           <br />
           Garden
         </span>

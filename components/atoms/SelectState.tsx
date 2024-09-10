@@ -12,7 +12,7 @@ import {
 import { TaskStatus } from "@/interfaces/State";
 
 type SelectStateProps = {
-  status: TaskStatus;
+  status: "BACKLOG" | "IN_PROGRESS" | "COMPLETED";
   onStatusChange: (newStatus: TaskStatus) => void;
 };
 

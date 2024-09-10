@@ -31,11 +31,13 @@ export default function Home() {
 
     // Transform the fetched messages to match the Message type
     const formattedMessages: Message[] = conversationMessages.map(
-      (message: { role: string }) => ({
+      (message: { role: string; content: string }) => ({
         ...message,
-        role: message.role as "user" | "assistant", // Ensure the role matches the expected type
+        role: message.role as "user" | "assistant", // Asegúrate de que el role coincida con los tipos esperados
+        content: message.content, // Asegúrate de incluir la propiedad content
       })
     );
+
 
     setConversation(formattedMessages);
     setConversationId(id);
