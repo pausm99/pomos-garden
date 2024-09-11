@@ -1,14 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import {
-  ClerkProvider,
-  SignInButton,
-  SignOutButton,
-  SignedIn,
-  SignedOut,
-  UserButton,
-} from "@clerk/nextjs";
+import { ClerkProvider, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import CustomSignInButton from "./CustomSignInButton";
 
 export default function Header() {
@@ -28,19 +20,15 @@ export default function Header() {
         </span>
       </Link>
       <div>
-        <SignedOut>
-          <CustomSignInButton />
-        </SignedOut>
         <SignedIn>
-          <UserButton />
-          <SignOutButton />
+          <UserButton
+            appearance={{
+              elements: {
+                avatarBox: "w-12 h-12",
+              },
+            }}
+          />
         </SignedIn>
-      </div>
-      <div>
-        <Avatar>
-          <AvatarImage src="https://picsum.photos/200" />
-          <AvatarFallback>PG</AvatarFallback>
-        </Avatar>
       </div>
     </header>
   );
