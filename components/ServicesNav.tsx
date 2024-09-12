@@ -4,6 +4,7 @@ import {
   AlarmClockCheck,
   BotMessageSquare,
   ChartColumnBig,
+  Gamepad2Icon,
   ListTodo,
 } from "lucide-react";
 import { usePathname } from "next/navigation";
@@ -58,6 +59,14 @@ export default function Nav({ className }: NavProps) {
             active={isActiveRoute("/analytics")}
           >
             <ChartColumnBig size={24} />
+          </ServiceButton>
+        </Link>
+        <Link href="/minigame" passHref>
+          <ServiceButton
+            tooltipContent="Garden"
+            active={isActiveRoute("/minigame")}
+          >
+            <Gamepad2Icon size={24} />
           </ServiceButton>
         </Link>
       </div>
