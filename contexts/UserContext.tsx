@@ -39,8 +39,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         } catch (error) {
           // Handle errors and add a toast message
           addToast({
-            message: "Error fetching user information",
-            type: "error",
+            description: "Error fetching user information",
           });
         } finally {
           setLoading(false);
