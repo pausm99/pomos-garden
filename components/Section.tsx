@@ -1,5 +1,6 @@
 "use client";
 
+import { ReactNode } from "react";
 import { PresetsProvider } from "@/contexts/PresetsContext";
 import TaskSection from "./TasksSection";
 import TimerSection from "./TimerSection";
@@ -7,9 +8,10 @@ import TimerSection from "./TimerSection";
 type SectionProps = {
   name: string;
   section: string;
+  children?: ReactNode;
 };
 
-export default function Section({ name, section }: SectionProps) {
+export default function Section({ name, section, children }: SectionProps) {
   return (
     <div className="h-[75dvh]">
       <h1 className="py-5 px-7 uppercase">{name}</h1>
@@ -18,6 +20,7 @@ export default function Section({ name, section }: SectionProps) {
       <PresetsProvider>
         {section === "pomodoro" && <TimerSection />}
       </PresetsProvider>
+      {children}
     </div>
   );
 }
