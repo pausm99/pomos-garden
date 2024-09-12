@@ -39,7 +39,7 @@ export default function RootLayout({
           <ToastProviderContext>
             <UserProvider>
               <TimerProvider>
-                <div className="flex flex-col flex-1 min-h-screen max-w-[1400px] m-auto p-6">
+                <div className="flex flex-col flex-1 min-h-screen px-[1em] max-w-[1400px] mx-auto py-5">
                   <Header />
                   <div className="flex-1 flex gap-7 h-[95dvh]">
                     <ServicesNav className="w-20 flex flex-col gap-5" />

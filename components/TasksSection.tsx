@@ -119,10 +119,13 @@ export default function TaskSection() {
         onDragStart={onDragStart}
         onDragEnd={onDragEnd}
       >
-        <div className="p-5 h-full flex gap-5 overflow-hidden">
+        <div className="p-5 h-full flex flex-col md:flex-row gap-5 overflow-hidden">
           {(["todo", "doing", "done"] as Array<keyof typeof tasks>).map(
             (state) => (
-              <div key={state} className="flex-1 w-[33%] flex flex-col gap-2.5">
+              <div
+                key={state}
+                className="flex-1 w-full md:w-[50%] flex flex-col gap-2.5 overflow-y-auto"
+              >
                 <SortableContext
                   items={tasks[state].map((task) => task.id)}
                   strategy={verticalListSortingStrategy}

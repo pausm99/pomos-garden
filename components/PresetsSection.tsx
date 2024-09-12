@@ -4,13 +4,17 @@ import AddPreset from "./AddPreset";
 
 export default function PresetsSection() {
   const { presets, loading } = usePresetsContext();
+
   return (
-    <div className="h-full">
-      <h2 className="uppercase text-zinc-400 text-lg mb-2.5">Presets ({presets.length})</h2>
+    <div className="h-full flex flex-col">
+      <h2 className="uppercase text-zinc-400 text-lg mb-2.5">
+        Presets ({presets.length})
+      </h2>
+
       <div className="flex flex-col justify-between gap-10 h-full">
         <div
-          style={{ maxHeight: "66%", flex: "3" }}
-          className="flex flex-col flex-grow flex-1 gap-2.5 overflow-y-scroll"
+          style={{ maxHeight: "60%" }}
+          className="flex flex-col flex-grow gap-2.5 overflow-y-scroll pr-4"
         >
           {loading ? (
             <div className="flex justify-center items-center">
