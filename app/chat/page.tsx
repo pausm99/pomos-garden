@@ -83,31 +83,9 @@ export default function Home() {
   return (
     <Section name={"Chatbot"} section={"Chatbot"}>
       <div className="flex flex-col h-full bg-gray-100 p-4 sm:flex-row overflow-y-auto">
-        <div className="w-full sm:w-1/3 bg-white rounded-lg shadow-lg p-4 mb-4 sm:mb-0 sm:mr-4 flex-shrink-0 overflow-y-auto">
-          <h2 className="text-xl font-semibold mb-4">Past Conversations</h2>
-          <ul className="space-y-2">
-            {conversations.map((conv) => (
-              <li
-                key={conv.id}
-                onClick={() => loadConversation(conv.id)}
-                className={`p-2 rounded-lg cursor-pointer ${
-                  conversationId === conv.id
-                    ? "bg-lime-500 text-white"
-                    : "bg-gray-200"
-                }`}
-              >
-                {new Date(conv.createdAt).toLocaleString()}
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div className="flex flex-col flex-1 bg-gray-100 p-4">
-          <div className="w-full bg-white rounded-lg shadow-lg p-6 flex flex-col h-full">
-            <div
-              ref={chatContainerRef}
-              className="mb-4 overflow-y-auto flex-1 max-h-[calc(100vh-200px)]"
-            >
+        <div className="flex-1 bg-gray-100 p-4 flex flex-col">
+          <div className="w-full bg-white rounded-lg shadow-lg p-6 flex flex-col h-full ">
+            <div ref={chatContainerRef} className="flex-1 overflow-y-auto mb-4">
               {conversation.map((message, index) => (
                 <div
                   key={index}
@@ -133,12 +111,31 @@ export default function Home() {
               />
               <button
                 onClick={handleSendMessage}
-                className="bg-lime-500 text-white pr-1 pl-1 rounded-r h-12 hover:bg-lime-600"
+                className="bg-lime-500 text-white p-3 rounded-r h-12 hover:bg-lime-600"
               >
                 Send Message
               </button>
             </div>
           </div>
+        </div>
+
+        <div className="w-full sm:w-1/3 bg-white rounded-lg shadow-lg p-4 mt-4 sm:mt-0 sm:ml-4 flex-shrink-0 overflow-y-auto">
+          <h2 className="text-xl font-semibold mb-4">Past Conversations</h2>
+          <ul className="space-y-2">
+            {conversations.map((conv) => (
+              <li
+                key={conv.id}
+                onClick={() => loadConversation(conv.id)}
+                className={`p-2 rounded-lg cursor-pointer ${
+                  conversationId === conv.id
+                    ? "bg-lime-500 text-white"
+                    : "bg-gray-200"
+                }`}
+              >
+                {new Date(conv.createdAt).toLocaleString()}
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
     </Section>
