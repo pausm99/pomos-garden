@@ -21,7 +21,7 @@ const UserContext = createContext<UserContextProps | undefined>(undefined);
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
   const { addToast } = useToastContext();
-  const { user: clerkUser, isSignedIn } = useUser(); // Destructure Clerk's user and isSignedIn
+  const { user: clerkUser, isSignedIn } = useUser();
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(false);
 
