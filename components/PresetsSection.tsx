@@ -14,7 +14,7 @@ export default function PresetsSection() {
       <div className="flex flex-col justify-between gap-10 h-full">
         <div
           style={{ maxHeight: "60%" }}
-          className="flex flex-col flex-grow gap-2.5 overflow-y-scroll"
+          className="flex flex-col flex-grow gap-2.5 overflow-y-scroll pr-4"
         >
           {loading ? (
             <div className="flex justify-center items-center">
