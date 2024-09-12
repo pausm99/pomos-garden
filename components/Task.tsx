@@ -37,7 +37,6 @@ export default function Task({ task, draggingTask }: TaskProps) {
     boxShadow: "0px 1px 3px rgba(0,0,0,0.1)",
     opacity: draggingTask?.id === task.id ? 0.7 : 1,
   };
-
   const handleStatusChange = (newStatus: TaskStatus) => {
     task.status = newStatus;
   };
