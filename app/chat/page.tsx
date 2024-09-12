@@ -82,7 +82,7 @@ export default function Home() {
 
   return (
     <Section name={"Chatbot"} section={"Chatbot"}>
-      <div className="flex flex-col h-full bg-gray-100 p-4 sm:flex-row">
+      <div className="flex flex-col h-full bg-gray-100 p-4 sm:flex-row overflow-y-auto">
         <div className="w-full sm:w-1/3 bg-white rounded-lg shadow-lg p-4 mb-4 sm:mb-0 sm:mr-4 flex-shrink-0 overflow-y-auto">
           <h2 className="text-xl font-semibold mb-4">Past Conversations</h2>
           <ul className="space-y-2">
@@ -128,12 +128,12 @@ export default function Home() {
                 value={input}
                 onChange={(event) => setInput(event.target.value)}
                 onKeyDown={handleKeyDown}
-                className="flex-grow border rounded-l p-3 text-gray-700"
+                className="flex-grow border rounded-l p-3 text-gray-700 h-12"
                 placeholder="Type your message..."
               />
               <button
                 onClick={handleSendMessage}
-                className="bg-lime-500 text-white p-3 rounded-r hover:bg-lime-600"
+                className="bg-lime-500 text-white pr-1 pl-1 rounded-r h-12 hover:bg-lime-600"
               >
                 Send Message
               </button>
