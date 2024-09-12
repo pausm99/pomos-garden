@@ -56,6 +56,8 @@ export async function POST(req: Request) {
   const eventType = evt.type;
   console.log(`Received webhook event: ${eventType}`);
 
+  if (eventType === 'session.created') console.log('session created!!!!!!!')
+
   if (eventType === "user.created") {
     const firstName = evt.data.first_name;
     const email = evt.data.email_addresses[0]?.email_address;
