@@ -1,16 +1,16 @@
 "use client";
 
+import { actionGetUserByEmail } from "@/actions/users";
+import { User } from "@/prisma/generated/zod";
+import { getSession, SessionProvider } from "next-auth/react";
 import {
   createContext,
-  useState,
   ReactNode,
   useContext,
   useEffect,
+  useState,
 } from "react";
-import { User } from "@/prisma/generated/zod";
 import { useToastContext } from "./ToastsContext";
-import { actionGetUserById, actionGetUserIdByClerkId } from "@/actions/users";
-import { useUser } from "@clerk/nextjs"; // Import the useUser hook from Clerk
 
 interface UserContextProps {
   user: User | null;
@@ -21,43 +21,38 @@ const UserContext = createContext<UserContextProps | undefined>(undefined);
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
   const { addToast } = useToastContext();
-  const { user: clerkUser, isSignedIn } = useUser();
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchUser = async () => {
-      if (isSignedIn && clerkUser) {
-        try {
-          setLoading(true);
-          // Fetch user ID by Clerk ID
-          const userId = await actionGetUserIdByClerkId(clerkUser.id);
-          // Fetch user data by user ID
-          const userData = await actionGetUserById(userId);
-          // Set user data in the state
+      try {
+        // Obtén la sesión del usuario
+        const session = await getSession();
+        if (session?.user?.email) {
+          // Si el usuario está autenticado, obtén los datos del usuario desde la base de datos
+          const userData = await actionGetUserByEmail(session.user.email);
           setUser(userData);
-        } catch (error) {
-          // Handle errors and add a toast message
-          addToast({
-            description: "Error fetching user information",
-          });
-        } finally {
-          setLoading(false);
+        } else {
+          // Si no hay sesión, el usuario no está autenticado
+          setUser(null);
         }
+      } catch (error) {
+        // Maneja errores y muestra un mensaje de toast
+        addToast({
+          description: "Error fetching user information",
+        });
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchUser();
-  }, [clerkUser, isSignedIn]); // Trigger effect when Clerk's user or sign-in status changes
+  }, []); // Solo ejecuta el efecto una vez al montar el componente
 
   return (
-    <UserContext.Provider
-      value={{
-        user,
-        loading,
-      }}
-    >
-      {children}
+    <UserContext.Provider value={{ user, loading }}>
+      <SessionProvider>{children}</SessionProvider>
     </UserContext.Provider>
   );
 };

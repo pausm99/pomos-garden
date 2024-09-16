@@ -1,15 +1,14 @@
-import type { Metadata } from "next";
-import { Rubik as FontSans, Roboto_Mono as FontMono } from "next/font/google";
-import "./globals.css";
-import { cn } from "@/lib/utils";
 import Header from "@/components/Header";
 import ServicesNav from "@/components/ServicesNav";
 import Blob from "@/components/atoms/Blob";
-import { ClerkProvider } from "@clerk/nextjs";
-import { ToastProviderContext } from "@/contexts/ToastsContext";
 import { Toaster } from "@/components/ui/toaster";
 import { TimerProvider } from "@/contexts/TimerContext";
+import { ToastProviderContext } from "@/contexts/ToastsContext";
 import { UserProvider } from "@/contexts/UserContext";
+import { cn } from "@/lib/utils";
+import type { Metadata } from "next";
+import { Roboto_Mono as FontMono, Rubik as FontSans } from "next/font/google";
+import "./globals.css";
 
 const fontSans = FontSans({ subsets: ["latin"], variable: "--font-sans" });
 const fontMono = FontMono({ subsets: ["latin"], variable: "--font-mono" });
@@ -26,36 +25,34 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider>
-      <html lang="en">
-        <body
-          className={cn(
-            fontSans.variable,
-            fontMono.variable,
-            "font-sans text-sm text-zinc-900 text-balance",
-            "bg-zinc-300"
-          )}
-        >
-          <ToastProviderContext>
-            <UserProvider>
-              <TimerProvider>
-                <div className="flex flex-col flex-1 min-h-screen px-[1em] max-w-[1400px] mx-auto py-5">
-                  <Header />
-                  <div className="flex-1 flex gap-7 h-[95dvh]">
-                    <ServicesNav className="w-20 flex flex-col gap-5" />
-                    <div className="flex flex-1 rounded-4xl bg-zinc-100 overflow-hidden relative">
-                      <Blob className="absolute w-full h-full" />
-                      <div className="absolute w-full h-full backdrop-blur-3xl"></div>
-                      <div className="flex-1 z-10">{children}</div>
-                    </div>
+    <html lang="en">
+      <body
+        className={cn(
+          fontSans.variable,
+          fontMono.variable,
+          "font-sans text-sm text-zinc-900 text-balance",
+          "bg-zinc-300"
+        )}
+      >
+        <ToastProviderContext>
+          <UserProvider>
+            <TimerProvider>
+              <div className="flex flex-col flex-1 min-h-screen px-[1em] max-w-[1400px] mx-auto py-5">
+                <Header />
+                <div className="flex-1 flex gap-7 h-[95dvh]">
+                  <ServicesNav className="w-20 flex flex-col gap-5" />
+                  <div className="flex flex-1 rounded-4xl bg-zinc-100 overflow-hidden relative">
+                    <Blob className="absolute w-full h-full" />
+                    <div className="absolute w-full h-full backdrop-blur-3xl"></div>
+                    <div className="flex-1 z-10">{children}</div>
                   </div>
                 </div>
-                <Toaster />
-              </TimerProvider>
-            </UserProvider>
-          </ToastProviderContext>
-        </body>
-      </html>
-    </ClerkProvider>
+              </div>
+              <Toaster />
+            </TimerProvider>
+          </UserProvider>
+        </ToastProviderContext>
+      </body>
+    </html>
   );
 }

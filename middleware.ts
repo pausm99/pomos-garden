@@ -1,18 +1,33 @@
-import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+// middleware.ts
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+import { getToken } from "next-auth/jwt";
 
-const isProtectedRoute = createRouteMatcher(["/((?!sign-in|sign-up).*)"]);
+const secret = process.env.NEXTAUTH_SECRET;
 
-export default clerkMiddleware((auth, req) => {
-    if (isProtectedRoute(req)) {
-        auth().protect();
+export async function middleware(request: NextRequest) {
+  const token = await getToken({ req: request, secret });
+
+  // Define las rutas protegidas
+  const protectedPaths = ["/", "/tasks", "/chat", "/analytics", "/minigame"];
+
+  // Verifica si la ruta actual es una ruta protegida
+  if (protectedPaths.some((path) => request.nextUrl.pathname === path)) {
+    if (!token) {
+      // Redirige a la página de inicio de sesión si el usuario no está autenticado
+      return NextResponse.redirect(new URL("/login", request.url));
     }
-});
+  }
 
+  // Permite acceso a la página de inicio de sesión y otras rutas no protegidas
+  if (request.nextUrl.pathname === "/login") {
+    return NextResponse.next();
+  }
+
+  return NextResponse.next();
+}
+
+// Configura el middleware para que se ejecute en las rutas especificadas
 export const config = {
-    matcher: [
-        // Skip Next.js internals and all static files, unless found in search params
-        "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
-        // Always run for API routes
-        "/(api|trpc)(.*)",
-    ],
+  matcher: ["/tasks", "/chat", "/analytics", "/minigame", "/"],
 };

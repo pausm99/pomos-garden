@@ -1,5 +1,6 @@
 "use client";
 
+import { twClassFormatter } from "@/lib/utils";
 import { Tag as TagType, TagCreateInputSchema } from "@/prisma/generated/zod";
 import { X } from "lucide-react";
 import React from "react";
@@ -33,7 +34,7 @@ export default function Tag({ tag, style, onSelectTag, onDiscardTag, deletable }
 
   return (
     <span
-      className={`flex items-center justify-between gap-1 px-2 py-0.5 ${style} ${tag.color} rounded-full text-zinc-500 text-ellipsis whitespace-nowrap overflow-hidden`}
+      className={`flex items-center justify-between gap-1 px-2 py-0.5 ${style} ${twClassFormatter(tag.color)} rounded-full text-zinc-500 text-ellipsis whitespace-nowrap overflow-hidden`}
       style={{
         border: "1px solid #e6e6e6",
       }}

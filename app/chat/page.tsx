@@ -1,16 +1,23 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
 import {
   Message,
   continueConversation,
-  getConversations,
   getConversationMessages,
+  getConversations,
 } from "@/actions/chat";
-import { readStreamableValue } from "ai/rsc";
 import Section from "@/components/Section";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useUserContext } from "@/contexts/UserContext";
+import { readStreamableValue } from "ai/rsc";
+import { Bot } from "lucide-react";
+import { useSession } from "next-auth/react";
+import { useEffect, useRef, useState } from "react";
 
 export default function Home() {
+  const { user } = useUserContext();
+  const { data: session } = useSession();
+
   const [conversation, setConversation] = useState<Message[]>([]);
   const [input, setInput] = useState<string>("");
   const [conversationId, setConversationId] = useState<string | null>(null);
@@ -18,16 +25,21 @@ export default function Home() {
     Array<{ id: string; createdAt: Date }>
   >([]);
 
+  let avatarFallback = "PG";
+  if (session?.user?.name) avatarFallback = session.user?.name[0].toUpperCase();
+
   const chatContainerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const fetchConversations = async () => {
-      const userConversations = await getConversations();
-      setConversations(userConversations);
+      if (user) {
+        const userConversations = await getConversations(user?.id);
+        setConversations(userConversations);
+      }
     };
 
     fetchConversations();
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     if (chatContainerRef.current) {
@@ -37,40 +49,45 @@ export default function Home() {
   }, [conversation]);
 
   const loadConversation = async (id: string) => {
-    const conversationMessages = await getConversationMessages(id);
+    if (user) {
+      const conversationMessages = await getConversationMessages(user?.id, id);
 
-    const formattedMessages: Message[] = conversationMessages.map(
-      (message: { role: string; content: string }) => ({
-        ...message,
-        role: message.role as "user" | "assistant",
-        content: message.content,
-      })
-    );
+      const formattedMessages: Message[] = conversationMessages.map(
+        (message: { role: string; content: string }) => ({
+          ...message,
+          role: message.role as "user" | "assistant",
+          content: message.content,
+        })
+      );
 
-    setConversation(formattedMessages);
-    setConversationId(id);
+      setConversation(formattedMessages);
+      setConversationId(id);
+    }
   };
 
   const handleSendMessage = async () => {
     if (input.trim() === "") return;
 
-    const { messages, newMessage } = await continueConversation(
-      [...conversation, { role: "user", content: input }],
-      conversationId
-    );
+    if (user) {
+      const { messages, newMessage } = await continueConversation(
+        user?.id,
+        [...conversation, { role: "user", content: input }],
+        conversationId
+      );
 
-    let textContent = "";
+      let textContent = "";
 
-    for await (const delta of readStreamableValue(newMessage)) {
-      textContent = `${textContent}${delta}`;
+      for await (const delta of readStreamableValue(newMessage)) {
+        textContent = `${textContent}${delta}`;
 
-      setConversation([
-        ...messages,
-        { role: "assistant", content: textContent },
-      ]);
+        setConversation([
+          ...messages,
+          { role: "assistant", content: textContent },
+        ]);
+      }
+
+      setInput("");
     }
-
-    setInput("");
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -79,6 +96,10 @@ export default function Home() {
       handleSendMessage();
     }
   };
+
+  if (!user) {
+    return null;
+  }
 
   return (
     <Section name={"Chatbot"} section={"Chatbot"}>
@@ -89,29 +110,41 @@ export default function Home() {
               {conversation.map((message, index) => (
                 <div
                   key={index}
-                  className={`p-3 my-2 rounded-lg ${
+                  className={`flex items-center gap-2.5 p-3 my-2 rounded-lg ${
                     message.role === "user"
                       ? "bg-blue-50 text-blue-900"
                       : "bg-lime-50 text-lime-900"
                   }`}
                 >
-                  <strong>{message.role}:</strong> {message.content}
+                  {message.role === "user" ? (
+                    <Avatar className="h-8 w-8 flex-shrink-0 flex-grow-0">
+                      <AvatarImage
+                        src={session?.user?.image || undefined}
+                        alt="@shadcn"
+                      />
+                      <AvatarFallback>{avatarFallback}</AvatarFallback>
+                    </Avatar>
+                  ) : (
+                    <Bot className="h8 w-8 flex-shrink-0 flex-grow-0" />
+                  )}
+
+                  <p>{message.content}</p>
                 </div>
               ))}
             </div>
 
-            <div className="flex items-center mt-4">
+            <div className="flex items-center mt-4 gap-2.5">
               <input
                 type="text"
                 value={input}
                 onChange={(event) => setInput(event.target.value)}
                 onKeyDown={handleKeyDown}
-                className="flex-grow border rounded-l p-3 text-gray-700 h-12"
+                className="flex-grow border rounded-lg p-3 text-zinc-800 h-12"
                 placeholder="Type your message..."
               />
               <button
                 onClick={handleSendMessage}
-                className="bg-lime-500 text-white p-3 rounded-r h-12 hover:bg-lime-600"
+                className="bg-lime-300 text-zinc-800 p-3 rounded-lg h-12 hover:bg-lime-400"
               >
                 Send Message
               </button>

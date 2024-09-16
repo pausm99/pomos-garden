@@ -3,13 +3,11 @@ import { UserCreateInputSchema } from "@/prisma/generated/zod";
 
 export async function serverCreateUser(
   name: string,
-  email: string,
-  userClerkId: string
+  email: string
 ) {
   const data = {
     name,
-    email,
-    userClerkId,
+    email
   };
   try {
     UserCreateInputSchema.parse(data);
@@ -26,29 +24,11 @@ export async function serverCreateUser(
   }
 }
 
-export async function serverGetUserIdByClerkId(userClerkId: string) {
+export async function serverGetUserByEmail(email: string) {
   try {
     const user = await db.user.findUnique({
       where: {
-        userClerkId,
-      },
-    });
-
-    if (!user) {
-      throw new Error("User not found");
-    }
-
-    return user.id;
-  } catch (error) {
-    throw new Error(`Failed to get user: ${error}`);
-  }
-}
-
-export async function serverGetUserById(id: string) {
-  try {
-    const user = await db.user.findUnique({
-      where: {
-        id
+        email
       },
     });
 

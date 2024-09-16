@@ -4,28 +4,18 @@ import { streamText } from "ai";
 import { openai } from "@ai-sdk/openai";
 import { createStreamableValue } from "ai/rsc";
 import { db } from "@/db/db";
-import { auth } from "@clerk/nextjs/server";
-import { serverGetUserIdByClerkId } from "@/lib/user";
 
 export interface Message {
   role: "user" | "assistant";
   content: string;
 }
 
-const { userId } = auth();
-try {
-  if (!userId) throw new Error("User not authenticated");
-} catch (error) {
-  throw new Error(`Failed to get user: ${error}`);
-}
-const dbUserId = serverGetUserIdByClerkId(userId);
-
 // Continue an existing conversation or start a new one
 export async function continueConversation(
+  userId: string,
   history: Message[],
   conversationId?: string | null
 ) {
-  const userId = "66d6edd4f3aeb2c0285644e1";
   if (!userId) throw new Error("User not authenticated");
 
   const stream = createStreamableValue();
@@ -78,9 +68,7 @@ export async function continueConversation(
 }
 
 // Fetch all conversations for the current user
-export async function getConversations() {
-  const userId = "66d6edd4f3aeb2c0285644e1";
-
+export async function getConversations(userId: string) {
   if (!userId) throw new Error("User not authenticated");
 
   const conversations = await db.conversation.findMany({
@@ -95,9 +83,10 @@ export async function getConversations() {
 }
 
 // Fetch messages of a specific conversation
-export async function getConversationMessages(conversationId: string) {
-  const userId = "66d6edd4f3aeb2c0285644e1";
-
+export async function getConversationMessages(
+  userId: string,
+  conversationId: string
+) {
   if (!userId) throw new Error("User not authenticated");
 
   const conversation = await db.conversation.findUnique({

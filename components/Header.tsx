@@ -1,7 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ClerkProvider, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
-import CustomSignInButton from "./CustomSignInButton";
+import UserMenu from "./UserMenu";
 
 export default function Header() {
   return (
@@ -19,17 +18,7 @@ export default function Header() {
           Garden
         </span>
       </Link>
-      <div>
-        <SignedIn>
-          <UserButton
-            appearance={{
-              elements: {
-                avatarBox: "w-12 h-12",
-              },
-            }}
-          />
-        </SignedIn>
-      </div>
+      <UserMenu />
     </header>
   );
 }

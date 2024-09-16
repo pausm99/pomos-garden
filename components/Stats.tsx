@@ -3,7 +3,6 @@
 import { actionGetAllTagsForUser } from "@/actions/tags";
 import { actionGetAllTasksForUser } from "@/actions/tasks";
 import { useUserContext } from "@/contexts/UserContext";
-import { useUser } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
 import {
   Bar,
@@ -29,7 +28,6 @@ export const Stats = () => {
     Array<{ tagDesc: string; count: number }>
   >([]);
 
-  const { isSignedIn, isLoaded } = useUser();
   const { user } = useUserContext();
 
   useEffect(() => {
@@ -82,25 +80,21 @@ export const Stats = () => {
       }
     };
 
-    if (isSignedIn && user!.id) {
+    if (user) {
       fetchTaskData();
       fetchTagData();
     }
-  }, [isSignedIn, user]);
+  }, [user]);
 
   const renderCustomLabel = (entry: any) => {
     return `${entry.tagDesc}`;
   };
 
-  if (!isLoaded) {
+  if (!user) {
     return <div>Loading...</div>;
   }
 
-  // if (!isSignedIn) {
-  //   return <div>You must be signed in to view this page</div>;
-  // }
-
-  if (isSignedIn) {
+  if (user) {
     return (
       <div className="p-8">
         <h1 className="text-2xl font-bold mb-4">

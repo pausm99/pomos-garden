@@ -13,6 +13,7 @@ import { Input } from "./ui/input";
 import { useTagsContext } from "@/contexts/TagsContext";
 import { z } from "zod";
 import { useUserContext } from "@/contexts/UserContext";
+import { twClassFormatter } from "@/lib/utils";
 
 type TagCreateInput = z.infer<typeof TagCreateInputSchema>;
 
@@ -43,7 +44,7 @@ type TagManagerProps = {
 
 export function TagManager({ onTagSelect }: TagManagerProps) {
   const { user } = useUserContext();
-  
+
   const [inputText, setInputText] = useState("");
   const [selectedColor, setSelectedColor] = useState<color>("bg_red_200");
   const { tagsCollection, addTag } = useTagsContext();
@@ -159,9 +160,8 @@ export function TagManager({ onTagSelect }: TagManagerProps) {
                         ? "2px solid rgba(0,0,0,0.1)"
                         : "1px solid rgba(0,0,0,0.1)"
                     }`,
-                    backgroundColor: color,
                   }}
-                  className={`h-4 w-4 rounded-full cursor-pointer hover:scale-125 transition-all ${
+                  className={`h-4 w-4 ${twClassFormatter(color)} rounded-full cursor-pointer hover:scale-125 transition-all ${
                     selectedColor === color ? "scale-125" : ""
                   }`}
                 ></span>
