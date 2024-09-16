@@ -119,7 +119,7 @@ export default function TaskSection() {
         onDragStart={onDragStart}
         onDragEnd={onDragEnd}
       >
-        <div className="p-5 h-full flex flex-col md:flex-row gap-5 overflow-hidden">
+        <div className="flex-1 p-5 flex flex-col md:flex-row gap-5 overflow-hidden">
           {(["todo", "doing", "done"] as Array<keyof typeof tasks>).map(
             (state) => (
               <div

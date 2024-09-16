@@ -1,7 +1,9 @@
 "use client";
-import { Stats } from "@/components/Stats";
+import Section from "@/components/Section";
+import { useUserContext } from "@/contexts/UserContext";
 import React from "react";
 
 export default function page() {
-  return <Stats />;
+  const { user } = useUserContext()
+  return <Section section="stats" name={`Analytics Dashboard for ${user?.name || '...'}`} />;
 }

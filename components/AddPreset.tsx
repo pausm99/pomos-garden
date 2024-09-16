@@ -42,7 +42,7 @@ export default function AddPreset() {
     }
   };
   return (
-    <form action={handlePresetAdd} className="flex flex-col flex-1 gap-2.5">
+    <form action={handlePresetAdd} className="flex flex-col gap-2.5">
       <Input
         value={name}
         onChange={handleNameInput}

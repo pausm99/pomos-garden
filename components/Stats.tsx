@@ -90,16 +90,9 @@ export const Stats = () => {
     return `${entry.tagDesc}`;
   };
 
-  if (!user) {
-    return <div>Loading...</div>;
-  }
-
   if (user) {
     return (
-      <div className="p-8">
-        <h1 className="text-2xl font-bold mb-4">
-          Analytics Dashboard for User: {user!.name}
-        </h1>
+      <div className="p-8 flex flex-col h-[75%] gap-2.5">
         <div className="bg-white p-4 rounded-lg shadow-lg">
           <h2 className="text-xl font-semibold mb-2">Task Status Overview</h2>
           <ResponsiveContainer width="100%" height={400}>

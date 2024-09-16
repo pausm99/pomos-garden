@@ -37,11 +37,11 @@ export default function RootLayout({
         <ToastProviderContext>
           <UserProvider>
             <TimerProvider>
-              <div className="flex flex-col flex-1 min-h-screen px-[1em] max-w-[1400px] mx-auto py-5">
+              <div className="flex flex-col min-h-screen h-screen px-[1em] max-w-[1400px] mx-auto py-5">
                 <Header />
-                <div className="flex-1 flex gap-7 h-[95dvh]">
+                <div className="h-full flex gap-7 overflow-hidden">
                   <ServicesNav className="w-20 flex flex-col gap-5" />
-                  <div className="flex flex-1 rounded-4xl bg-zinc-100 overflow-hidden relative">
+                  <div className="h-full w-full flex rounded-4xl bg-zinc-100 overflow-hidden relative">
                     <Blob className="absolute w-full h-full" />
                     <div className="absolute w-full h-full backdrop-blur-3xl"></div>
                     <div className="flex-1 z-10">{children}</div>
