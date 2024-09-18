@@ -38,7 +38,7 @@ const SignInButtons = ({ className = "" }) => {
         </div>
       </button>
       <button
-        onClick={() => handleLoginClick("google")}
+        onClick={() => handleLoginClick("github")}
         className="px-10 h-fit py-2 bg-white text-black rounded-lg shadow-md border border-gray-300 hover:bg-gray-100"
       >
         <div className="flex justify-center items-center gap-2.5">
