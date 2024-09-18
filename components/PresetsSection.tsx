@@ -11,7 +11,7 @@ export default function PresetsSection() {
         Presets ({presets.length})
       </h2>
 
-      <div className="w-full h-full flex flex-col mb-2.5 gap-2.5 overflow-scroll border rounded-lg p-2.5">
+      <div className="w-full h-full flex flex-col mb-2.5 gap-2.5 overflow-y-auto border rounded-lg p-2.5">
         {loading ? (
           <div className="flex justify-center items-center">
             <div className="animate-spin rounded-full h-32 w-32 border-t-4 border-lime-500"></div>
