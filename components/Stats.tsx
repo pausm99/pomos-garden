@@ -22,15 +22,15 @@ import {
 } from "recharts";
 
 export const Stats = () => {
-  // Explicitly define the types for state variables
   const [taskData, setTaskData] = useState<
     Array<{ status: string; count: number }>
   >([]);
   const [tagData, setTagData] = useState<
     Array<{ tagDesc: string; count: number }>
   >([]);
-
-  const COLORS = generateUniqueColors(tagData.length);
+  const [sessionData, setSessionData] = useState<
+    Array<{ date: string; sessions: number; focusTime: number }>
+  >([]);
 
   const { user } = useUserContext();
 
@@ -39,7 +39,6 @@ export const Stats = () => {
       try {
         if (user) {
           const data = await actionGetAllTasksForUser(user.id);
-
           const taskCounts = data.reduce(
             (acc: { [key: string]: number }, task) => {
               const status = task.status as string;
@@ -55,7 +54,7 @@ export const Stats = () => {
               count,
             })
           );
-          setTaskData(chartData); // No more TypeScript error here
+          setTaskData(chartData);
         }
       } catch (error) {
         console.error("Failed to fetch task data:", error);
@@ -126,10 +125,12 @@ export const Stats = () => {
     return `${entry.tagDesc}`;
   };
 
+  const dynamicColors = generateUniqueColors(tagData.length);
+
   if (user) {
     console.log("Session Data for Chart:", sessionData);
     return (
-      <div className="h-full overflow-y-auto p-8 flex flex-col gap-2.5">
+      <div className="p-8 flex flex-col h-full gap-2.5 overflow-y-auto">
         <div className="bg-white p-4 rounded-lg shadow-lg">
           <h2 className="text-xl font-semibold mb-2">Task Status Overview</h2>
           <ResponsiveContainer width="100%" height={400}>
@@ -164,7 +165,7 @@ export const Stats = () => {
                 labelLine={false}
               >
                 {tagData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index]} />
+                  <Cell key={`cell-${index}`} fill={dynamicColors[index]} />
                 ))}
               </Pie>
               <Tooltip />
