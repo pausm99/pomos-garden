@@ -21,8 +21,6 @@ import {
   YAxis,
 } from "recharts";
 
-const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
-
 export const Stats = () => {
   // Explicitly define the types for state variables
   const [taskData, setTaskData] = useState<
@@ -31,9 +29,8 @@ export const Stats = () => {
   const [tagData, setTagData] = useState<
     Array<{ tagDesc: string; count: number }>
   >([]);
-  const [sessionData, setSessionData] = useState<
-    Array<{ date: string; sessions: number; focusTime: number }>
-  >([]);
+
+  const COLORS = generateUniqueColors(tagData.length);
 
   const { user } = useUserContext();
 
@@ -132,8 +129,7 @@ export const Stats = () => {
   if (user) {
     console.log("Session Data for Chart:", sessionData);
     return (
-      <div className="p-8 flex flex-col h-full gap-2.5 overflow-y-auto">
-        {/* Task Status Overview */}
+      <div className="h-full overflow-y-auto p-8 flex flex-col gap-2.5">
         <div className="bg-white p-4 rounded-lg shadow-lg">
           <h2 className="text-xl font-semibold mb-2">Task Status Overview</h2>
           <ResponsiveContainer width="100%" height={400}>
@@ -168,10 +164,7 @@ export const Stats = () => {
                 labelLine={false}
               >
                 {tagData.map((entry, index) => (
-                  <Cell
-                    key={`cell-${index}`}
-                    fill={COLORS[index % COLORS.length]}
-                  />
+                  <Cell key={`cell-${index}`} fill={COLORS[index]} />
                 ))}
               </Pie>
               <Tooltip />
@@ -229,3 +222,59 @@ export const Stats = () => {
     return <div>Loading...</div>;
   }
 };
+
+export function generateUniqueColors(numberOfColors: number) {
+  const colors = [];
+  const hueStep = 360 / numberOfColors;
+
+  for (let i = 0; i < numberOfColors; i++) {
+    const hue = i * hueStep;
+    const saturation = 50 + Math.random() * 50; // Saturación aleatoria entre 50% y 100%
+    const lightness = 40 + Math.random() * 20; // Luminosidad aleatoria entre 40% y 60%
+
+    const color = hslToHex(hue, saturation, lightness);
+    colors.push(color);
+  }
+
+  return colors;
+}
+
+// Convertir HSL a HEX
+function hslToHex(h: number, s: number, l: number) {
+  s /= 100;
+  l /= 100;
+
+  const c = (1 - Math.abs(2 * l - 1)) * s;
+  const x = c * (1 - Math.abs(((h / 60) % 2) - 1));
+  const m = l - c / 2;
+
+  let r = 0,
+    g = 0,
+    b = 0;
+
+  if (0 <= h && h < 60) {
+    [r, g, b] = [c, x, 0];
+  } else if (60 <= h && h < 120) {
+    [r, g, b] = [x, c, 0];
+  } else if (120 <= h && h < 180) {
+    [r, g, b] = [0, c, x];
+  } else if (180 <= h && h < 240) {
+    [r, g, b] = [0, x, c];
+  } else if (240 <= h && h < 300) {
+    [r, g, b] = [x, 0, c];
+  } else if (300 <= h && h < 360) {
+    [r, g, b] = [c, 0, x];
+  }
+
+  const rHex = Math.round((r + m) * 255)
+    .toString(16)
+    .padStart(2, "0");
+  const gHex = Math.round((g + m) * 255)
+    .toString(16)
+    .padStart(2, "0");
+  const bHex = Math.round((b + m) * 255)
+    .toString(16)
+    .padStart(2, "0");
+
+  return `#${rHex}${gHex}${bHex}`;
+}
