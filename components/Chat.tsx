@@ -101,9 +101,9 @@ export default function Chat() {
   }
 
   return (
-    <div className="flex flex-col sm:flex-row h-full bg-gray-100 p-4 overflow-y-hidden">
+    <div className="flex flex-col sm:flex-row h-full bg-gray-100 p-4 overflow-y-auto">
       <div className="flex-1 h-full rounded-lg mb-4 sm:mb-0 sm:mr-4">
-        <div className="h-full bg-white rounded-lg shadow-lg p-4 flex flex-col">
+        <div className="h-full bg-white rounded-lg shadow-lg p-4 flex flex-col min-h-[400px]">
           <div ref={chatContainerRef} className="flex-1 overflow-y-auto mb-4">
             {conversation.map((message, index) => (
               <div

@@ -128,3 +128,6 @@ textarea {
 .preset:hover .preset-trash {
   opacity: 100;
 }
+.no-cursor {
+  user-select: none;
+}

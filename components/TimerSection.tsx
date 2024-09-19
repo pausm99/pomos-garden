@@ -15,7 +15,7 @@ export default function TimerSection() {
   };
 
   return (
-    <div className="p-5 h-full w-full flex flex-col lg:flex-row gap-5 overflow-hidden">
+    <div className="p-5 h-full w-full flex flex-col lg:flex-row gap-5 overflow-y-auto">
       <div
         style={style}
         className="flex flex-col items-center justify-between gap-6 flex-grow-0 flex-shrink-0 p-5 md:p-10 lg:p-20 border rounded-xl bg-white w-full lg:w-[calc(66.666%-0.625rem)]"

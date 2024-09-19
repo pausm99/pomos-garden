@@ -41,10 +41,10 @@ export default function RootLayout({
                 <Header />
                 <div className="h-full flex gap-7 overflow-hidden">
                   <ServicesNav className="w-20 flex flex-col gap-5" />
-                  <div className="h-full w-full flex rounded-4xl bg-zinc-100 overflow-hidden relative">
-                    <Blob className="absolute w-full h-full" />
+                  <div className="h-full w-full flex rounded-4xl bg-zinc-100 overflow-y-auto overflow-x-auto relative">
+                    <Blob className="absolute w-full h-full max-w-full max-h-full overflow-hidden" />
                     <div className="absolute w-full h-full backdrop-blur-3xl"></div>
-                    <div className="flex-1 z-10">{children}</div>
+                    <div className="flex-1 z-10 no-cursor">{children}</div>
                   </div>
                 </div>
               </div>
