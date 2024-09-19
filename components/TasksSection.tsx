@@ -67,7 +67,7 @@ export default function TaskSection() {
     const activeTask = tasksCollection.find((task) => task.id === active.id);
     const overTask = tasksCollection.find((task) => task.id === over.id);
 
-    if (!activeTask || !overTask) {
+    if (!activeTask) {
       setDraggingTask(null);
       return;
     }
@@ -76,9 +76,15 @@ export default function TaskSection() {
       tasks[key as keyof typeof tasks].some((task) => task.id === active.id)
     ) as keyof typeof tasks;
 
-    const overColumn = Object.keys(tasks).find((key) =>
-      tasks[key as keyof typeof tasks].some((task) => task.id === over.id)
-    ) as keyof typeof tasks;
+    let overColumn: keyof typeof tasks;
+
+    if (overTask) {
+      overColumn = Object.keys(tasks).find((key) =>
+        tasks[key as keyof typeof tasks].some((task) => task.id === over.id)
+      ) as keyof typeof tasks;
+    } else {
+      overColumn = over.id as keyof typeof tasks;
+    }
 
     if (activeColumn !== overColumn) {
       const newActiveTasks = tasks[activeColumn].filter(

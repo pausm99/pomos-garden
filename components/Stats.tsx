@@ -2,6 +2,7 @@
 
 import { actionGetAllTagsForUser } from "@/actions/tags";
 import { actionGetAllTasksForUser } from "@/actions/tasks";
+import { actionGetAllSessionsForUser } from "@/actions/sessions";
 import { useUserContext } from "@/contexts/UserContext";
 import { useEffect, useState } from "react";
 import {
@@ -10,6 +11,8 @@ import {
   CartesianGrid,
   Cell,
   Legend,
+  Line,
+  LineChart,
   Pie,
   PieChart,
   ResponsiveContainer,
@@ -25,8 +28,9 @@ export const Stats = () => {
   const [tagData, setTagData] = useState<
     Array<{ tagDesc: string; count: number }>
   >([]);
-
-  const COLORS = generateUniqueColors(tagData.length)
+  const [sessionData, setSessionData] = useState<
+    Array<{ date: string; sessions: number; focusTime: number }>
+  >([]);
 
   const { user } = useUserContext();
 
@@ -34,14 +38,16 @@ export const Stats = () => {
     const fetchTaskData = async () => {
       try {
         if (user) {
-          const data = await actionGetAllTasksForUser(user!.id);
+          const data = await actionGetAllTasksForUser(user.id);
           const taskCounts = data.reduce(
             (acc: { [key: string]: number }, task) => {
-              acc[task.status] = (acc[task.status] || 0) + 1;
+              const status = task.status as string;
+              acc[status] = (acc[status] || 0) + 1;
               return acc;
             },
             {}
           );
+
           const chartData = Object.entries(taskCounts).map(
             ([status, count]) => ({
               status,
@@ -58,15 +64,12 @@ export const Stats = () => {
     const fetchTagData = async () => {
       try {
         if (user) {
-          const tags = await actionGetAllTagsForUser(user!.id);
-          const tagCounts = tags.reduce(
-            (acc: { [key: string]: number }, tag) => {
-              const taskCount = tag.taskIDs.length;
-              acc[tag.tagDesc] = (acc[tag.tagDesc] || 0) + taskCount;
-              return acc;
-            },
-            {}
-          );
+          const tags = await actionGetAllTagsForUser(user.id);
+          const tagCounts = tags.reduce((acc, tag) => {
+            const taskCount = tag.taskIDs.length;
+            acc[tag.tagDesc] = (acc[tag.tagDesc] || 0) + taskCount;
+            return acc;
+          }, {});
           const tagChartData = Object.entries(tagCounts).map(
             ([tagDesc, count]) => ({
               tagDesc,
@@ -80,19 +83,54 @@ export const Stats = () => {
       }
     };
 
+    const fetchSessionData = async () => {
+      try {
+        if (user) {
+          const sessions = await actionGetAllSessionsForUser(user.id);
+          const sessionCounts = sessions.reduce((acc, session) => {
+            const date = new Date(session.startTime)
+              .toISOString()
+              .split("T")[0];
+            const focusTime = session.focusDuration;
+            if (!acc[date]) {
+              acc[date] = { sessions: 0, focusTime: 0 };
+            }
+            acc[date].sessions += 1;
+            acc[date].focusTime += focusTime;
+            return acc;
+          }, {});
+          const sessionChartData = Object.entries(sessionCounts).map(
+            ([date, { sessions, focusTime }]) => ({
+              date,
+              sessions,
+              focusTime,
+            })
+          );
+          setSessionData(sessionChartData);
+          console.log("Fetched session data:", sessionChartData);
+        }
+      } catch (error) {
+        console.error("Failed to fetch session data:", error);
+      }
+    };
+
     if (user) {
       fetchTaskData();
       fetchTagData();
+      fetchSessionData();
     }
   }, [user]);
 
-  const renderCustomLabel = (entry: any) => {
+  const renderCustomLabel = (entry) => {
     return `${entry.tagDesc}`;
   };
 
+  const dynamicColors = generateUniqueColors(tagData.length);
+
   if (user) {
+    console.log("Session Data for Chart:", sessionData);
     return (
-      <div className="h-full overflow-y-auto p-8 flex flex-col gap-2.5">
+      <div className="p-8 flex flex-col h-full gap-2.5 overflow-y-auto">
         <div className="bg-white p-4 rounded-lg shadow-lg">
           <h2 className="text-xl font-semibold mb-2">Task Status Overview</h2>
           <ResponsiveContainer width="100%" height={400}>
@@ -109,6 +147,8 @@ export const Stats = () => {
             </BarChart>
           </ResponsiveContainer>
         </div>
+
+        {/* Tag Distribution */}
         <div className="bg-white p-4 rounded-lg shadow-lg">
           <h2 className="text-xl font-semibold mb-2">Tag Distribution</h2>
           <ResponsiveContainer width="100%" height={400}>
@@ -125,18 +165,62 @@ export const Stats = () => {
                 labelLine={false}
               >
                 {tagData.map((entry, index) => (
-                  <Cell
-                    key={`cell-${index}`}
-                    fill={COLORS[index]}
-                  />
+                  <Cell key={`cell-${index}`} fill={dynamicColors[index]} />
                 ))}
               </Pie>
               <Tooltip />
             </PieChart>
           </ResponsiveContainer>
         </div>
+
+        {/* Sessions Over Time */}
+        <div className="bg-white p-4 rounded-lg shadow-lg">
+          <h2 className="text-xl font-semibold mb-2">Sessions Over Time</h2>
+          <ResponsiveContainer width="100%" height={400}>
+            <LineChart
+              data={sessionData}
+              margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+            >
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="date" />
+              <YAxis
+                yAxisId="left"
+                label={{
+                  value: "Sessions",
+                  angle: -90,
+                  position: "insideLeft",
+                }}
+              />
+              <YAxis
+                yAxisId="right"
+                orientation="right"
+                label={{
+                  value: "Focus Time (mins)",
+                  angle: -90,
+                  position: "insideRight",
+                }}
+              />
+              <Tooltip />
+              <Legend />
+              <Line
+                yAxisId="left"
+                type="monotone"
+                dataKey="sessions"
+                stroke="#8884d8"
+              />
+              <Line
+                yAxisId="right"
+                type="monotone"
+                dataKey="focusTime"
+                stroke="#82ca9d"
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
       </div>
     );
+  } else {
+    return <div>Loading...</div>;
   }
 };
 
@@ -147,7 +231,7 @@ export function generateUniqueColors(numberOfColors: number) {
   for (let i = 0; i < numberOfColors; i++) {
     const hue = i * hueStep;
     const saturation = 50 + Math.random() * 50; // Saturación aleatoria entre 50% y 100%
-    const lightness = 40 + Math.random() * 20;  // Luminosidad aleatoria entre 40% y 60%
+    const lightness = 40 + Math.random() * 20; // Luminosidad aleatoria entre 40% y 60%
 
     const color = hslToHex(hue, saturation, lightness);
     colors.push(color);
@@ -162,10 +246,12 @@ function hslToHex(h: number, s: number, l: number) {
   l /= 100;
 
   const c = (1 - Math.abs(2 * l - 1)) * s;
-  const x = c * (1 - Math.abs((h / 60) % 2 - 1));
+  const x = c * (1 - Math.abs(((h / 60) % 2) - 1));
   const m = l - c / 2;
 
-  let r = 0, g = 0, b = 0;
+  let r = 0,
+    g = 0,
+    b = 0;
 
   if (0 <= h && h < 60) {
     [r, g, b] = [c, x, 0];
@@ -181,9 +267,15 @@ function hslToHex(h: number, s: number, l: number) {
     [r, g, b] = [c, 0, x];
   }
 
-  const rHex = Math.round((r + m) * 255).toString(16).padStart(2, '0');
-  const gHex = Math.round((g + m) * 255).toString(16).padStart(2, '0');
-  const bHex = Math.round((b + m) * 255).toString(16).padStart(2, '0');
+  const rHex = Math.round((r + m) * 255)
+    .toString(16)
+    .padStart(2, "0");
+  const gHex = Math.round((g + m) * 255)
+    .toString(16)
+    .padStart(2, "0");
+  const bHex = Math.round((b + m) * 255)
+    .toString(16)
+    .padStart(2, "0");
 
   return `#${rHex}${gHex}${bHex}`;
 }

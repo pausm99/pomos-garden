@@ -101,8 +101,8 @@ export default function Chat() {
   }
 
   return (
-    <div className="flex h-full bg-gray-100 p-4 sm:flex-row overflow-y-auto">
-      <div className="w-full h-full rounded-lg">
+    <div className="flex flex-col sm:flex-row h-full bg-gray-100 p-4 overflow-y-hidden">
+      <div className="flex-1 h-full rounded-lg mb-4 sm:mb-0 sm:mr-4">
         <div className="h-full bg-white rounded-lg shadow-lg p-4 flex flex-col">
           <div ref={chatContainerRef} className="flex-1 overflow-y-auto mb-4">
             {conversation.map((message, index) => (
@@ -115,7 +115,7 @@ export default function Chat() {
                 }`}
               >
                 {message.role === "user" ? (
-                  <Avatar className="h-8 w-8 flex-shrink-0 flex-grow-0">
+                  <Avatar className="h-8 w-8 flex-shrink-0">
                     <AvatarImage
                       src={session?.user?.image || undefined}
                       alt="@shadcn"
@@ -123,7 +123,7 @@ export default function Chat() {
                     <AvatarFallback>{avatarFallback}</AvatarFallback>
                   </Avatar>
                 ) : (
-                  <Bot className="h8 w-8 flex-shrink-0 flex-grow-0" />
+                  <Bot className="h-8 w-8 flex-shrink-0" />
                 )}
 
                 <p>{message.content}</p>
@@ -144,15 +144,15 @@ export default function Chat() {
               onClick={handleSendMessage}
               className="bg-lime-300 text-zinc-800 p-3 rounded-lg h-12 hover:bg-lime-400"
             >
-              Send Message
+              Send
             </button>
           </div>
         </div>
       </div>
 
-      <div className="w-full h-full flex flex-col sm:w-1/3 bg-white rounded-lg shadow-lg p-4 mt-4 sm:mt-0 sm:ml-4 flex-shrink-0">
+      <div className="w-full sm:w-1/3 bg-white rounded-lg shadow-lg p-4 flex flex-col">
         <h2 className="text-xl font-semibold mb-4">Past Conversations</h2>
-        <ul className="h-full flex flex-col gap-2.5 overflow-y-auto">
+        <ul className="flex-1 flex flex-col gap-2.5 overflow-y-auto">
           {conversations.map((conv) => (
             <li
               key={conv.id}
