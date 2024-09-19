@@ -641,26 +641,10 @@ export const TagOrderByWithRelationInputSchema: z.ZodType<Prisma.TagOrderByWithR
 export const TagWhereUniqueInputSchema: z.ZodType<Prisma.TagWhereUniqueInput> = z.union([
   z.object({
     id: z.string(),
-    tagDesc: z.string(),
     userId_tagDesc: z.lazy(() => TagUserIdTagDescCompoundUniqueInputSchema)
   }),
   z.object({
     id: z.string(),
-    tagDesc: z.string(),
-  }),
-  z.object({
-    id: z.string(),
-    userId_tagDesc: z.lazy(() => TagUserIdTagDescCompoundUniqueInputSchema),
-  }),
-  z.object({
-    id: z.string(),
-  }),
-  z.object({
-    tagDesc: z.string(),
-    userId_tagDesc: z.lazy(() => TagUserIdTagDescCompoundUniqueInputSchema),
-  }),
-  z.object({
-    tagDesc: z.string(),
   }),
   z.object({
     userId_tagDesc: z.lazy(() => TagUserIdTagDescCompoundUniqueInputSchema),
@@ -668,13 +652,13 @@ export const TagWhereUniqueInputSchema: z.ZodType<Prisma.TagWhereUniqueInput> = 
 ])
 .and(z.object({
   id: z.string().optional(),
-  tagDesc: z.string().optional(),
   userId_tagDesc: z.lazy(() => TagUserIdTagDescCompoundUniqueInputSchema).optional(),
   AND: z.union([ z.lazy(() => TagWhereInputSchema),z.lazy(() => TagWhereInputSchema).array() ]).optional(),
   OR: z.lazy(() => TagWhereInputSchema).array().optional(),
   NOT: z.union([ z.lazy(() => TagWhereInputSchema),z.lazy(() => TagWhereInputSchema).array() ]).optional(),
   userId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   taskIDs: z.lazy(() => StringNullableListFilterSchema).optional(),
+  tagDesc: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   color: z.union([ z.lazy(() => EnumtagColorFilterSchema),z.lazy(() => tagColorSchema) ]).optional(),
   tasks: z.lazy(() => TaskListRelationFilterSchema).optional()
 }).strict());

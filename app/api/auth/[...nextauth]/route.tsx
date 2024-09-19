@@ -4,6 +4,7 @@ import GoogleProvider from "next-auth/providers/google";
 import GithubProvider from "next-auth/providers/github";
 import { db } from "@/db/db";
 import { env } from "@/lib/utils";
+import { actionCreateUser, actionGetUserByEmail } from "@/actions/users";
 
 const authHandler = NextAuth({
   providers: [
@@ -21,17 +22,13 @@ const authHandler = NextAuth({
     async signIn({ user, account, profile }) {
       const userEmail = user.email;
       if (userEmail) {
+
         const existingUser = await db.user.findUnique({
           where: { email: userEmail },
         });
 
         if (!existingUser) {
-          await db.user.create({
-            data: {
-              email: userEmail,
-              name: user.name || userEmail,
-            },
-          });
+          await actionCreateUser(user.name || userEmail, userEmail)
         }
         return true;
       }

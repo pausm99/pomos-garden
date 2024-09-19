@@ -101,7 +101,7 @@ export default function Chat() {
   }
 
   return (
-    <div className="flex h-full bg-gray-100 p-4 sm:flex-row overflow-y-scroll">
+    <div className="flex h-full bg-gray-100 p-4 sm:flex-row overflow-y-auto">
       <div className="w-full h-full rounded-lg">
         <div className="h-full bg-white rounded-lg shadow-lg p-4 flex flex-col">
           <div ref={chatContainerRef} className="flex-1 overflow-y-auto mb-4">
@@ -152,7 +152,7 @@ export default function Chat() {
 
       <div className="w-full h-full flex flex-col sm:w-1/3 bg-white rounded-lg shadow-lg p-4 mt-4 sm:mt-0 sm:ml-4 flex-shrink-0">
         <h2 className="text-xl font-semibold mb-4">Past Conversations</h2>
-        <ul className="h-full flex flex-col gap-2.5 overflow-y-scroll">
+        <ul className="h-full flex flex-col gap-2.5 overflow-y-auto">
           {conversations.map((conv) => (
             <li
               key={conv.id}

@@ -116,7 +116,7 @@ export function TagManager({ onTagSelect }: TagManagerProps) {
           {filteredTags.length > 0 && (
             <>
               <DropdownMenuSeparator className="bg-zinc-300" />
-              <div className="flex flex-wrap gap-2 p-2.5 h-32 overflow-y-scroll">
+              <div className="flex flex-wrap gap-2 p-2.5 h-32 overflow-y-auto">
                 {filteredTags.map((tag, index) => (
                   <span key={index}>
                     <Tag

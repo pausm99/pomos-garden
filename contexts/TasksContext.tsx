@@ -66,9 +66,6 @@ export const TasksProvider = ({ children }: { children: ReactNode }) => {
 
   const updateTask = async (updatedTask: Task) => {
     const task = await actionUpdateTask(updatedTask);
-    addToast({
-      description: "Task updated",
-    });
     setTasksCollection((prevTasks) =>
       prevTasks.map((prevTask) => (prevTask.id === task.id ? task : prevTask))
     );

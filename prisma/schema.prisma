@@ -60,7 +60,7 @@ model Tag {
   userId  String   @db.ObjectId
   taskIDs String[] @db.ObjectId
   tasks   Task[]   @relation(fields: [taskIDs], references: [id])
-  tagDesc String   @unique
+  tagDesc String
   color   tagColor
 
   @@unique([userId, tagDesc])
