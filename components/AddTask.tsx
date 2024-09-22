@@ -38,12 +38,13 @@ export default function AddTask() {
         className="flex w-full max-w-sm items-center gap-2"
       >
         <Input
+        className="rounded-lg"
           type="text"
           placeholder="Add task"
           value={inputTitle}
           onChange={handleTextInput}
         />
-        <Button className="addTaskButton" type="submit" size="icon">
+        <Button className="addTaskButton aspect-square rounded-lg" type="submit" size="icon">
           <Plus size={14} strokeWidth={3} className="text-zinc-800" />
         </Button>
       </form>

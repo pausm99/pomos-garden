@@ -30,7 +30,7 @@ export default function RootLayout({
         className={cn(
           fontSans.variable,
           fontMono.variable,
-          "font-sans text-sm text-zinc-900 text-balance",
+          "font-sans text-sm text-zinc-900",
           "bg-zinc-300"
         )}
       >

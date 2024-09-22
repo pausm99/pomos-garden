@@ -95,12 +95,12 @@ export function TagManager({ onTagSelect }: TagManagerProps) {
       <DropdownMenuTrigger asChild>
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="text-xs flex justify-center items-center rounded-full bg-zinc-50 text-zinc-400 h-5 w-5 border border-zinc-400"
+          className="text-xs flex justify-center items-center rounded-full bg-zinc-50 text-zinc-600 h-5 w-5 border border-zinc-400"
         >
           +
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-64 rounded-lg border border-zinc-300">
+      <DropdownMenuContent className="w-64 rounded-lg border border-zinc-300 p-0">
         <form
           action={() =>
             createTag({
@@ -110,13 +110,13 @@ export function TagManager({ onTagSelect }: TagManagerProps) {
             })
           }
         >
-          <div className="p-2.5">
-            <Input value={inputText} size={12} onChange={handleInputChange} />
+          <div>
+            <Input className="border-none h-auto px-2 py-1 !placeholder-zinc-400" value={inputText} size={12} placeholder="New tag" onChange={handleInputChange} />
           </div>
           {filteredTags.length > 0 && (
             <>
               <DropdownMenuSeparator className="bg-zinc-300" />
-              <div className="flex flex-wrap gap-2 p-2.5 h-32 overflow-y-scroll">
+              <div className="flex flex-wrap gap-1.5 p-2.5 h-32 overflow-y-scroll">
                 {filteredTags.map((tag, index) => (
                   <span key={index}>
                     <Tag

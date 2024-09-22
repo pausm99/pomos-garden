@@ -34,10 +34,7 @@ export default function Tag({ tag, style, onSelectTag, onDiscardTag, deletable }
 
   return (
     <span
-      className={`flex items-center justify-between gap-1 px-2 py-0.5 ${style} ${twClassFormatter(tag.color)} rounded-full text-zinc-500 text-ellipsis whitespace-nowrap overflow-hidden`}
-      style={{
-        border: "1px solid #e6e6e6",
-      }}
+      className={`flex items-center outline outline-2 outline-offset-[-2px] outline-[#0000000e] justify-between text-[12px] gap-1 px-2.5 py-[1px] ${style} ${twClassFormatter(tag.color)} rounded-full text-zinc-600 uppercase text-ellipsis whitespace-nowrap overflow-hidden`}
       onClick={sendEvent}
     >
       {deletable && <X size={14}/>}
