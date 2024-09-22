@@ -86,9 +86,9 @@ export default function Task({ task, draggingTask }: TaskProps) {
     <div
       ref={setNodeRef}
       style={style}
-      className="flex flex-col gap-5 p-4 bg-white text-black rounded-lg"
+      className="flex flex-col gap-4 p-4 bg-white text-black rounded-lg"
     >
-      <form onSubmit={handleEditTask} className="flex flex-col gap-5">
+      <form onSubmit={handleEditTask} className="flex flex-col gap-3">
         <div className="flex justify-between gap-2 items-center">
           {isEditing ? (
             <Input
@@ -108,7 +108,7 @@ export default function Task({ task, draggingTask }: TaskProps) {
           {isEditing ? (
             <Button
               onClick={handleEditTask}
-              className="doneEditingButton"
+              className="doneEditingButton aspect-square"
               type="submit"
               size="icon"
             >
@@ -131,11 +131,11 @@ export default function Task({ task, draggingTask }: TaskProps) {
           </>
         ) : (
           descriptionInputText && (
-            <p className="flex-1 text-zinc-500">{descriptionInputText}</p>
+            <p className="flex-1 text-[13px] leading-[1.3em] text-zinc-400">{descriptionInputText}</p>
           )
         )}
       </form>
-      <div className="flex gap-2 flex-wrap items-center">
+      <div className="flex gap-1.5 flex-wrap items-center">
         {task.tagIDs.length > 0 &&
           task.tagIDs
             .map((tagId: string) =>

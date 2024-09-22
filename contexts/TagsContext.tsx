@@ -44,7 +44,6 @@ export const TagsProvider = ({ children }: { children: ReactNode }) => {
   }, [user]);
 
   const addTag = async (tag: TagCreateInput) => {
-    console.log(tag)
     const newTag = await actionCreateTag(user!.id, tag.tagDesc, tag.color, []);
     addToast({
       description: "Tag created",

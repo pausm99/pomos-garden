@@ -90,7 +90,7 @@ input:focus-visible,
 button,
 button:hover,
 button:focus-visible {
-  outline: 0 !important;
+  
   box-shadow: none !important;
 }
 
@@ -102,9 +102,7 @@ textarea {
 
 /* Global */
 
-* {
-  @apply text-zinc-800;
-}
+
 
 /* General */
 .rounded-4xl {
@@ -127,4 +125,7 @@ textarea {
 /* Presets */
 .preset:hover .preset-trash {
   opacity: 100;
+}
+.no-cursor {
+  user-select: none;
 }

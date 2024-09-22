@@ -15,14 +15,14 @@ import Task from "./Task";
 import { actionUpdateTaskStatus } from "@/actions/tasks";
 
 export default function TaskSection() {
-  const { tasksCollection, loading } = useTasksContext();
-  const [tasks, setTasks] = useState({
-    todo: tasksCollection.filter((task) => task.status === "BACKLOG"),
-    doing: tasksCollection.filter((task) => task.status === "IN_PROGRESS"),
-    done: tasksCollection.filter((task) => task.status === "COMPLETED"),
-  });
-
+  const { tasksCollection, loading, updateCollection } = useTasksContext(); // Utilizar updateCollection
   const [draggingTask, setDraggingTask] = useState<TaskType | null>(null);
+
+  const [tasks, setTasks] = useState({
+    todo: [] as TaskType[],
+    doing: [] as TaskType[],
+    done: [] as TaskType[],
+  });
 
   useEffect(() => {
     setTasks({
@@ -92,14 +92,22 @@ export default function TaskSection() {
       );
       const newOverTasks = [activeTask, ...tasks[overColumn]];
 
+      // Actualizar el estado local
       setTasks({
         ...tasks,
         [activeColumn]: newActiveTasks,
         [overColumn]: newOverTasks,
       });
 
-      const newStatus = columnToStatusMap[overColumn];
+      // Actualizar el contexto global usando updateCollection
+      const updatedTasks = tasksCollection.map((task) =>
+        task.id === activeTask.id
+          ? { ...task, status: columnToStatusMap[overColumn] }
+          : task
+      );
+      updateCollection(updatedTasks);
 
+      const newStatus = columnToStatusMap[overColumn];
       await actionUpdateTaskStatus(activeTask.id, newStatus);
     } else {
       const oldIndex = tasks[activeColumn].findIndex(

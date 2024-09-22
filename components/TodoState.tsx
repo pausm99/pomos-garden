@@ -48,7 +48,7 @@ export default function TodoState({
     >
       <div className="flex gap-2 items-center p-[5px]">
         <span
-          className={`flex justify-center items-center rounded-full ${dotColor} h-5 w-5`}
+          className={`flex justify-center items-center text-white rounded-full ${dotColor} h-5 w-5`}
         >
           {tasks.length}
         </span>

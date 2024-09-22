@@ -22,6 +22,7 @@ interface TasksContextProps {
   addTask: (task: Task) => void;
   updateTask: (updatedTask: Task) => void;
   deleteTask: (taskId: string) => void;
+  updateCollection: (tasks: Task[]) => void;
   loading: boolean;
 }
 
@@ -71,6 +72,10 @@ export const TasksProvider = ({ children }: { children: ReactNode }) => {
     );
   };
 
+  const updateCollection = (tasks: Task[]) => {
+    setTasksCollection(tasks)
+  }
+
   const deleteTask = async (taskId: string) => {
     await actionDeleteTask(taskId);
     addToast({
@@ -88,6 +93,7 @@ export const TasksProvider = ({ children }: { children: ReactNode }) => {
         addTask,
         updateTask,
         deleteTask,
+        updateCollection,
         loading,
       }}
     >

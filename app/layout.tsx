@@ -30,7 +30,7 @@ export default function RootLayout({
         className={cn(
           fontSans.variable,
           fontMono.variable,
-          "font-sans text-sm text-zinc-900 text-balance",
+          "font-sans text-sm text-zinc-900",
           "bg-zinc-300"
         )}
       >
@@ -39,12 +39,12 @@ export default function RootLayout({
             <TimerProvider>
               <div className="flex flex-col min-h-screen h-screen px-[1em] max-w-[1400px] mx-auto py-5">
                 <Header />
-                <div className="h-full flex gap-7 overflow-hidden">
+                <div className="h-full flex gap-7">
                   <ServicesNav className="w-20 flex flex-col gap-5" />
-                  <div className="h-full w-full flex rounded-4xl bg-zinc-100 overflow-hidden relative">
-                    <Blob className="absolute w-full h-full" />
+                  <div className="h-[733px] w-full flex rounded-4xl bg-zinc-100 overflow-y-auto overflow-x-auto relative">
+                    <Blob className="absolute w-full h-full max-w-full max-h-full overflow-hidden" />
                     <div className="absolute w-full h-full backdrop-blur-3xl"></div>
-                    <div className="flex-1 z-10">{children}</div>
+                    <div className="w-full flex-1 z-10 no-cursor">{children}</div>
                   </div>
                 </div>
               </div>

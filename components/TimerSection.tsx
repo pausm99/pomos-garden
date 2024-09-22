@@ -15,13 +15,13 @@ export default function TimerSection() {
   };
 
   return (
-    <div className="p-5 h-full w-full flex flex-col lg:flex-row gap-5 overflow-hidden">
+    <div className="p-5 h-full w-full flex flex-col lg:flex-row gap-5 overflow-y-auto">
       <div
         style={style}
         className="flex flex-col items-center justify-between gap-6 flex-grow-0 flex-shrink-0 p-5 md:p-10 lg:p-20 border rounded-xl bg-white w-full lg:w-[calc(66.666%-0.625rem)]"
       >
-        <div className="w-full flex justify-between items-center text-sm md:text-base">
-          <span className="rounded-full px-3 py-1 uppercase bg-zinc-200 border border-zinc-300">
+        <div className="w-full flex flex-wrap gap-2.5 justify-center md:justify-between items-center text-sm md:text-base">
+          <span className="text-center whitespace-nowrap rounded-full px-3 py-1 uppercase bg-zinc-200 border border-zinc-300">
             {isFocus ? "FOCUS" : "BREAK"} TIME
           </span>
           {selectedPreset ? (
@@ -29,7 +29,7 @@ export default function TimerSection() {
               {selectedPreset?.name}
             </span>
           ) : (
-            <span className="rounded-full px-3 py-1 uppercase bg-red-200 border border-zinc-300">
+            <span className="text-center rounded-full px-3 py-1 uppercase bg-red-200 border border-zinc-300">
               Select time preset
             </span>
           )}
@@ -44,7 +44,6 @@ export default function TimerSection() {
           </div>
         </div>
         <Timer timeLeft={timeLeft} />
-        <div className="p-1"></div>
         <TimerProgress progress={progress} />
         <TimerControls />
       </div>

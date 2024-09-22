@@ -65,11 +65,14 @@ export const Stats = () => {
       try {
         if (user) {
           const tags = await actionGetAllTagsForUser(user.id);
-          const tagCounts = tags.reduce((acc, tag) => {
-            const taskCount = tag.taskIDs.length;
-            acc[tag.tagDesc] = (acc[tag.tagDesc] || 0) + taskCount;
-            return acc;
-          }, {});
+          const tagCounts = tags.reduce(
+            (acc: { [key: string]: number }, tag) => {
+              const taskCount = tag.taskIDs.length;
+              acc[tag.tagDesc] = (acc[tag.tagDesc] || 0) + taskCount;
+              return acc;
+            },
+            {}
+          );
           const tagChartData = Object.entries(tagCounts).map(
             ([tagDesc, count]) => ({
               tagDesc,
@@ -87,18 +90,24 @@ export const Stats = () => {
       try {
         if (user) {
           const sessions = await actionGetAllSessionsForUser(user.id);
-          const sessionCounts = sessions.reduce((acc, session) => {
-            const date = new Date(session.startTime)
-              .toISOString()
-              .split("T")[0];
-            const focusTime = session.focusDuration;
-            if (!acc[date]) {
-              acc[date] = { sessions: 0, focusTime: 0 };
-            }
-            acc[date].sessions += 1;
-            acc[date].focusTime += focusTime;
-            return acc;
-          }, {});
+          const sessionCounts = sessions.reduce(
+            (
+              acc: { [key: string]: { sessions: number; focusTime: number } },
+              session
+            ) => {
+              const date = new Date(session.startTime)
+                .toISOString()
+                .split("T")[0];
+              const focusTime = session.focusDuration;
+              if (!acc[date]) {
+                acc[date] = { sessions: 0, focusTime: 0 };
+              }
+              acc[date].sessions += 1;
+              acc[date].focusTime += focusTime;
+              return acc;
+            },
+            {}
+          );
           const sessionChartData = Object.entries(sessionCounts).map(
             ([date, { sessions, focusTime }]) => ({
               date,
@@ -107,7 +116,6 @@ export const Stats = () => {
             })
           );
           setSessionData(sessionChartData);
-          console.log("Fetched session data:", sessionChartData);
         }
       } catch (error) {
         console.error("Failed to fetch session data:", error);
@@ -121,14 +129,13 @@ export const Stats = () => {
     }
   }, [user]);
 
-  const renderCustomLabel = (entry) => {
+  const renderCustomLabel = (entry: { tagDesc: string }) => {
     return `${entry.tagDesc}`;
   };
 
   const dynamicColors = generateUniqueColors(tagData.length);
 
   if (user) {
-    console.log("Session Data for Chart:", sessionData);
     return (
       <div className="p-8 flex flex-col h-full gap-2.5 overflow-y-auto">
         <div className="bg-white p-4 rounded-lg shadow-lg">

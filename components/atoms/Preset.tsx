@@ -35,7 +35,7 @@ export default function Preset({ preset }: PresetProps) {
       >
         <span>{preset.name}</span>
         <div>
-          <span>{preset.focusTime}</span>/<span>{preset.breakTime}</span>
+          <span>{formatTime(preset.focusTime)}</span>/<span>{formatTime(preset.breakTime)}</span>
         </div>
       </div>
       <span
@@ -49,3 +49,29 @@ export default function Preset({ preset }: PresetProps) {
     </div>
   );
 }
+
+function formatTime(segundos: number): string {
+  const horas = Math.floor(segundos / 3600);
+  const segundosRestantes = segundos % 3600;
+  const minutos = Math.floor(segundosRestantes / 60);
+  const segundosFinales = segundosRestantes % 60;
+
+  const partes: string[] = [];
+
+  if (horas > 0) {
+      partes.push(`${horas} h`);
+  }
+  if (minutos > 0) {
+      partes.push(`${minutos} m`);
+  }
+  if (segundosFinales > 0) {
+      partes.push(`${segundosFinales} s`);
+  }
+
+  if (partes.length === 0) {
+      return "0 s";
+  }
+
+  return partes.join(' ');
+}
+
