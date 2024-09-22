@@ -20,7 +20,7 @@ export default function TimerSection() {
         style={style}
         className="flex flex-col items-center justify-between gap-6 flex-grow-0 flex-shrink-0 p-5 md:p-10 lg:p-20 border rounded-xl bg-white w-full lg:w-[calc(66.666%-0.625rem)]"
       >
-        <div className="h-full w-full flex justify-between items-center text-sm md:text-base">
+        <div className="w-full flex justify-between items-center text-sm md:text-base">
           <span className="rounded-full px-3 py-1 uppercase bg-zinc-200 border border-zinc-300">
             {isFocus ? "FOCUS" : "BREAK"} TIME
           </span>
@@ -44,7 +44,6 @@ export default function TimerSection() {
           </div>
         </div>
         <Timer timeLeft={timeLeft} />
-        <div className="p-1"></div>
         <TimerProgress progress={progress} />
         <TimerControls />
       </div>

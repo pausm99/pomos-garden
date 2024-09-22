@@ -32,7 +32,7 @@ export default function Timer({ timeLeft }: TimerProps) {
   return (
     <span
       style={{ lineHeight: fontSize, fontSize: fontSize, fontWeight: "300" }}
-      className="h-1/3 font-mono text-center justify-center items-center"
+      className="font-mono text-center justify-center items-center"
     >
       {formattedTime}
     </span>

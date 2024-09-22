@@ -42,7 +42,7 @@ export default function TimerControls() {
   };
 
   return (
-    <div className="w-full flex items-center justify-between gap-2.5">
+    <div className="w-full flex items-center justify-between gap-2.5 mt-2">
       <Tippy
         content={isPaused ? "Play" : "Pause"}
         placement="top"
