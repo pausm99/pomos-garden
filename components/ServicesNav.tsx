@@ -54,7 +54,7 @@ export default function Nav({ className }: NavProps) {
       </Link>
 
       <Link href="/minigame" passHref>
-        <ServiceButton tooltipContent="Garden" active={isActiveRoute("/minigame")}>
+        <ServiceButton tooltipContent="Garden" disabled active={isActiveRoute("/minigame")}>
           <Gamepad2Icon size={24} />
         </ServiceButton>
       </Link>

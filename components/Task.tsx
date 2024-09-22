@@ -108,7 +108,7 @@ export default function Task({ task, draggingTask }: TaskProps) {
           {isEditing ? (
             <Button
               onClick={handleEditTask}
-              className="doneEditingButton"
+              className="doneEditingButton aspect-square"
               type="submit"
               size="icon"
             >
